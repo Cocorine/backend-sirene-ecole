@@ -1,0 +1,270 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\User;
+use App\Repositories\Contracts\OtpCodeRepositoryInterface;
+use App\Repositories\Contracts\RoleRepositoryInterface;
+use App\Repositories\Contracts\UserInfoRepositoryInterface;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Throwable;
+use Illuminate\Support\Str;
+
+class UserRepository extends BaseRepository implements UserRepositoryInterface
+{
+    protected UserInfoRepositoryInterface $userInfoRepository;
+    protected OtpCodeRepositoryInterface $otpCodeRepository;
+    protected RoleRepositoryInterface $roleRepository;
+
+    public function __construct(User $model, UserInfoRepositoryInterface $userInfoRepository, OtpCodeRepositoryInterface $otpCodeRepository, RoleRepositoryInterface $roleRepository)
+    {
+        parent::__construct($model);
+        $this->userInfoRepository = $userInfoRepository;
+        $this->otpCodeRepository = $otpCodeRepository;
+        $this->roleRepository = $roleRepository;
+    }
+
+    public function create(array $data): ?User
+    {
+        try {
+            DB::beginTransaction();
+
+            if (isset($data['mot_de_passe'])) {
+                $data['mot_de_passe'] = Hash::make($data['mot_de_passe']);
+            }
+
+            if (isset($data['role_id'])) {
+                if (!$this->roleRepository->find($data['role_id'])) {
+                    throw new Exception('Role with ID ' . $data['role_id'] . ' not found.');
+                }
+            }
+
+            // Inherit user_account_type from authenticated user if not provided
+            if (auth()->check() && auth()->user()->userAccount) {
+                $data['user_account_type_id'] = auth()->user()->userAccount->id;
+                $data['user_account_type_type'] = get_class(auth()->user()->userAccount);
+            } else {
+
+                // Ensure user_account_type_id and user_account_type_type default to null if not provided
+                $data['user_account_type_id'] = null;
+                $data['user_account_type_type'] =  null;
+            }
+
+            $userInfoData = $data['userInfoData'] ?? [];
+            unset($data['userInfoData']);
+
+            // Generate identifiant if not provided
+            if (!isset($data['identifiant'])) {
+                if (isset($userInfoData['telephone'])) {
+                    $data['identifiant'] = $userInfoData['telephone'];
+                } elseif (isset($userInfoData['email'])) {
+                    $data['identifiant'] = $userInfoData['email'];
+                } else {
+                    $data['identifiant'] = (string) Str::uuid(); // Fallback to UUID
+                }
+            }
+            // Generate nom_utilisateur if not provided
+            if (!isset($data['nom_utilisateur'])) {
+                if (isset($data['user_account_type_type']) && $data['user_account_type_type'] === \App\Models\Ecole::class) {
+                    // For Ecole users, try to use a school name from userInfoData
+                    if (isset($userInfoData['nom_etablissement'])) {
+                        $data['nom_utilisateur'] = Str::slug($userInfoData['nom_etablissement']);
+                    } else {
+                        $data['nom_utilisateur'] = $data['identifiant'];
+                    }
+                } elseif (isset($userInfoData['prenom']) && isset($userInfoData['nom'])) {
+                    // For individual users, use first and last name
+                    $data['nom_utilisateur'] = Str::slug($userInfoData['prenom'] . ' ' . $userInfoData['nom']);
+                } else {
+                    // Fallback to identifiant
+                    $data['nom_utilisateur'] = $data['identifiant'];
+                }
+            }
+
+            $user = parent::create($data);
+
+            if ($user && !empty($userInfoData)) {
+                $userInfoData['user_id'] = $user->id;
+                $this->userInfoRepository->create($userInfoData);
+            }
+
+            // Generate and store OTP for account activation
+            if ($user) {
+                $otpCode = rand(100000, 999999); // Generate a 6-digit OTP
+                $this->otpCodeRepository->create([
+                    'user_id' => $user->id,
+                    'code' => (string) $otpCode,
+                    'expires_at' => now()->addMinutes(10), // OTP valid for 10 minutes
+                ]);
+                // In a real application, you would send this OTP via SMS or email
+                Log::info("OTP for user {$user->id}: {$otpCode}");
+            }
+
+            DB::commit();
+            return $user;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Error in " . get_class($this) . "::create - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function update(string $id, array $data): ?User
+    {
+        try {
+            DB::beginTransaction();
+
+            if (isset($data['mot_de_passe'])) {
+                $data['mot_de_passe'] = Hash::make($data['mot_de_passe']);
+            }
+
+            if (isset($data['role_id'])) {
+                if (!$this->roleRepository->find($data['role_id'])) {
+                    throw new Exception('Role with ID ' . $data['role_id'] . ' not found.');
+                }
+            }
+
+            $userInfoData = $data['userInfoData'] ?? [];
+            unset($data['userInfoData']);
+
+            $user = parent::update($id, $data);
+
+            if ($user && !empty($userInfoData)) {
+                $existingUserInfo = $this->userInfoRepository->findByUserId($id);
+                if ($existingUserInfo) {
+                    $this->userInfoRepository->update($existingUserInfo->id, $userInfoData);
+                } else {
+                    $userInfoData['user_id'] = $id;
+                    $this->userInfoRepository->create($userInfoData);
+                }
+            }
+
+            DB::commit();
+            return $this->find($id); // Return the updated user with fresh data
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Error in " . get_class($this) . "::update - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function findByIdentifier(string $identifier): ?User
+    {
+        try {
+            return $this->model->where('identifiant', $identifier)->first();
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::findByIdentifier - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function findByEmail(string $email): ?User
+    {
+        try {
+            return $this->model->whereHas('userInfo', function ($query) use ($email) {
+                $query->where('email', $email);
+            })->first();
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::findByEmail - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function findByPhone(string $phone): ?User
+    {
+        try {
+            return $this->model->whereHas('userInfo', function ($query) use ($phone) {
+                $query->where('telephone', $phone);
+            })->first();
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::findByPhone - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function findByUserAccount(string $accountType, string $accountId): ?User
+    {
+        try {
+            return $this->model
+                ->where('user_account_type', $accountType)
+                ->where('user_account_type_id', $accountId)
+                ->first();
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::findByUserAccount - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function userExists(string $identifier): bool
+    {
+        try {
+            return $this->model->where('identifiant', $identifier)->exists();
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::userExists - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateStatus(string $id, int $status): ?User
+    {
+        try {
+            $user = $this->find($id);
+            if ($user) {
+                $user->statut = $status;
+                $user->save();
+            }
+            return $user;
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::updateStatus - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function activateUser(string $id): ?User
+    {
+        try {
+            $user = $this->find($id);
+            if ($user) {
+                $user->actif = true;
+                $user->save();
+            }
+            return $user;
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::activateUser - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function deactivateUser(string $id): ?User
+    {
+        try {
+            $user = $this->find($id);
+            if ($user) {
+                $user->actif = false;
+                $user->save();
+            }
+            return $user;
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::deactivateUser - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updatePassword(string $id, string $newPassword): ?User
+    {
+        try {
+            $user = $this->find($id);
+            if ($user) {
+                $user->mot_de_passe = Hash::make($newPassword);
+                $user->save();
+            }
+            return $user;
+        } catch (Throwable $e) {
+            Log::error("Error in " . get_class($this) . "::updatePassword - " . $e->getMessage());
+            throw $e;
+        }
+    }
+}
