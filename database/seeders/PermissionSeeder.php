@@ -16,16 +16,21 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             // Permissions
-            ['name' => 'View Permissions', 'slug' => 'view-permissions'],
-            ['name' => 'View Permission', 'slug' => 'view-permission'],
+            ['nom' => 'View Permissions', 'slug' => 'view-permissions'],
+            ['nom' => 'View Permission', 'slug' => 'view-permission'],
 
             // Roles
-            ['name' => 'View Roles', 'slug' => 'view-roles'],
-            ['name' => 'View Role', 'slug' => 'view-role'],
+            ['nom' => 'View Roles', 'slug' => 'view-roles'],
+            ['nom' => 'View Role', 'slug' => 'view-role'],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['slug' => $permission['slug']], $permission);
+        foreach ($permissions as $permissionData) {
+            $permission = Permission::firstOrNew(['slug' => $permissionData['slug']], $permissionData);
+            if (!$permission->exists) {
+                $permission->id = Permission::generateUlid();
+                $permission->fill($permissionData);
+                $permission->save();
+            }
         }
     }
 }

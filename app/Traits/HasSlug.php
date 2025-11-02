@@ -19,31 +19,29 @@ trait HasSlug
                 $uniqueSlug = $baseSlug;
                 $counter = 1;
 
-                // Append roleable identifier to ensure uniqueness within the scope
-                $scopeIdentifier = '';
-                if (isset($model->roleable_id) && isset($model->roleable_type)) {
-                    // If roleable is an Ecole, append its code
-                    if ($model->roleable_type === Ecole::class) {
-                        $ecole = Ecole::find($model->roleable_id);
-                        if ($ecole && $ecole->code_etablissement) {
-                            $scopeIdentifier = '-' . Str::slug($ecole->code_etablissement);
-                        }
-                    } else {
-                        $scopeIdentifier = '-' . $model->roleable_id;
-                    }
-                }
+                // Vérifie si les colonnes roleable existent dans la table
+                $hasRoleableColumns = in_array('roleable_id', $model->getConnection()
+                        ->getSchemaBuilder()
+                        ->getColumnListing($model->getTable()))
+                    && in_array('roleable_type', $model->getConnection()
+                        ->getSchemaBuilder()
+                        ->getColumnListing($model->getTable()));
 
-                while (static::where('slug', $uniqueSlug . $scopeIdentifier)
-                            ->when(isset($model->roleable_id) && isset($model->roleable_type), function ($query) use ($model) {
+                while (static::where('slug', $uniqueSlug)
+                            ->when($hasRoleableColumns && isset($model->roleable_id) && isset($model->roleable_type), function ($query) use ($model) {
                                 return $query->where('roleable_id', $model->roleable_id)
                                              ->where('roleable_type', $model->roleable_type);
-                            }, function ($query) {
-                                return $query->whereNull('roleable_id')->whereNull('roleable_type');
+                            }, function ($query) use ($hasRoleableColumns) {
+                                if ($hasRoleableColumns) {
+                                    return $query->whereNull('roleable_id')->whereNull('roleable_type');
+                                }
+                                return $query; // ignore si pas de colonnes
                             })
                             ->exists()) {
                     $uniqueSlug = $baseSlug . '-' . $counter++;
                 }
-                $model->slug = $uniqueSlug . $scopeIdentifier;
+
+                $model->slug = $uniqueSlug;
             }
         });
     }

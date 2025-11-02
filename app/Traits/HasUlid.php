@@ -8,13 +8,17 @@ use Symfony\Component\Uid\Ulid;
 
 trait HasUlid
 {
-
     /**
      * Boot the trait and automatically generate ULID on model creation
      */
     protected static function bootHasUlid(): void
     {
         static::creating(function (Model $model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Ulid::generate();
+            }
+        });
+        static::saving(function (Model $model) {
             if (empty($model->{$model->getKeyName()})) {
                 $model->{$model->getKeyName()} = (string) Ulid::generate();
             }

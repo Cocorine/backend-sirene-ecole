@@ -4,6 +4,23 @@ namespace App\Http\Requests\API\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="AssignPermissionsRequest",
+ *     title="Assign Permissions Request",
+ *     description="Request body for assigning permissions to a role",
+ *     required={"permission_ids"},
+ *     @OA\Property(
+ *         property="permission_ids",
+ *         type="array",
+ *         description="Array of permission IDs to assign to the role",
+ *         @OA\Items(
+ *             type="string",
+ *             format="uuid"
+ *         )
+ *     )
+ * )
+ */
 class AssignPermissionsRequest extends FormRequest
 {
     /**

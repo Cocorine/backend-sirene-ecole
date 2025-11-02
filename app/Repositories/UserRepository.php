@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Str;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\SmsService;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -131,7 +132,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                     throw new Exception('Role with ID ' . $data['role_id'] . ' not found.');
                 }
             }
-            
+
             $userInfoData = $data['userInfoData'] ?? [];
             unset($data['userInfoData']);
 

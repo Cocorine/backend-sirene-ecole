@@ -2,13 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use Illuminate\Database\Seeder;
 
 class DefaultUserSeeder extends Seeder
 {
+    protected UserRepositoryInterface $userRepository;
+
+    public function __construct(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Run the database seeds.
      *
@@ -16,30 +22,87 @@ class DefaultUserSeeder extends Seeder
      */
     public function run()
     {
-        // Create Admin User
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            [
-                'name' => 'Admin User',
-                'password' => Hash::make('password'),
-            ]
-        );
+        // Get roles
         $adminRole = Role::where('slug', 'admin')->first();
+        $userRole = Role::where('slug', 'user')->first();
+        $ecoleRole = Role::where('slug', 'ecole')->first();
+        $technicienRole = Role::where('slug', 'technicien')->first();
+
+        // Create Admin User
         if ($adminRole) {
-            $admin->roles()->sync([$adminRole->id]);
+            $adminData = [
+                'mot_de_passe' => 'password',
+                'type' => 'ADMIN',
+                'role_id' => $adminRole->id,
+                'userInfoData' => [
+                    'email' => 'admin@example.com',
+                    'telephone' => '+1234567890',
+                    'prenom' => 'Admin',
+                    'nom' => 'User',
+                ],
+                'doit_changer_mot_de_passe' => false,
+                'mot_de_passe_change' => true,
+                'actif' => true,
+                'statut' => 1,
+            ];
+            // Check if user already exists by email (identifiant)
+            if (!$this->userRepository->findByEmail('admin@example.com')) {
+                $this->userRepository->create($adminData);
+            }
         }
 
         // Create Regular User
-        $user = User::firstOrCreate(
-            ['email' => 'user@example.com'],
-            [
-                'name' => 'Regular User',
-                'password' => Hash::make('password'),
-            ]
-        );
-        $userRole = Role::where('slug', 'user')->first();
         if ($userRole) {
-            $user->roles()->sync([$userRole->id]);
+            $userData = [
+                'mot_de_passe' => 'password',
+                'type' => 'REGULAR',
+                'role_id' => $userRole->id,
+                'userInfoData' => [
+                    'email' => 'user@example.com',
+                    'telephone' => '+2290162004867',
+                    'prenom' => 'Regular',
+                    'nom' => 'User',
+                ],
+            ];
+            // Check if user already exists by email (identifiant)
+            if (!$this->userRepository->findByEmail('user@example.com')) {
+                $this->userRepository->create($userData);
+            }
+        }
+
+        // Create Ecole User (example)
+        if ($ecoleRole) {
+            $ecoleUserData = [
+                'mot_de_passe' => 'password',
+                'type' => 'ECOLE',
+                'role_id' => $ecoleRole->id,
+                'userInfoData' => [
+                    'email' => 'ecole@example.com',
+                    'telephone' => '+1122334455',
+                    'nom_etablissement' => 'Ecole Test',
+                ],
+            ];
+            if (!$this->userRepository->findByEmail('ecole@example.com')) {
+                $this->userRepository->create($ecoleUserData);
+            }
+        }
+
+        // Create Technicien User (example)
+        if ($technicienRole) {
+            $technicienUserData = [
+                'mot_de_passe' => 'password',
+                'type' => 'TECHNICIEN',
+                'role_id' => $technicienRole->id,
+                'userInfoData' => [
+                    'email' => 'technicien@example.com',
+                    'telephone' => '+1554433221',
+                    'prenom' => 'Tech',
+                    'nom' => 'User',
+                ],
+            ];
+            if (!$this->userRepository->findByEmail('technicien@example.com')) {
+                $this->userRepository->create($technicienUserData);
+            }
         }
     }
 }

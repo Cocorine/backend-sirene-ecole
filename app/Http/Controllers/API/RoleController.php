@@ -157,7 +157,7 @@ class RoleController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return $this->roleService->getById($id, ['permissions']);
+        return $this->roleService->getById($id, relations:['permissions']);
     }
 
     /**

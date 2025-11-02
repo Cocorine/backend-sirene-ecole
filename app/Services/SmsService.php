@@ -14,6 +14,9 @@ class SmsService
     private string $apiSecret;
     private string $fromNumber;
     private string $apiUrl;
+    private string $account_id;
+    private string $account_password;
+    private string $username;
     private int $alertThreshold;
     private string $alertEmails;
     private string $alertPhones;
@@ -21,13 +24,13 @@ class SmsService
     public function __construct()
     {
         $this->provider = config('services.sms.provider', 'custom_api');
-        $this->apiKey = config('services.sms.api_key');
-        $this->apiSecret = config('services.sms.api_secret');
+        $this->apiKey = config('services.sms.api_key', '');
+        $this->apiSecret = config('services.sms.api_secret', '');
         $this->fromNumber = config('services.sms.from_number', 'SIRENE');
-        $this->apiUrl = config('services.sms.url');
-        $this->alertThreshold = (int) config('services.sms.alert_threshold', 1000);
-        $this->alertEmails = config('services.sms.alert_emails', '');
-        $this->alertPhones = config('services.sms.alert_phones', '');
+        $this->apiUrl = config('services.sms.url', '');
+        $this->account_id = config('services.sms.account_id', '');
+        $this->account_password = config('services.sms.account_password', '');
+        $this->username = config('services.sms.username', '');
     }
 
     /**

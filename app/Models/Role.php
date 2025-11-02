@@ -15,6 +15,12 @@ class Role extends Model
 {
     use HasFactory, HasUlid, SoftDeletes, HasSlug; // Added HasSlug
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $table = 'roles';
+
     protected $fillable = [
         'nom',
         'slug',
@@ -31,7 +37,7 @@ class Role extends Model
     // Permissions relationship
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'role_permissions', 'role_id', 'permission_id')
+        return $this->belongsToMany(Permission::class, 'role_permissions', 'role_id', 'permission_id')->using(RolePermission::class)->withPivot([])
             ->withTimestamps();
     }
 

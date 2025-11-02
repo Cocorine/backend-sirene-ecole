@@ -32,10 +32,10 @@ abstract class BaseService implements BaseServiceInterface
         }
     }
 
-    public function getById(string $id, array $relations = []): JsonResponse
+    public function getById(string $id, array $columns = ['*'], array $relations = []): JsonResponse
     {
         try {
-            $data = $this->repository->find($id, $relations);
+            $data = $this->repository->find($id, $columns, $relations);
             if (!$data) {
                 return $this->notFoundResponse();
             }

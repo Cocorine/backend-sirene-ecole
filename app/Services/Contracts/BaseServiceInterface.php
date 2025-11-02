@@ -14,7 +14,7 @@ interface BaseServiceInterface
     /**
      * Récupérer un enregistrement par ID
      */
-    public function getById(string $id, array $relations = []): JsonResponse;
+    public function getById(string $id, array $columns = ['*'], array $relations = []): JsonResponse;
 
     /**
      * Créer un nouvel enregistrement

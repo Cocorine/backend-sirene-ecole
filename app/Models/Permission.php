@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSlug;
 use App\Traits\HasUlid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Permission extends Model
 {
-    use HasFactory, HasUlid, SoftDeletes;
+    use HasFactory, HasUlid, HasSlug, SoftDeletes;
 
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -25,7 +26,7 @@ class Permission extends Model
     // Roles relationship
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'role_permissions')
+        return $this->belongsToMany(Role::class, 'role_permissions')->using(RolePermission::class)->withPivot([])
             ->withTimestamps();
     }
 }
