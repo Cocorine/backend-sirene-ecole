@@ -8,6 +8,7 @@ use App\Services\SmsService;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AuthService implements AuthServiceInterface
@@ -54,7 +55,7 @@ class AuthService implements AuthServiceInterface
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::requestOtp - " . $e->getMessage());
+            Log::error("Error in " . get_class($this) . "::requestOtp - " . $e->getMessage());
             throw $e;
         }
     }
@@ -99,7 +100,7 @@ class AuthService implements AuthServiceInterface
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::verifyOtpAndLogin - " . $e->getMessage());
+            Log::error("Error in " . get_class($this) . "::verifyOtpAndLogin - " . $e->getMessage());
             throw $e;
         }
     }
@@ -136,7 +137,7 @@ class AuthService implements AuthServiceInterface
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::login - " . $e->getMessage());
+            Log::error("Error in " . get_class($this) . "::login - " . $e->getMessage());
             throw $e;
         }
     }
@@ -155,7 +156,7 @@ class AuthService implements AuthServiceInterface
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::logout - " . $e->getMessage());
+            Log::error("Error in " . get_class($this) . "::logout - " . $e->getMessage());
             throw $e;
         }
     }
@@ -183,7 +184,7 @@ class AuthService implements AuthServiceInterface
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::me - " . $e->getMessage());
+            Log::error("Error in " . get_class($this) . "::me - " . $e->getMessage());
             throw $e;
         }
     }

@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             RateLimiter::for('api', function (\Illuminate\Http\Request $request) {
                 return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
             });
+            require base_path('routes/api.php');
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
