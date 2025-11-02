@@ -326,7 +326,7 @@ class RoleController extends Controller
      *             @OA\Property(property="message", type="string", example="Permissions synced successfully.")
      *         )
      *     ),
-     *     @OA
+     *     @OA\Response(
      *         response=404,
      *         description="Role not found",
      *         @OA\JsonContent(

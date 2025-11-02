@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\OtpCode;
+use App\Repositories\Contracts\OtpCodeRepositoryInterface;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +12,12 @@ class OtpService
     private int $expirationMinutes;
     private int $maxAttempts;
     private SmsService $smsService;
+    private OtpCodeRepositoryInterface $otpCodeRepository;
 
-    public function __construct(SmsService $smsService)
+    public function __construct(SmsService $smsService, OtpCodeRepositoryInterface $otpCodeRepository)
     {
         $this->smsService = $smsService;
+        $this->otpCodeRepository = $otpCodeRepository;
         $this->expirationMinutes = config('services.otp.expiration_minutes', 5);
         $this->maxAttempts = config('services.otp.max_attempts', 3);
     }
@@ -26,15 +28,13 @@ class OtpService
     public function generate(string $telephone, string $type = 'login'): array
     {
         // Supprimer les anciens codes non vérifiés pour ce numéro
-        OtpCode::where('telephone', $telephone)
-            ->where('verifie', false)
-            ->delete();
+        $this->otpCodeRepository->deleteUnverifiedByPhone($telephone);
 
         // Générer un code à 6 chiffres
         $code = str_pad((string) random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
 
         // Créer le code OTP en base
-        $otpCode = OtpCode::create([
+        $otpCode = $this->otpCodeRepository->create([
             'telephone' => $telephone,
             'code' => $code,
             'type' => $type,
@@ -55,7 +55,7 @@ class OtpService
             ];
         } catch (Exception $e) {
             Log::error('Failed to send OTP: ' . $e->getMessage());
-            $otpCode->delete();
+            $this->otpCodeRepository->delete($otpCode->id);
 
             return [
                 'success' => false,
@@ -70,10 +70,7 @@ class OtpService
      */
     public function verify(string $telephone, string $code): array
     {
-        $otpCode = OtpCode::where('telephone', $telephone)
-            ->where('code', $code)
-            ->where('verifie', false)
-            ->first();
+        $otpCode = $this->otpCodeRepository->findByTelephoneAndCode($telephone, $code);
 
         if (!$otpCode) {
             return [
@@ -84,7 +81,7 @@ class OtpService
 
         // Vérifier l'expiration
         if (Carbon::now()->isAfter($otpCode->date_expiration)) {
-            $otpCode->delete();
+            $this->otpCodeRepository->delete($otpCode->id);
             return [
                 'success' => false,
                 'message' => 'Code OTP expiré',
@@ -93,7 +90,7 @@ class OtpService
 
         // Vérifier le nombre de tentatives
         if ($otpCode->tentatives >= $this->maxAttempts) {
-            $otpCode->delete();
+            $this->otpCodeRepository->delete($otpCode->id);
             return [
                 'success' => false,
                 'message' => 'Nombre maximum de tentatives atteint',
@@ -101,13 +98,10 @@ class OtpService
         }
 
         // Incrémenter les tentatives
-        $otpCode->increment('tentatives');
+        $this->otpCodeRepository->incrementAttempts($otpCode->id);
 
         // Marquer comme vérifié
-        $otpCode->update([
-            'verifie' => true,
-            'date_verification' => Carbon::now(),
-        ]);
+        $this->otpCodeRepository->markAsVerified($otpCode->id);
 
         return [
             'success' => true,
@@ -116,15 +110,35 @@ class OtpService
     }
 
     /**
+     * Générer un code OTP (alias de generate pour compatibilité)
+     */
+    public function generateOtp(string $telephone, string $type = 'login'): string
+    {
+        $result = $this->generate($telephone, $type);
+
+        if (!$result['success']) {
+            throw new Exception($result['message']);
+        }
+
+        // Récupérer le dernier code créé pour ce téléphone
+        $otpCode = $this->otpCodeRepository->findBy(['telephone' => $telephone, 'verifie' => false]);
+        return $otpCode ? $otpCode->code : '';
+    }
+
+    /**
+     * Vérifier un code OTP (alias de verify pour compatibilité)
+     */
+    public function verifyOtp(string $telephone, string $code): bool
+    {
+        $result = $this->verify($telephone, $code);
+        return $result['success'];
+    }
+
+    /**
      * Nettoie les codes OTP expirés
      */
     public function cleanupExpired(): int
     {
-        return OtpCode::where('date_expiration', '<', Carbon::now())
-            ->orWhere(function ($query) {
-                $query->where('verifie', true)
-                    ->where('updated_at', '<', Carbon::now()->subDays(1));
-            })
-            ->delete();
+        return $this->otpCodeRepository->deleteExpired();
     }
 }

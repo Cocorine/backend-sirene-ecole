@@ -6,6 +6,28 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Ecole; // Assuming Ecole model exists
 
+/**
+ * @OA\Schema(
+ *     schema="CreateRoleRequest",
+ *     title="Create Role Request",
+ *     description="Request body for creating a new role",
+ *     required={"nom"},
+ *     @OA\Property(
+ *         property="nom",
+ *         type="string",
+ *         description="Name of the role"
+ *     ),
+ *     @OA\Property(
+ *         property="permission_ids",
+ *         type="array",
+ *         description="Array of permission IDs to assign to the role",
+ *         @OA\Items(
+ *             type="string",
+ *             format="uuid"
+ *         )
+ *     )
+ * )
+ */
 class CreateRoleRequest extends FormRequest
 {
     /**

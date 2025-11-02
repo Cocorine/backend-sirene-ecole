@@ -6,6 +6,7 @@ use App\Services\Contracts\AuthServiceInterface;
 use App\Services\OtpService;
 use App\Services\SmsService;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthService implements AuthServiceInterface
 {
+    use JsonResponseTrait;
+
     protected $otpService;
     protected $smsService;
     protected $userRepository;
@@ -48,11 +51,10 @@ class AuthService implements AuthServiceInterface
             // Envoyer l'OTP par SMS
             $this->smsService->sendOtpSms($telephone, $otp);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Code OTP envoyé avec succès.',
-                'expires_in' => config('otp.expiration', 5) . ' minutes',
-            ], 200);
+            return $this->successResponse(
+                'Code OTP envoyé avec succès.',
+                ['expires_in' => config('otp.expiration', 5) . ' minutes']
+            );
 
         } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::requestOtp - " . $e->getMessage());
@@ -85,19 +87,22 @@ class AuthService implements AuthServiceInterface
             // Créer le token d'accès
             $token = $user->createToken('auth_token')->accessToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Connexion réussie.',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => [
-                    'id' => $user->id,
-                    'nom_utilisateur' => $user->nom_utilisateur,
-                    'type' => $user->type,
-                    'telephone' => $user->userInfo->telephone ?? null,
-                    'email' => $user->userInfo->email ?? null,
-                ],
-            ], 200);
+            return $this->successResponse(
+                'Connexion réussie.',
+                [
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                    'user' => [
+                        'id' => $user->id,
+                        'nom_utilisateur' => $user->nom_utilisateur,
+                        'type' => $user->type,
+                        'telephone' => $user->userInfo->telephone ?? null,
+                        'email' => $user->userInfo->email ?? null,
+                        'doit_changer_mot_de_passe' => $user->doit_changer_mot_de_passe,
+                        'mot_de_passe_change' => $user->mot_de_passe_change,
+                    ],
+                ]
+            );
 
         } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::verifyOtpAndLogin - " . $e->getMessage());
@@ -111,7 +116,7 @@ class AuthService implements AuthServiceInterface
     public function login(string $identifiant, string $motDePasse): JsonResponse
     {
         try {
-            $user = $this->userRepository->findBy('identifiant', $identifiant);
+            $user = $this->userRepository->findBy(['identifiant' => $identifiant]);
 
             if (!$user || !Hash::check($motDePasse, $user->mot_de_passe)) {
                 throw ValidationException::withMessages([
@@ -122,19 +127,22 @@ class AuthService implements AuthServiceInterface
             // Créer le token d'accès
             $token = $user->createToken('auth_token')->accessToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Connexion réussie.',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => [
-                    'id' => $user->id,
-                    'nom_utilisateur' => $user->nom_utilisateur,
-                    'type' => $user->type,
-                    'telephone' => $user->userInfo->telephone ?? null,
-                    'email' => $user->userInfo->email ?? null,
-                ],
-            ], 200);
+            return $this->successResponse(
+                'Connexion réussie.',
+                [
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                    'user' => [
+                        'id' => $user->id,
+                        'nom_utilisateur' => $user->nom_utilisateur,
+                        'type' => $user->type,
+                        'telephone' => $user->userInfo->telephone ?? null,
+                        'email' => $user->userInfo->email ?? null,
+                        'doit_changer_mot_de_passe' => $user->doit_changer_mot_de_passe,
+                        'mot_de_passe_change' => $user->mot_de_passe_change,
+                    ],
+                ]
+            );
 
         } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::login - " . $e->getMessage());
@@ -150,10 +158,7 @@ class AuthService implements AuthServiceInterface
         try {
             $user->token()->revoke();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Déconnexion réussie.',
-            ], 200);
+            return $this->successResponse('Déconnexion réussie.');
 
         } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::logout - " . $e->getMessage());
@@ -169,22 +174,53 @@ class AuthService implements AuthServiceInterface
         try {
             $user->load(['userInfo', 'role.permissions']);
 
-            return response()->json([
-                'success' => true,
-                'user' => [
-                    'id' => $user->id,
-                    'nom_utilisateur' => $user->nom_utilisateur,
-                    'identifiant' => $user->identifiant,
-                    'type' => $user->type,
-                    'telephone' => $user->userInfo->telephone ?? null,
-                    'email' => $user->userInfo->email ?? null,
-                    'role' => $user->role,
-                    'permissions' => $user->role->permissions ?? [],
-                ],
-            ], 200);
+            return $this->successResponse(
+                null,
+                [
+                    'user' => [
+                        'id' => $user->id,
+                        'nom_utilisateur' => $user->nom_utilisateur,
+                        'identifiant' => $user->identifiant,
+                        'type' => $user->type,
+                        'telephone' => $user->userInfo->telephone ?? null,
+                        'email' => $user->userInfo->email ?? null,
+                        'role' => $user->role,
+                        'permissions' => $user->role->permissions ?? [],
+                    ],
+                ]
+            );
 
         } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::me - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Changer le mot de passe de l'utilisateur
+     */
+    public function changerMotDePasse($user, string $nouveauMotDePasse, ?string $ancienMotDePasse = null): JsonResponse
+    {
+        try {
+            // Si l'ancien mot de passe est fourni, le vérifier
+            if ($ancienMotDePasse !== null) {
+                if (!Hash::check($ancienMotDePasse, $user->mot_de_passe)) {
+                    throw ValidationException::withMessages([
+                        'ancien_mot_de_passe' => ['L\'ancien mot de passe est incorrect.'],
+                    ]);
+                }
+            }
+
+            // Mettre à jour le mot de passe
+            $user->mot_de_passe = Hash::make($nouveauMotDePasse);
+            $user->mot_de_passe_change = true;
+            $user->doit_changer_mot_de_passe = false;
+            $user->save();
+
+            return $this->successResponse('Mot de passe changé avec succès.');
+
+        } catch (\Exception $e) {
+            Log::error("Error in " . get_class($this) . "::changerMotDePasse - " . $e->getMessage());
             throw $e;
         }
     }

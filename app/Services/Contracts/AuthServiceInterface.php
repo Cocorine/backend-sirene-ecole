@@ -11,4 +11,5 @@ interface AuthServiceInterface
     public function login(string $identifiant, string $motDePasse): JsonResponse;
     public function logout($user): JsonResponse;
     public function me($user): JsonResponse;
+    public function changerMotDePasse($user, string $nouveauMotDePasse, ?string $ancienMotDePasse = null): JsonResponse;
 }

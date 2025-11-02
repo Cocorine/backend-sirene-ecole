@@ -8,11 +8,6 @@ use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
 /**
- * @OA\Info(
- *     title="Sirene Automatique API Documentation",
- *     version="1.0.0",
- *     description="API Documentation for the Sirene Automatique project"
- * )
  *
  * Class PermissionController
  * @package App\Http\Controllers\API

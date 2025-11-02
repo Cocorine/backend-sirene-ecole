@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 use Illuminate\Support\Str;
+use App\Repositories\Contracts\UserRepositoryInterface;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -96,23 +97,20 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 $this->userInfoRepository->create($userInfoData);
             }
 
-            // Generate and store OTP for account activation
-            if ($user) {
-                $otpCode = rand(100000, 999999); // Generate a 6-digit OTP
-                $this->otpCodeRepository->create([
-                    'user_id' => $user->id,
-                    'code' => (string) $otpCode,
-                    'expires_at' => now()->addMinutes(10), // OTP valid for 10 minutes
-                ]);
-                // In a real application, you would send this OTP via SMS or email
             DB::commit();
 
-            // Send login credentials and OTP via SMS
-            if ($user && $plainPassword && $otpCode && isset($userInfoData['telephone'])) {
-                $message = "Votre compte a été créé. Identifiant: {$user->identifiant}, Mot de passe: {$plainPassword}, Code OTP: {$otpCode}";
-                $this->smsService->sendSms($userInfoData['telephone'], $message);
+            // Envoyer SMS de confirmation de création de compte (SMS 1)
+            // L'OTP sera envoyé lors de la première demande de connexion
+            if ($user && isset($userInfoData['telephone'])) {
+                $message = "Votre compte a été créé. Identifiant: {$user->identifiant}. Un code OTP vous sera envoyé lors de votre première connexion.";
+                try {
+                    $this->smsService->sendSms($userInfoData['telephone'], $message);
+                    Log::info("Account creation SMS sent to user {$user->id}");
+                } catch (\Exception $e) {
+                    Log::error("Failed to send account creation SMS for user {$user->id}: " . $e->getMessage());
+                }
             } else {
-                Log::warning("Could not send SMS for user {$user->id}. Missing phone, password or OTP.");
+                Log::warning("Could not send SMS for user {$user->id}. Missing phone.");
             }
 
             return $user;

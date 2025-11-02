@@ -36,6 +36,13 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return $this->model->with($relations)->where($criteria)->get($columns);
     }
 
+    public function findByRelation(string $relation, string $column, $value, array $columns = ['*'], array $relations = []): ?Model
+    {
+        return $this->model->with($relations)->whereHas($relation, function ($query) use ($column, $value) {
+            $query->where($column, $value);
+        })->first($columns);
+    }
+
     public function create(array $data): Model
     {
         return $this->model->create($data);

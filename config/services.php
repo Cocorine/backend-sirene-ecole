@@ -47,11 +47,19 @@ return [
     ],
 
     'sms' => [
-        'provider' => env('SMS_PROVIDER', 'twilio'),
-        'api_key' => env('SMS_API_KEY'),
+        'provider' => env('SMS_PROVIDER', 'custom_api'),
+        'url' => env('SMS_PROVIDER_URL'),
+        'account_id' => env('SMS_PROVIDER_API_ACCOUNT_ID'),
+        'account_password' => env('SMS_PROVIDER_API_ACCOUNT_PASSWORD'),
+        'api_key' => env('SMS_PROVIDER_API_KEY'),
         'api_secret' => env('SMS_API_SECRET'),
-        'from_number' => env('SMS_FROM_NUMBER'),
+        'from_number' => env('SMS_FROM_NUMBER', 'SIRENE'),
         'username' => env('SMS_USERNAME'),
+
+        // Alertes de seuil
+        'alert_threshold' => env('SMS_ALERT_THRESHOLD', 1000),
+        'alert_emails' => env('ALERT_EMAIL', ''),
+        'alert_phones' => env('ALERT_SMS', ''),
     ],
 
     'subscription' => [

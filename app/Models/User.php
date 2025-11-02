@@ -17,6 +17,8 @@ class User extends Authenticatable
         'nom_utilisateur',
         'identifiant',
         'mot_de_passe',
+        'doit_changer_mot_de_passe',
+        'mot_de_passe_change',
         'type',
         'user_account_type_id',
         'user_account_type_type',
@@ -34,6 +36,8 @@ class User extends Authenticatable
     {
         return [
             'actif' => 'boolean',
+            'doit_changer_mot_de_passe' => 'boolean',
+            'mot_de_passe_change' => 'boolean',
             'statut' => 'integer',
         ];
     }

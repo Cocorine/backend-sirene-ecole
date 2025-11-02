@@ -29,6 +29,11 @@ interface BaseRepositoryInterface
     public function findAllBy(array $criteria, array $columns = ['*'], array $relations = []): Collection;
 
     /**
+     * Récupérer un enregistrement en filtrant par une relation
+     */
+    public function findByRelation(string $relation, string $column, $value, array $columns = ['*'], array $relations = []): ?Model;
+
+    /**
      * Créer un nouvel enregistrement
      */
     public function create(array $data): Model;

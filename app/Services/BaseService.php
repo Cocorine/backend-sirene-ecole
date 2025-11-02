@@ -136,8 +136,7 @@ abstract class BaseService implements BaseServiceInterface
         try {
             $data = $this->repository->findAllBy($criteria, $relations);
             return $this->successResponse(null, $data);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error in " . get_class($this) . "::findAllBy - " . $e->getMessage());
             return $this->errorResponse($e->getMessage(), 500);
         }

@@ -21,23 +21,28 @@ class RoleService extends BaseService implements RoleServiceInterface
         parent::__construct($roleRepository);
         $this->roleRepository = $roleRepository;
     }
-    public function findBySlug(string $slug): ?Model
+    public function findBySlug(string $slug): JsonResponse
     {
         try {
-            return $this->repository->findBySlug($slug);
+            $role = $this->repository->findBySlug($slug);
+            if (!$role) {
+                return $this->notFoundResponse();
+            }
+            return $this->successResponse(null, $role);
         } catch (\Exception $e) {
             \Log::error("Error in " . get_class($this) . "::findBySlug - " . $e->getMessage());
-            throw $e;
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
-    public function getRolesByRoleable(string $roleableId, string $roleableType): Collection
+    public function getRolesByRoleable(string $roleableId, string $roleableType): JsonResponse
     {
         try {
-            return $this->repository->getRolesByRoleable($roleableId, $roleableType);
+            $roles = $this->repository->getRolesByRoleable($roleableId, $roleableType);
+            return $this->successResponse(null, $roles);
         } catch (\Exception $e) {
             \Log::error("Error in " . get_class($this) . "::getRolesByRoleable - " . $e->getMessage());
-            throw $e;
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 

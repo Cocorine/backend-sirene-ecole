@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ChangerMotDePasseRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RequestOtpRequest;
 use App\Http\Requests\Auth\VerifyOtpRequest;
@@ -57,5 +58,17 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         return $this->authService->me($request->user());
+    }
+
+    /**
+     * Changer le mot de passe de l'utilisateur connecté
+     */
+    public function changerMotDePasse(ChangerMotDePasseRequest $request): JsonResponse
+    {
+        return $this->authService->changerMotDePasse(
+            $request->user(),
+            $request->nouveau_mot_de_passe,
+            $request->ancien_mot_de_passe
+        );
     }
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('user_account_type_id', 26)->nullable(); // ULID polymorphic
             $table->string('user_account_type_type', 100)->nullable();
             $table->string('role_id', 26)->nullable(); // ULID foreign key
-            $table->boolean('actif')->default(true);
+            $table->boolean('actif')->default(false);
             $table->integer('statut')->default(-1); // -1, 0, 1
             $table->rememberToken();
             $table->timestamps();
