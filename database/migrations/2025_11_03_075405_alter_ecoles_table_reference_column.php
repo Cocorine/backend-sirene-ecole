@@ -11,7 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::table('ecoles', function (Blueprint $table) {
+            $table->dropUnique(['reference']);
+            $table->string('reference')->nullable()->change();
+        });
     }
 
     /**
@@ -19,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-    }
-};
+        Schema::table('ecoles', function (Blueprint $table) {
+            $table->string('reference')->nullable(false)->change();
+            $table->unique('reference');
+        });
+    };

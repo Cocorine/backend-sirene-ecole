@@ -19,6 +19,7 @@ abstract class BaseService implements BaseServiceInterface
     public function __construct(BaseRepositoryInterface $repository)
     {
         $this->repository = $repository;
+        Log::info('BaseService constructor: ' . get_class($repository));
     }
 
     public function getAll(int $perPage = 15, array $relations = []): JsonResponse

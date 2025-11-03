@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
 use App\Http\Controllers\API\TechnicienController;
 use App\Http\Controllers\Api\CalendrierScolaireController; // Add this line
+use App\Http\Controllers\Api\JourFerieController; // Add this line
 use App\Http\Controllers\Api\UserController;
 use App\Models\Ville;
 use Illuminate\Http\Request;
@@ -93,5 +94,13 @@ Route::prefix('calendrier-scolaire')->middleware('auth:api')->group(function () 
     Route::post('/', [CalendrierScolaireController::class, 'store']);
     Route::get('{id}', [CalendrierScolaireController::class, 'show']);
     Route::put('{id}', [CalendrierScolaireController::class, 'update']);
-    Route::delete('{id}', [CalendrierScolaireController::class, 'destroy']);
+});
+
+// JoursFeries routes (Protected)
+Route::prefix('jours-feries')->middleware('auth:api')->group(function () {
+    Route::get('/', [JourFerieController::class, 'index']);
+    Route::post('/', [JourFerieController::class, 'store']);
+    Route::get('{id}', [JourFerieController::class, 'show']);
+    Route::put('{id}', [JourFerieController::class, 'update']);
+    Route::delete('{id}', [JourFerieController::class, 'destroy']);
 });
