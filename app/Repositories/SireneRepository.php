@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\StatutSirene;
 use App\Models\Sirene;
 use App\Repositories\Contracts\SireneRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,11 +29,12 @@ class SireneRepository extends BaseRepository implements SireneRepositoryInterfa
             ->get();
     }
 
-    public function affecterSireneASite(string $sireneId, string $siteId)
+    public function affecterSireneASite(string $sireneId, string $siteId, string $ecoleId)
     {
         return $this->update($sireneId, [
             'site_id' => $siteId,
-            'statut' => 'ACTIVE',
+            'ecole_id' => $ecoleId,
+            'statut' => StatutSirene::RESERVE,
             'date_installation' => now(),
         ]);
     }

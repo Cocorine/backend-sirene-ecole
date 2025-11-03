@@ -5,9 +5,16 @@ use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
-use App\Http\Controllers\Api\TechnicienController;
+use App\Http\Controllers\API\TechnicienController;
+use App\Http\Controllers\Api\CalendrierScolaireController; // Add this line
 use App\Http\Controllers\Api\UserController;
+use App\Models\Ville;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::get("/villes", function(Request $request){
+    return Ville::all();
+});
 
 Route::prefix('permissions')->group(function () {
     Route::get('/', [PermissionController::class, 'index']);
@@ -78,4 +85,13 @@ Route::prefix('techniciens')->middleware('auth:api')->group(function () {
     Route::get('{id}', [TechnicienController::class, 'show']);
     Route::put('{id}', [TechnicienController::class, 'update']);
     Route::delete('{id}', [TechnicienController::class, 'destroy']);
+});
+
+// CalendrierScolaire routes (Protected)
+Route::prefix('calendrier-scolaire')->middleware('auth:api')->group(function () {
+    Route::get('/', [CalendrierScolaireController::class, 'index']);
+    Route::post('/', [CalendrierScolaireController::class, 'store']);
+    Route::get('{id}', [CalendrierScolaireController::class, 'show']);
+    Route::put('{id}', [CalendrierScolaireController::class, 'update']);
+    Route::delete('{id}', [CalendrierScolaireController::class, 'destroy']);
 });

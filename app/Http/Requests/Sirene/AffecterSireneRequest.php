@@ -36,6 +36,7 @@ class AffecterSireneRequest extends FormRequest
     {
         return [
             'site_id' => ['required', 'string', 'exists:sites,id'],
+            'ecole_id' => ['required', 'string', 'exists:ecoles,id'],
         ];
     }
 
@@ -47,6 +48,8 @@ class AffecterSireneRequest extends FormRequest
         return [
             'site_id.required' => 'Le site est requis.',
             'site_id.exists' => 'Le site sélectionné n\'existe pas.',
+            'ecole_id.required' => "L'ecole est requis.",
+            'ecole_id.exists' => "L'ecole sélectionné n\'existe pas.",
         ];
     }
 }

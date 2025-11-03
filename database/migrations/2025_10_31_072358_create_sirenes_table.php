@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date_fabrication')->nullable();
             $table->string('etat')->default('active'); // MCD field
             $table->string('statut', 50)->nullable(); // MCD field - ex: active, hors_service
-            $table->enum('old_statut', ['en_stock', 'installe', 'en_panne', 'hors_service'])->default('en_stock'); // Keep old for compatibility
+            $table->enum('old_statut', ['en_stock', 'reserve', 'installe', 'en_panne', 'hors_service'])->default('en_stock'); // Keep old for compatibility
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

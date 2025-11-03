@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Contracts\EcoleRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Contracts\SireneRepositoryInterface;
+use App\Repositories\Contracts\SiteRepositoryInterface;
 use App\Services\Contracts\AbonnementServiceInterface;
 use App\Services\Contracts\EcoleServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -17,17 +18,20 @@ class EcoleService extends BaseService implements EcoleServiceInterface
     protected $userRepository;
     protected $sireneRepository;
     protected $abonnementService;
+    protected $siteRepository;
 
     public function __construct(
         EcoleRepositoryInterface $repository,
         UserRepositoryInterface $userRepository,
         SireneRepositoryInterface $sireneRepository,
-        AbonnementServiceInterface $abonnementService
+        AbonnementServiceInterface $abonnementService,
+        SiteRepositoryInterface $siteRepository
     ) {
         parent::__construct($repository);
         $this->userRepository = $userRepository;
         $this->sireneRepository = $sireneRepository;
         $this->abonnementService = $abonnementService;
+        $this->siteRepository = $siteRepository;
     }
 
     /**
@@ -47,6 +51,7 @@ class EcoleService extends BaseService implements EcoleServiceInterface
             $ecole = $this->repository->create($ecoleData);
 
             // 2. Créer le site principal avec sa sirène
+            $sitePrincipalData['nom'] = $ecoleData['nom'];
             $sitePrincipal = $this->createSiteWithSirene(
                 $ecole->id,
                 $sitePrincipalData,
@@ -108,7 +113,7 @@ class EcoleService extends BaseService implements EcoleServiceInterface
         unset($siteData['sirene']);
 
         // Créer le site
-        $site = $this->repository->siteRepository->create(array_merge($siteData, [
+        $site = $this->siteRepository->create(array_merge($siteData, [
             'ecole_principale_id' => $ecoleId,
             'est_principale' => $estPrincipale,
         ]));
@@ -121,12 +126,12 @@ class EcoleService extends BaseService implements EcoleServiceInterface
                 throw new \Exception("Sirène avec numéro de série {$sireneData['numero_serie']} introuvable.");
             }
 
-            if ($sirene->statut !== 'DISPONIBLE' || $sirene->site_id !== null) {
+            if ($sirene->statut && $sirene->statut !== 'DISPONIBLE' || $sirene->site_id !== null) {
                 throw new \Exception("La sirène {$sireneData['numero_serie']} n'est pas disponible.");
             }
 
             // Affecter la sirène au site
-            $this->sireneRepository->affecterSireneASite($sirene->id, $site->id);
+            $this->sireneRepository->affecterSireneASite($sirene->id, $site->id, $ecoleId);
 
             // Créer un abonnement en attente pour l'école
             $abonnement = $this->abonnementService->create([
@@ -138,6 +143,8 @@ class EcoleService extends BaseService implements EcoleServiceInterface
                 // Par exemple, date_debut, date_fin, etc.
                 // Pour l'instant, nous créons un abonnement minimal en attente.
             ]);
+
+            dd($abonnement);
 
             // Générer et sauvegarder le QR code pour l'abonnement
             $qrCodePath = $abonnement->generateAndSaveQrCode();

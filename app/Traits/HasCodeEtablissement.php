@@ -22,7 +22,7 @@ trait HasCodeEtablissement
     /**
      * Générer un code établissement unique
      */
-    private function generateUniqueCode(): string
+    public static function generateUniqueCode(): string
     {
         do {
             $code = 'ECO' . strtoupper(Str::random(6));

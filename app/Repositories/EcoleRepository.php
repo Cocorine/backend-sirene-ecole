@@ -13,22 +13,19 @@ use App\Repositories\Contracts\PaiementRepositoryInterface;
 use App\Repositories\Contracts\JourFerieRepositoryInterface;
 use App\Repositories\Contracts\SireneRepositoryInterface;
 use App\Services\Contracts\AbonnementServiceInterface;
-use App\Models\Sirene;
-use App\Enums\StatutAbonnement;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
 {
-    protected $siteRepository;
-    protected $userRepository;
-    protected $abonnementRepository;
-    protected $programmationRepository;
-    protected $panneRepository;
-    protected $paiementRepository;
-    protected $jourFerieRepository;
-    protected $sireneRepository;
-    protected $abonnementService;
+    public $siteRepository;
+    public $userRepository;
+    public $abonnementRepository;
+    public $programmationRepository;
+    public $panneRepository;
+    public $paiementRepository;
+    public $jourFerieRepository;
+    public $sireneRepository;
+    public $abonnementService;
 
     public function __construct(
         Ecole $model,

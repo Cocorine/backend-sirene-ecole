@@ -5,6 +5,26 @@ namespace App\Http\Requests\Technicien;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateTechnicienRequest",
+ *     title="Update Technicien Request",
+ *     description="Request body for updating an existing technician",
+ *     @OA\Property(
+ *         property="user",
+ *         type="object",
+ *         @OA\Property(property="nom_utilisateur", type="string", maxLength=255, description="Username"),
+ *         @OA\Property(property="identifiant", type="string", maxLength=255, description="Unique identifier"),
+ *         @OA\Property(property="mot_de_passe", type="string", minLength=8, description="Password"),
+ *         @OA\Property(property="type", type="string", enum={"TECHNICIEN"}, description="User type"),
+ *         @OA\Property(property="role_id", type="string", format="uuid", nullable=true, description="ID of the role"),
+ *     ),
+ *     @OA\Property(property="ville_id", type="string", format="uuid", description="ID of the city"),
+ *     @OA\Property(property="specialite", type="string", maxLength=255, description="Technician's specialty"),
+ *     @OA\Property(property="disponibilite", type="boolean", description="Technician's availability"),
+ *     @OA\Property(property="date_embauche", type="string", format="date", nullable=true, description="Date of hire"),
+ * )
+ */
 class UpdateTechnicienRequest extends FormRequest
 {
     /**
@@ -22,16 +42,23 @@ class UpdateTechnicienRequest extends FormRequest
     {
         $userId = $this->route('technicien')->user->id; // Assuming route model binding for technicien
 
+        dd($userId);
+
         return [
             'user.nom_utilisateur' => ['sometimes', 'string', 'max:255'],
-            'user.identifiant' => ['sometimes', 'string', 'max:255', Rule::unique('users', 'identifiant')->ignore($userId)],
-            'user.mot_de_passe' => ['sometimes', 'string', 'min:8'],
-            'user.type' => ['sometimes', 'string', Rule::in(['TECHNICIEN'])],
-            'user.role_id' => ['sometimes', 'string', 'exists:roles,id'],
-            'ville_id' => ['sometimes', 'string', 'exists:villes,id'],
+
             'specialite' => ['sometimes', 'string', 'max:255'],
             'disponibilite' => ['boolean'],
             'date_embauche' => ['nullable', 'date'],
+
+            // UserInfo related fields (assuming they come in the same request)
+            'user.userInfoData.email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('user_infos', 'email')->ignore($userId, 'user_id')],
+            'user.userInfoData.telephone' => ['sometimes', 'string', 'max:20', Rule::unique('user_infos', 'telephone')->ignore($userId, 'user_id')],
+            'user.userInfoData.prenom' => ['sometimes', 'string', 'max:255'],
+            'user.userInfoData.nom' => ['sometimes', 'string', 'max:255'],
+            'user.userInfoData.adresse' => ['sometimes', 'string', 'max:255'],
+            'user.userInfoData.adresse' => ['sometimes', 'string', 'max:255'],
+            'user.userInfoData.ville_id' => ['sometimes', 'string', 'exists:villes,id']
         ];
     }
 }

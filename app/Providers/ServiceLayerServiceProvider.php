@@ -42,6 +42,14 @@ class ServiceLayerServiceProvider extends ServiceProvider
             \App\Services\Contracts\SireneServiceInterface::class,
             \App\Services\SireneService::class
         );
+        $this->app->bind(
+            \App\Services\Contracts\AbonnementServiceInterface::class,
+            \App\Services\AbonnementService::class
+        );
+        $this->app->bind(
+            \App\Services\Contracts\TechnicienServiceInterface::class,
+            \App\Services\TechnicienService::class
+        );
 
         // Repositories
         $this->app->bind(
@@ -76,6 +84,31 @@ class ServiceLayerServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\SireneRepositoryInterface::class,
             \App\Repositories\SireneRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\PaiementRepositoryInterface::class,
+            \App\Repositories\PaiementRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\AbonnementRepositoryInterface::class,
+            \App\Repositories\AbonnementRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\PanneRepositoryInterface::class,
+            \App\Repositories\PanneRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\ProgrammationRepositoryInterface::class,
+            \App\Repositories\ProgrammationRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\JourFerieRepositoryInterface::class,
+            \App\Repositories\JourFerieRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\TechnicienRepositoryInterface::class,
+            \App\Repositories\TechnicienRepository::class
+        );
+
     }
 
     /**

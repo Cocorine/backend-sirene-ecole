@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Technicien extends Model
@@ -21,7 +22,6 @@ class Technicien extends Model
     protected $table = 'techniciens';
 
     protected $fillable = [
-        'ville_id',
         'review',
         'specialite',
         'disponibilite',
@@ -41,12 +41,6 @@ class Technicien extends Model
         'deleted_at' => 'datetime',
     ];
 
-    // Relations
-    public function ville(): BelongsTo
-    {
-        return $this->belongsTo(Ville::class, 'ville_id');
-    }
-
     public function interventions(): HasMany
     {
         return $this->hasMany(Intervention::class);
@@ -55,5 +49,10 @@ class Technicien extends Model
     public function notifications(): MorphMany
     {
         return $this->morphMany(Notification::class, 'notifiable');
+    }
+
+    public function user(): MorphOne
+    {
+        return $this->morphOne(User::class, 'user_account_type');
     }
 }

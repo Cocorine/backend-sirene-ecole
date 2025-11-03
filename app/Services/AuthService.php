@@ -7,10 +7,12 @@ use App\Services\OtpService;
 use App\Services\SmsService;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Traits\JsonResponseTrait;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use PhpParser\Node\Expr\Throw_;
 
 class AuthService implements AuthServiceInterface
 {
@@ -123,6 +125,11 @@ class AuthService implements AuthServiceInterface
     {
         try {
             $user = $this->userRepository->findBy(['identifiant' => $identifiant]);
+
+            if(!$user){
+
+                throw new Exception("User undefined", 403);
+            }
 
             if($user->actif == false && $user->statut == -1)
             {

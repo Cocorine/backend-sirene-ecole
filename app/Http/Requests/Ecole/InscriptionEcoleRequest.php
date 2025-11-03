@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Ecole;
 
+use App\Enums\TypeEtablissement;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
 /**
@@ -101,10 +103,11 @@ class InscriptionEcoleRequest extends FormRequest
             // Informations de l'école (basées sur la migration)
             'nom' => ['required', 'string', 'max:100'],
             'nom_complet' => ['required', 'string'],
+            'reference' => ['nullable', 'string'],
             'telephone_contact' => ['required', 'string', 'max:20', 'unique:ecoles,telephone_contact'],
             'email_contact' => ['nullable', 'email', 'max:100', 'unique:ecoles,email_contact'],
             'types_etablissement' => ['required', 'array'],
-            'types_etablissement.*' => ['string', 'exists:types_etablissement,id'],
+            'types_etablissement.*' => ['string', Rule::in(TypeEtablissement::values())],
 
             // Informations du responsable
             'responsable_nom' => ['required', 'string', 'max:255'],
@@ -113,7 +116,6 @@ class InscriptionEcoleRequest extends FormRequest
 
             // Site principal (obligatoire avec une sirène)
             'site_principal' => ['required', 'array'],
-            'site_principal.nom' => ['nullable', 'string', 'max:255'],
             'site_principal.adresse' => ['required', 'string', 'max:500'],
             'site_principal.ville_id' => ['required', 'string', 'exists:villes,id'],
             'site_principal.latitude' => ['nullable', 'numeric', 'between:-90,90'],

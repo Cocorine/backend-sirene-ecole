@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Enums\TypeUtilisateur;
+use App\Models\Role;
 use App\Models\Technicien;
 use App\Repositories\Contracts\TechnicienRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
@@ -52,6 +54,8 @@ class TechnicienRepository extends BaseRepository implements TechnicienRepositor
             // 2. Prepare user data with polymorphic relationship details
             $userData['user_account_type_id'] = $technicien->id;
             $userData['user_account_type_type'] = Technicien::class;
+            $userData['type'] = TypeUtilisateur::TECHNICIEN;
+            $userData['role_id'] = Role::where('slug', 'technicien')->first()->id;
 
             // 3. Create the User associated with the Technicien
             $user = $this->userRepository->create($userData);
@@ -63,7 +67,7 @@ class TechnicienRepository extends BaseRepository implements TechnicienRepositor
             DB::commit();
 
             // Return the technician with its associated user account (which is the User model)
-            return $technicien->load('userAccount');
+            return $technicien->load('user.userAccount');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Error in " . get_class($this) . "::create - " . $e->getMessage());

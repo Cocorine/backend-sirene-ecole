@@ -34,7 +34,7 @@ class StoreUserRequest extends FormRequest
             // UserInfo related fields (assuming they come in the same request)
             'userInfoData.email' => ['nullable', 'string', 'email', 'max:255', 'unique:user_infos,email'],
             'userInfoData.telephone' => ['required', 'string', 'max:20', 'unique:user_infos,telephone'],
-            'userInfoData.prenom' => ['nullable', 'string', 'max:255'],
+            'userInfoData.prenom' => ['required', 'string', 'max:255'],
             'userInfoData.nom' => ['required', 'string', 'max:255'],
             'userInfoData.adresse' => ['nullable', 'string', 'max:255'],
             'userInfoData.ville_id' => ['nullable', 'string', 'exists:villes,id']

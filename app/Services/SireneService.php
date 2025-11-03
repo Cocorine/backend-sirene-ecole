@@ -34,10 +34,10 @@ class SireneService extends BaseService implements SireneServiceInterface
         }
     }
 
-    public function affecterSireneASite(string $sireneId, string $siteId): Model
+    public function affecterSireneASite(string $sireneId, string $siteId, string $ecoleId): Model
     {
         try {
-            return $this->repository->affecterSireneASite($sireneId, $siteId);
+            return $this->repository->affecterSireneASite($sireneId, $siteId, $ecoleId);
         } catch (\Exception $e) {
             \Log::error("Error in " . get_class($this) . "::affecterSireneASite - " . $e->getMessage());
             throw $e;
