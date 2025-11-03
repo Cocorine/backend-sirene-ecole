@@ -5,6 +5,7 @@ use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
+use App\Http\Controllers\Api\TechnicienController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -68,4 +69,13 @@ Route::prefix('sirenes')->middleware('auth:api')->group(function () {
     Route::put('{id}', [SireneController::class, 'update']); // Admin/Technicien
     Route::post('{id}/affecter', [SireneController::class, 'affecter']); // Admin/Technicien
     Route::delete('{id}', [SireneController::class, 'destroy']); // Admin only
+});
+
+// Technicien routes (Protected)
+Route::prefix('techniciens')->middleware('auth:api')->group(function () {
+    Route::get('/', [TechnicienController::class, 'index']);
+    Route::post('/', [TechnicienController::class, 'store']);
+    Route::get('{id}', [TechnicienController::class, 'show']);
+    Route::put('{id}', [TechnicienController::class, 'update']);
+    Route::delete('{id}', [TechnicienController::class, 'destroy']);
 });

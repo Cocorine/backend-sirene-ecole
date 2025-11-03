@@ -11,7 +11,12 @@ use App\Repositories\Contracts\ProgrammationRepositoryInterface;
 use App\Repositories\Contracts\PanneRepositoryInterface;
 use App\Repositories\Contracts\PaiementRepositoryInterface;
 use App\Repositories\Contracts\JourFerieRepositoryInterface;
+use App\Repositories\Contracts\SireneRepositoryInterface;
+use App\Services\Contracts\AbonnementServiceInterface;
+use App\Models\Sirene;
+use App\Enums\StatutAbonnement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
 {
@@ -22,6 +27,8 @@ class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
     protected $panneRepository;
     protected $paiementRepository;
     protected $jourFerieRepository;
+    protected $sireneRepository;
+    protected $abonnementService;
 
     public function __construct(
         Ecole $model,
@@ -31,7 +38,9 @@ class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
         ProgrammationRepositoryInterface $programmationRepository,
         PanneRepositoryInterface $panneRepository,
         PaiementRepositoryInterface $paiementRepository,
-        JourFerieRepositoryInterface $jourFerieRepository
+        JourFerieRepositoryInterface $jourFerieRepository,
+        SireneRepositoryInterface $sireneRepository,
+        AbonnementServiceInterface $abonnementService
     )
     {
         parent::__construct($model);
@@ -42,6 +51,8 @@ class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
         $this->panneRepository = $panneRepository;
         $this->paiementRepository = $paiementRepository;
         $this->jourFerieRepository = $jourFerieRepository;
+        $this->sireneRepository = $sireneRepository;
+        $this->abonnementService = $abonnementService;
     }
 
     public function delete(string $id): bool
@@ -96,3 +107,4 @@ class EcoleRepository extends BaseRepository implements EcoleRepositoryInterface
             return parent::delete($id);
         });
     }
+}

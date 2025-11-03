@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Technicien\CreateTechnicienRequest;
+use App\Http\Requests\Technicien\UpdateTechnicienRequest;
+use App\Repositories\Contracts\TechnicienRepositoryInterface;
+use App\Traits\JsonResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 
 class TechnicienController extends Controller
 {
