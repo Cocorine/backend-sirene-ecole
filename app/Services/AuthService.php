@@ -88,6 +88,7 @@ class AuthService implements AuthServiceInterface
 
             // Apply the user's requested logic
             if ($user->doit_changer_mot_de_passe === true && $user->mot_de_passe_change === false) {
+                $user->actif = false;
                 $user->statut = 0;
                 $user->save(); // Save the updated user
             }
@@ -232,6 +233,12 @@ class AuthService implements AuthServiceInterface
                         'ancien_mot_de_passe' => ['L\'ancien mot de passe est incorrect.'],
                     ]);
                 }
+            }
+
+            // Activer le compte si c'est le premier changement de mot de passe
+            if ($user->doit_changer_mot_de_passe === true && $user->mot_de_passe_change === false) {
+                $user->actif = true;
+                $user->statut = 1;
             }
 
             // Mettre à jour le mot de passe

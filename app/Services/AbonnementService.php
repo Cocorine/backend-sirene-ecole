@@ -14,7 +14,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
         AbonnementRepositoryInterface $abonnementRepository,
         TokenEncryptionService $tokenService
     ) {
-        $this->abonnementRepository = $abonnementRepository;
+        parent::__construct($abonnementRepository);
         $this->tokenService = $tokenService;
     }
 

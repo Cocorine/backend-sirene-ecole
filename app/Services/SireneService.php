@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Repositories\Contracts\SireneRepositoryInterface;
 use App\Services\Contracts\SireneServiceInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class SireneService extends BaseService implements SireneServiceInterface
 {
@@ -14,33 +16,42 @@ class SireneService extends BaseService implements SireneServiceInterface
         parent::__construct($repository);
     }
 
-    public function findByNumeroSerie(string $numeroSerie): ?Model
+    public function findByNumeroSerie(string $numeroSerie, array $relations = []): JsonResponse
     {
         try {
-            return $this->repository->findByNumeroSerie($numeroSerie);
-        } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::findByNumeroSerie - " . $e->getMessage());
-            throw $e;
+            $sirene = $this->repository->findByNumeroSerie($numeroSerie, $relations);
+            if (!$sirene) {
+                return $this->notFoundResponse('Sirène non trouvée.');
+            }
+            return $this->successResponse(null, $sirene);
+        } catch (Exception $e) {
+            Log::error("Error in " . get_class($this) . "::findByNumeroSerie - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
-    public function getSirenesDisponibles(): Collection
+    public function getSirenesDisponibles(array $relations = []): JsonResponse
     {
         try {
-            return $this->repository->getSirenesDisponibles();
-        } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::getSirenesDisponibles - " . $e->getMessage());
-            throw $e;
+            $sirenes = $this->repository->getSirenesDisponibles($relations);
+            return $this->successResponse(null, $sirenes);
+        } catch (Exception $e) {
+            Log::error("Error in " . get_class($this) . "::getSirenesDisponibles - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
-    public function affecterSireneASite(string $sireneId, string $siteId, string $ecoleId): Model
+    public function affecterSireneASite(string $sireneId, string $siteId, ?string $ecoleId = null): JsonResponse
     {
         try {
-            return $this->repository->affecterSireneASite($sireneId, $siteId, $ecoleId);
-        } catch (\Exception $e) {
-            \Log::error("Error in " . get_class($this) . "::affecterSireneASite - " . $e->getMessage());
-            throw $e;
+            DB::beginTransaction();
+            $sirene = $this->repository->affecterSireneASite($sireneId, $siteId, $ecoleId);
+            DB::commit();
+            return $this->successResponse('Sirène affectée avec succès.', $sirene);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Error in " . get_class($this) . "::affecterSireneASite - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 }

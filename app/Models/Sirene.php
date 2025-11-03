@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Enums\StatutSirene;
 use App\Traits\HasNumeroSerie;
 use App\Traits\HasUlid;
-use App\Traits\GeneratesQrCode;
+use App\Traits\HasAbonnementAnnuel;
 use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sirene extends Model
 {
-    use HasUlid, HasNumeroSerie, SoftDeletes, SoftDeletesUniqueFields;
+    use HasUlid, HasNumeroSerie, HasAbonnementAnnuel, SoftDeletes, SoftDeletesUniqueFields;
 
     protected $primaryKey = 'id';
     public $incrementing = false;

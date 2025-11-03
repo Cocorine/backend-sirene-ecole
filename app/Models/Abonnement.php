@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\ModePaiement;
 use App\Enums\StatutAbonnement;
 use App\Traits\HasUlid;
-use App\Traits\GeneratesQrCode;
+use App\Traits\HasQrCodeAbonnement;
+use App\Traits\HasTokenCrypte;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Abonnement extends Model
 {
-    use HasUlid, SoftDeletes, GeneratesQrCode;
+    use HasUlid, SoftDeletes, HasQrCodeAbonnement, HasTokenCrypte;
 
     protected $primaryKey = 'id';
     protected $keyType = 'string';
@@ -33,6 +33,7 @@ class Abonnement extends Model
         'statut',
         'auto_renouvellement',
         'notes',
+        'qr_code_path',
     ];
 
     protected $casts = [

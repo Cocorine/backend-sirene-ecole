@@ -29,7 +29,7 @@ class SireneRepository extends BaseRepository implements SireneRepositoryInterfa
             ->get();
     }
 
-    public function affecterSireneASite(string $sireneId, string $siteId, string $ecoleId)
+    public function affecterSireneASite(string $sireneId, string $siteId, ?string $ecoleId)
     {
         return $this->update($sireneId, [
             'site_id' => $siteId,

@@ -8,7 +8,7 @@ use App\Repositories\Contracts\SireneRepositoryInterface;
 use App\Repositories\Contracts\SiteRepositoryInterface;
 use App\Services\Contracts\AbonnementServiceInterface;
 use App\Services\Contracts\EcoleServiceInterface;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -40,9 +40,9 @@ class EcoleService extends BaseService implements EcoleServiceInterface
      * @param array $ecoleData - Données de l'école (nom, email, telephone, etc.)
      * @param array $sitePrincipalData - Données du site principal avec sirène
      * @param array $sitesAnnexeData - Tableau des sites annexes avec leurs sirènes (optionnel)
-     * @return Model
+     * @return JsonResponse
      */
-    public function inscrireEcole(array $ecoleData, array $sitePrincipalData, array $sitesAnnexeData = []): Model
+    public function inscrireEcole(array $ecoleData, array $sitePrincipalData, array $sitesAnnexeData = []): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -90,16 +90,20 @@ class EcoleService extends BaseService implements EcoleServiceInterface
             DB::commit();
 
             // Recharger l'école avec toutes les relations
-            return $ecole->load([
+            $ecole->load([
                 'sites.sirene',
                 'abonnementActif',
                 'user'
-            ])->setAttribute('mot_de_passe_temporaire', $motDePasse);
+            ]);
+
+            $ecole->setAttribute('mot_de_passe_temporaire', $motDePasse);
+
+            return $this->createdResponse($ecole);
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Error in " . get_class($this) . "::inscrireEcole - " . $e->getMessage());
-            throw $e;
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
@@ -134,7 +138,7 @@ class EcoleService extends BaseService implements EcoleServiceInterface
             $this->sireneRepository->affecterSireneASite($sirene->id, $site->id, $ecoleId);
 
             // Créer un abonnement en attente pour l'école
-            $abonnement = $this->abonnementService->create([
+            /* $abonnement = $this->abonnementService->create([
                 'ecole_id' => $ecoleId,
                 'site_id' => $site->id, // Link abonnement to the site
                 'sirene_id' => $sirene->id, // Link abonnement to the sirene
@@ -148,7 +152,9 @@ class EcoleService extends BaseService implements EcoleServiceInterface
 
             // Générer et sauvegarder le QR code pour l'abonnement
             $qrCodePath = $abonnement->generateAndSaveQrCode();
-            $abonnement->update(['qr_code_path' => $qrCodePath]);
+            $abonnement->update(['qr_code_path' => $qrCodePath]); */
+
+            dd($ecoleId);
         }
 
         return $site;

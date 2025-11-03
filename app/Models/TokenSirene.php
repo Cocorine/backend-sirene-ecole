@@ -67,4 +67,67 @@ class TokenSirene extends Model
             && $this->date_debut <= now()
             && $this->date_fin >= now();
     }
+
+    /**
+     * Décrypte le token et retourne les données
+     */
+    public function decrypterToken(): ?array
+    {
+        if (!$this->token_crypte) {
+            return null;
+        }
+
+        try {
+            $decrypted = \Illuminate\Support\Facades\Crypt::decryptString($this->token_crypte);
+            return json_decode($decrypted, true);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Erreur décryptage token: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Vérifie l'intégrité du token
+     */
+    public function verifierToken(): bool
+    {
+        $tokenData = $this->decrypterToken();
+
+        if (!$tokenData) {
+            return false;
+        }
+
+        // Vérifier l'expiration
+        if (isset($tokenData['expires_at'])) {
+            $expiresAt = \Carbon\Carbon::parse($tokenData['expires_at']);
+            if ($expiresAt->isPast()) {
+                return false;
+            }
+        }
+
+        // Vérifier la correspondance des données
+        return $tokenData['sirene_id'] === $this->sirene_id
+            && $tokenData['abonnement_id'] === $this->abonnement_id;
+    }
+
+    /**
+     * Formatte le token pour affichage (segments de 4 caractères)
+     */
+    public function getTokenFormatted(): ?string
+    {
+        if (!$this->token_crypte) {
+            return null;
+        }
+
+        $token = base64_encode($this->token_crypte);
+        return rtrim(chunk_split($token, 4, '-'), '-');
+    }
+
+    /**
+     * Vérifie le hash du token
+     */
+    public function verifierHash(string $tokenCrypte): bool
+    {
+        return hash('sha256', $tokenCrypte) === $this->token_hash;
+    }
 }

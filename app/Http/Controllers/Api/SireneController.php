@@ -206,7 +206,7 @@ class SireneController extends Controller
         return $this->sireneService->findByNumeroSerie($numeroSerie, [
             'modeleSirene',
             'ecole',
-            'site.ecolePrincipale',
+            'site',
         ]);
     }
 
@@ -325,7 +325,7 @@ class SireneController extends Controller
      */
     public function affecter(AffecterSireneRequest $request, string $id): JsonResponse
     {
-        return $this->sireneService->affecterSireneASite($id, $request->site_id);
+        return $this->sireneService->affecterSireneASite($id, $request->site_id, $request->ecole_id ?? null);
     }
 
     /**
