@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\SoftDeletesUniqueFields;
 
 class Role extends Model
 {
-    use HasFactory, HasUlid, SoftDeletes, HasSlug; // Added HasSlug
+    use HasFactory, HasUlid, SoftDeletes, HasSlug, SoftDeletesUniqueFields; // Added HasSlug
 
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -27,6 +28,16 @@ class Role extends Model
         'roleable_id',
         'roleable_type',
     ];
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['nom', 'slug'];
+    }
 
     // Polymorphic relationship
     public function roleable(): MorphTo

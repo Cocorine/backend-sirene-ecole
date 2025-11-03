@@ -61,7 +61,7 @@ class CreateRoleRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'permission_ids' => ['nullable', 'array'],
+            'permission_ids' => ['required', 'array'],
             'permission_ids.*' => ['string', 'max:26', 'exists:permissions,id'], // ULID
         ];
 

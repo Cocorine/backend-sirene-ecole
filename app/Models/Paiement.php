@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Enums\MoyenPaiement;
 use App\Traits\HasUlid;
+use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Paiement extends Model
 {
-    use HasUlid, SoftDeletes;
+    use HasUlid, SoftDeletes, SoftDeletesUniqueFields;
 
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -40,4 +41,14 @@ class Paiement extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['numero_transaction', 'reference_externe'];
+    }
 }

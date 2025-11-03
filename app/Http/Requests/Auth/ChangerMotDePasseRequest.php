@@ -4,6 +4,35 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="ChangerMotDePasseRequest",
+ *     title="Change Password Request",
+ *     description="Request body for changing user password",
+ *     required={"nouveau_mot_de_passe", "nouveau_mot_de_passe_confirmation"},
+ *     @OA\Property(
+ *         property="ancien_mot_de_passe",
+ *         type="string",
+ *         format="password",
+ *         description="User's current password (optional, if admin is changing password)",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="nouveau_mot_de_passe",
+ *         type="string",
+ *         format="password",
+ *         description="User's new password",
+ *         minLength=8
+ *     ),
+ *     @OA\Property(
+ *         property="nouveau_mot_de_passe_confirmation",
+ *         type="string",
+ *         format="password",
+ *         description="Confirmation of the new password",
+ *         minLength=8
+ *     )
+ * )
+ */
 class ChangerMotDePasseRequest extends FormRequest
 {
     /**

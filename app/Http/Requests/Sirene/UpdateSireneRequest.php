@@ -4,6 +4,47 @@ namespace App\Http\Requests\Sirene;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateSireneRequest",
+ *     title="Update Sirene Request",
+ *     description="Request body for updating an existing sirene",
+ *     @OA\Property(
+ *         property="modele_id",
+ *         type="string",
+ *         format="uuid",
+ *         description="ID of the sirene model",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="etat",
+ *         type="string",
+ *         description="State of the sirene",
+ *         enum={"NEUF", "BON", "MOYEN", "MAUVAIS", "HORS_SERVICE"},
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="statut",
+ *         type="string",
+ *         description="Status of the sirene",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="notes",
+ *         type="string",
+ *         nullable=true,
+ *         description="Additional notes for the sirene",
+ *         maxLength=1000
+ *     ),
+ *     @OA\Property(
+ *         property="date_fabrication",
+ *         type="string",
+ *         format="date",
+ *         description="Manufacturing date of the sirene",
+ *         nullable=true
+ *     )
+ * )
+ */
 class UpdateSireneRequest extends FormRequest
 {
     /**
@@ -25,7 +66,7 @@ class UpdateSireneRequest extends FormRequest
             'etat' => ['sometimes', 'string', 'in:NEUF,BON,MOYEN,MAUVAIS,HORS_SERVICE'],
             'statut' => ['sometimes', 'string'],
             'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
-            'date_fabrication' => ['sometimes', 'date', 'before_or_equal:today'],
+            'date_fabrication' => ['sometimes', 'date_format:d/m/Y', 'before_or_equal:today'],
         ];
     }
 

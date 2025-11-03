@@ -8,3 +8,4 @@ interface SireneRepositoryInterface extends BaseRepositoryInterface
     public function getSirenesDisponibles(array $relations = []);
     public function affecterSireneASite(string $sireneId, string $siteId);
 }
+

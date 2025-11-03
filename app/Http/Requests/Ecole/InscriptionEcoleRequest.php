@@ -3,7 +3,85 @@
 namespace App\Http\Requests\Ecole;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="InscriptionEcoleRequest",
+ *     title="School Registration Request",
+ *     description="Request body for registering a new school",
+ *     required={
+ *         "nom", "nom_complet", "telephone_contact", "types_etablissement",
+ *         "responsable_nom", "responsable_prenom", "responsable_telephone",
+ *         "site_principal"
+ *     },
+ *     @OA\Property(
+ *         property="nom",
+ *         type="string",
+ *         description="Name of the school",
+ *         maxLength=100
+ *     ),
+ *     @OA\Property(
+ *         property="nom_complet",
+ *         type="string",
+ *         description="Full name of the school"
+ *     ),
+ *     @OA\Property(
+ *         property="telephone_contact",
+ *         type="string",
+ *         description="Contact phone number for the school",
+ *         maxLength=20
+ *     ),
+ *     @OA\Property(
+ *         property="email_contact",
+ *         type="string",
+ *         format="email",
+ *         nullable=true,
+ *         description="Contact email for the school",
+ *         maxLength=100
+ *     ),
+ *     @OA\Property(
+ *         property="types_etablissement",
+ *         type="array",
+ *         description="Array of establishment type IDs",
+ *         @OA\Items(
+ *             type="string",
+ *             format="uuid"
+ *         )
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_nom",
+ *         type="string",
+ *         description="Last name of the person in charge",
+ *         maxLength=255
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_prenom",
+ *         type="string",
+ *         description="First name of the person in charge",
+ *         maxLength=255
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_telephone",
+ *         type="string",
+ *         description="Phone number of the person in charge",
+ *         maxLength=20
+ *     ),
+ *     @OA\Property(
+ *         property="site_principal",
+ *         ref="#/components/schemas/SitePrincipalRequest"
+ *     ),
+ *     @OA\Property(
+ *         property="sites_annexe",
+ *         type="array",
+ *         nullable=true,
+ *         description="Array of annex sites (optional for multi-site schools)",
+ *         @OA\Items(
+ *             ref="#/components/schemas/SitesAnnexeRequest"
+ *         )
+ *     )
+ * )
+ */
 class InscriptionEcoleRequest extends FormRequest
 {
     /**

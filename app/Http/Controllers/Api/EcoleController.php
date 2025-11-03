@@ -8,7 +8,33 @@ use App\Http\Requests\Ecole\UpdateEcoleRequest;
 use App\Services\Contracts\EcoleServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
+/**
+ * Class EcoleController
+ * @package App\Http\Controllers\Api
+ * @OA\Tag(
+ *     name="Ecoles",
+ *     description="API Endpoints for School Management"
+ * )
+ * @OA\Schema(
+ *     schema="Ecole",
+ *     title="Ecole",
+ *     description="School model",
+ *     @OA\Property(property="id", type="string", format="uuid", description="ID of the school"),
+ *     @OA\Property(property="nom", type="string", description="Name of the school"),
+ *     @OA\Property(property="nom_complet", type="string", description="Full name of the school"),
+ *     @OA\Property(property="telephone_contact", type="string", description="Contact phone number"),
+ *     @OA\Property(property="email_contact", type="string", format="email", nullable=true, description="Contact email"),
+ *     @OA\Property(property="responsable_nom", type="string", description="Last name of the person in charge"),
+ *     @OA\Property(property="responsable_prenom", type="string", description="First name of the person in charge"),
+ *     @OA\Property(property="responsable_telephone", type="string", description="Phone number of the person in charge"),
+ *     @OA\Property(property="statut", type="string", description="Status of the school (e.g., ACTIVE, INACTIVE)"),
+ *     @OA\Property(property="abonnement_id", type="string", format="uuid", nullable=true, description="ID of the active subscription"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp")
+ * )
+ */
 class EcoleController extends Controller
 {
     protected $ecoleService;
@@ -20,6 +46,31 @@ class EcoleController extends Controller
 
     /**
      * Lister toutes les écoles
+     * @OA\Get(
+     *     path="/api/ecoles",
+     *     summary="List all schools",
+     *     tags={"Ecoles"},
+     *     security={ {"passport": {}} },
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of schools per page",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=15)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Ecole"))
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
      */
     public function index(Request $request): JsonResponse
     {
@@ -29,6 +80,27 @@ class EcoleController extends Controller
 
     /**
      * Inscription d'une nouvelle école
+     * @OA\Post(
+     *     path="/api/ecoles/inscrire",
+     *     summary="Register a new school",
+     *     tags={"Ecoles"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/InscriptionEcoleRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="School registered successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Ecole")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid.")
+     *         )
+     *     )
+     * )
      */
     public function inscrire(InscriptionEcoleRequest $request): JsonResponse
     {
@@ -41,6 +113,38 @@ class EcoleController extends Controller
 
     /**
      * Obtenir les informations de l'école connectée
+     * @OA\Get(
+     *     path="/api/ecoles/me",
+     *     summary="Get authenticated school details",
+     *     tags={"Ecoles"},
+     *     security={ {"passport": {}} },
+     *     @OA\Response(
+     *         response=200,
+     *         description="School details retrieved successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Ecole")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="School not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="School not found")
+     *         )
+     *     )
+     * )
      */
     public function show(Request $request): JsonResponse
     {
@@ -49,6 +153,49 @@ class EcoleController extends Controller
 
     /**
      * Mettre à jour les informations de l'école
+     * @OA\Put(
+     *     path="/api/ecoles/me",
+     *     summary="Update authenticated school details",
+     *     tags={"Ecoles"},
+     *     security={ {"passport": {}} },
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateEcoleRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="School details updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Ecole")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="School not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="School not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid.")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateEcoleRequest $request): JsonResponse
     {
@@ -57,6 +204,44 @@ class EcoleController extends Controller
 
     /**
      * Supprimer une école
+     * @OA\Delete(
+     *     path="/api/ecoles/{id}",
+     *     summary="Delete a school by ID",
+     *     tags={"Ecoles"},
+     *     security={ {"passport": {}} },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the school to delete",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="School deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="School not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="School not found")
+     *         )
+     *     )
+     * )
      */
     public function destroy(string $id): JsonResponse
     {

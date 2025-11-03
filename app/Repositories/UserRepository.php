@@ -15,6 +15,7 @@ use Throwable;
 use Illuminate\Support\Str;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\SmsService;
+use Carbon\Carbon;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -40,7 +41,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             $plainPassword = null;
             if (isset($data['mot_de_passe'])) {
                 $plainPassword = $data['mot_de_passe']; // Capture plain-text password
-                $data['mot_de_passe'] = Hash::make($data['mot_de_passe']);
+                $data['mot_de_passe'] = Hash::make($plainPassword);
+            } else {
+                $plainPassword = Str::random(12); // Generate a 12-character temporary password
+                $data['mot_de_passe'] = Hash::make($plainPassword);
             }
 
             if (isset($data['role_id'])) {
@@ -61,6 +65,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             }
 
             $userInfoData = $data['userInfoData'] ?? [];
+
             unset($data['userInfoData']);
 
             // Generate identifiant if not provided
@@ -73,6 +78,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                     $data['identifiant'] = (string) Str::uuid(); // Fallback to UUID
                 }
             }
+
             // Generate nom_utilisateur if not provided
             if (!isset($data['nom_utilisateur'])) {
                 if (isset($data['user_account_type_type']) && $data['user_account_type_type'] === \App\Models\Ecole::class) {
@@ -85,6 +91,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 } elseif (isset($userInfoData['prenom']) && isset($userInfoData['nom'])) {
                     // For individual users, use first and last name
                     $data['nom_utilisateur'] = Str::slug($userInfoData['prenom'] . ' ' . $userInfoData['nom']);
+                } elseif ( isset($userInfoData['nom'])) {
+                    // For individual users, use first and last name
+                    $data['nom_utilisateur'] = Str::slug($userInfoData['nom']);
                 } else {
                     // Fallback to identifiant
                     $data['nom_utilisateur'] = $data['identifiant'];
@@ -98,15 +107,32 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 $this->userInfoRepository->create($userInfoData);
             }
 
+            // Generate and store OTP for account activation
+            $otpCode = null;
+            if ($user && isset($userInfoData['telephone'])) {
+                $otpCode = rand(100000, 999999); // Generate a 6-digit OTP
+                $this->otpCodeRepository->create([
+                    'user_id' => $user->id,
+                    'telephone' => $userInfoData['telephone'],
+                    'code' => (string) $otpCode,
+                    'expire_le' => now()->addMinutes(10), // OTP valid for 10 minutes
+
+                    //'type' => "activation",
+                    'verifie' => false,
+                    'date_expiration' => Carbon::now()->addMinutes((int) intval(config('services.otp.expiration_minutes', 5))),
+                    'tentatives' => 0,
+                ]);
+            }
+
             DB::commit();
 
             // Envoyer SMS de confirmation de création de compte (SMS 1)
             // L'OTP sera envoyé lors de la première demande de connexion
             if ($user && isset($userInfoData['telephone'])) {
-                $message = "Votre compte a été créé. Identifiant: {$user->identifiant}. Un code OTP vous sera envoyé lors de votre première connexion.";
+                $message = "Votre compte a été créé. Identifiant: {$user->identifiant}. Mot de passe temporaire: {$plainPassword}. Un code OTP vous sera envoyé lors de votre première connexion.";
                 try {
                     $this->smsService->sendSms($userInfoData['telephone'], $message);
-                    Log::info("Account creation SMS sent to user {$user->id}");
+                    Log::info("Account creation SMS sent to user {$user->id} {$plainPassword}");
                 } catch (\Exception $e) {
                     Log::error("Failed to send account creation SMS for user {$user->id}: " . $e->getMessage());
                 }
@@ -273,4 +299,40 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             throw $e;
         }
     }
+
+
+    public function delete(string $id): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = parent::find($id);
+            if (!$user) {
+                return false;
+            }
+
+            // Delete associated UserInfo
+            $userInfo = $user->userInfo;
+            if ($userInfo) {
+                $this->userInfoRepository->delete($userInfo->id);
+            }
+
+            // Delete the User
+            $deleteResult = parent::delete($id);
+
+            if (!$deleteResult) {
+                DB::rollBack();
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error in " . get_class($this) . "::delete - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

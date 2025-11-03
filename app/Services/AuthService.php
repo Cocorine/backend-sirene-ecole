@@ -46,14 +46,14 @@ class AuthService implements AuthServiceInterface
             }
 
             // Générer l'OTP
-            $otp = $this->otpService->generateOtp($telephone);
+            $otp = $this->otpService->generate($telephone, $user->id);
 
             // Envoyer l'OTP par SMS
-            $this->smsService->sendOtpSms($telephone, $otp);
+            //$this->smsService->sendOtpSms($telephone, $otp);
 
             return $this->successResponse(
                 'Code OTP envoyé avec succès.',
-                ['expires_in' => config('otp.expiration', 5) . ' minutes']
+                $otp,//['expires_in' => config('otp.expiration', 5) . ' minutes']
             );
 
         } catch (\Exception $e) {
@@ -69,7 +69,7 @@ class AuthService implements AuthServiceInterface
     {
         try {
             // Vérifier l'OTP
-            if (!$this->otpService->verifyOtp($telephone, $otp)) {
+            if (!$this->otpService->verify($telephone, $otp)) {
                 throw ValidationException::withMessages([
                     'otp' => ['Code OTP invalide ou expiré.'],
                 ]);
@@ -82,6 +82,12 @@ class AuthService implements AuthServiceInterface
                 throw ValidationException::withMessages([
                     'telephone' => ['Aucun compte associé à ce numéro de téléphone.'],
                 ]);
+            }
+
+            // Apply the user's requested logic
+            if ($user->doit_changer_mot_de_passe === true && $user->mot_de_passe_change === false) {
+                $user->statut = 0;
+                $user->save(); // Save the updated user
             }
 
             // Créer le token d'accès
@@ -117,6 +123,16 @@ class AuthService implements AuthServiceInterface
     {
         try {
             $user = $this->userRepository->findBy(['identifiant' => $identifiant]);
+
+            if($user->actif == false && $user->statut == -1)
+            {
+                throw new \Exception("Veuillez activer votre compte", 403);
+            }
+
+            if($user->actif == false && $user->statut !== 1)
+            {
+                throw new \Exception("Veuillez changer le mot de passe temporaire", 206);
+            }
 
             if (!$user || !Hash::check($motDePasse, $user->mot_de_passe)) {
                 throw ValidationException::withMessages([

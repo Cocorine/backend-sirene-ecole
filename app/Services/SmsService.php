@@ -23,14 +23,14 @@ class SmsService
 
     public function __construct()
     {
-        $this->provider = config('services.sms.provider', 'custom_api');
-        $this->apiKey = config('services.sms.api_key', '');
-        $this->apiSecret = config('services.sms.api_secret', '');
-        $this->fromNumber = config('services.sms.from_number', 'SIRENE');
-        $this->apiUrl = config('services.sms.url', '');
-        $this->account_id = config('services.sms.account_id', '');
-        $this->account_password = config('services.sms.account_password', '');
-        $this->username = config('services.sms.username', '');
+        $this->provider = (string) config('services.sms.provider', 'custom_api');
+        $this->apiKey = (string) config('services.sms.api_key', '');
+        $this->apiSecret = (string) config('services.sms.api_secret', '');
+        $this->fromNumber = (string) config('services.sms.from_number', 'SIRENE');
+        $this->apiUrl = (string) config('services.sms.url', '');
+        $this->account_id = (string) config('services.sms.account_id', '');
+        $this->account_password = (string) config('services.sms.account_password', '');
+        $this->username = (string) config('services.sms.username', '');
     }
 
     /**

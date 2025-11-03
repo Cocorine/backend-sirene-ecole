@@ -4,6 +4,33 @@ namespace App\Http\Requests\Sirene;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CreateSireneRequest",
+ *     title="Create Sirene Request",
+ *     description="Request body for creating a new sirene",
+ *     required={"modele_id", "date_fabrication"},
+ *     @OA\Property(
+ *         property="modele_id",
+ *         type="string",
+ *         format="uuid",
+ *         description="ID of the sirene model"
+ *     ),
+ *     @OA\Property(
+ *         property="date_fabrication",
+ *         type="string",
+ *         format="date",
+ *         description="Manufacturing date of the sirene"
+ *     ),
+ *     @OA\Property(
+ *         property="notes",
+ *         type="string",
+ *         nullable=true,
+ *         description="Additional notes for the sirene",
+ *         maxLength=1000
+ *     )
+ * )
+ */
 class CreateSireneRequest extends FormRequest
 {
     /**
@@ -21,8 +48,8 @@ class CreateSireneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'modele_id' => ['required', 'string', 'exists:modeles_sirene,id'],
-            'date_fabrication' => ['required', 'date', 'before_or_equal:today'],
+            'modele_id' => ['sometimes', 'string', 'exists:modeles_sirene,id'],
+            'date_fabrication' => ['required', 'date_format:d/m/Y', 'before_or_equal:today'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

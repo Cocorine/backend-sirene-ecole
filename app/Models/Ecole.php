@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\StatutAbonnement;
 use App\Traits\HasCodeEtablissement;
 use App\Traits\HasUlid;
+use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ecole extends Model
 {
-    use HasUlid, HasCodeEtablissement, SoftDeletes;
+    use HasUlid, HasCodeEtablissement, SoftDeletes, SoftDeletesUniqueFields;
 
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -112,5 +113,15 @@ class Ecole extends Model
             ->where('statut', 'actif')
             ->where('date_fin', '>=', now())
             ->exists();
+    }
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['code_etablissement', 'nom_complet', 'telephone_contact', 'email_contact'];
     }
 }

@@ -25,7 +25,7 @@ class OtpService
     /**
      * Génère et envoie un code OTP
      */
-    public function generate(string $telephone, string $type = 'login'): array
+    public function generate(string $telephone, string $userId, string $type = 'login'): array
     {
         // Supprimer les anciens codes non vérifiés pour ce numéro
         $this->otpCodeRepository->deleteUnverifiedByPhone($telephone);
@@ -35,6 +35,7 @@ class OtpService
 
         // Créer le code OTP en base
         $otpCode = $this->otpCodeRepository->create([
+            'userId' => $userId,
             'telephone' => $telephone,
             'code' => $code,
             'type' => $type,
@@ -107,31 +108,6 @@ class OtpService
             'success' => true,
             'message' => 'Code OTP vérifié avec succès',
         ];
-    }
-
-    /**
-     * Générer un code OTP (alias de generate pour compatibilité)
-     */
-    public function generateOtp(string $telephone, string $type = 'login'): string
-    {
-        $result = $this->generate($telephone, $type);
-
-        if (!$result['success']) {
-            throw new Exception($result['message']);
-        }
-
-        // Récupérer le dernier code créé pour ce téléphone
-        $otpCode = $this->otpCodeRepository->findBy(['telephone' => $telephone, 'verifie' => false]);
-        return $otpCode ? $otpCode->code : '';
-    }
-
-    /**
-     * Vérifier un code OTP (alias de verify pour compatibilité)
-     */
-    public function verifyOtp(string $telephone, string $code): bool
-    {
-        $result = $this->verify($telephone, $code);
-        return $result['success'];
     }
 
     /**

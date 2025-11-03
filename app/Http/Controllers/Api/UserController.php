@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -18,12 +19,12 @@ class UserController extends Controller
 
     public function index()
     {
-        return $this->userService->getAll();
+        return $this->userService->getAll(15, relations: ["userInfo"]);
     }
 
     public function show(string $id)
     {
-        return $this->userService->getById($id);
+        return $this->userService->getById($id, relations:["userInfo"]);
     }
 
     public function store(StoreUserRequest $request)

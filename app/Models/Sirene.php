@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\StatutSirene;
 use App\Traits\HasNumeroSerie;
 use App\Traits\HasUlid;
+use App\Traits\GeneratesQrCode;
+use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sirene extends Model
 {
-    use HasUlid, HasNumeroSerie, SoftDeletes;
+    use HasUlid, HasNumeroSerie, SoftDeletes, SoftDeletesUniqueFields;
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $table = 'sirenes';
 
@@ -81,5 +87,15 @@ class Sirene extends Model
     public function isInStock(): bool
     {
         return $this->statut === StatutSirene::EN_STOCK;
+    }
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['numero_serie'];
     }
 }

@@ -10,7 +10,28 @@ use App\Http\Requests\Auth\VerifyOtpRequest;
 use App\Services\Contracts\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
+/**
+ * Class AuthController
+ * @package App\Http\Controllers\Api
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="API Endpoints for User Authentication"
+ * )
+ * @OA\Schema(
+ *     schema="AuthUser",
+ *     title="Authenticated User",
+ *     description="User object returned upon successful authentication",
+ *     @OA\Property(property="id", type="string", format="uuid", description="User ID"),
+ *     @OA\Property(property="nom_utilisateur", type="string", description="Username"),
+ *     @OA\Property(property="type", type="string", description="User type (e.g., ADMIN, ECOLE)"),
+ *     @OA\Property(property="telephone", type="string", nullable=true, description="User's phone number"),
+ *     @OA\Property(property="email", type="string", format="email", nullable=true, description="User's email address"),
+ *     @OA\Property(property="doit_changer_mot_de_passe", type="boolean", description="Indicates if user must change password"),
+ *     @OA\Property(property="mot_de_passe_change", type="boolean", description="Indicates if user has changed password at least once")
+ * )
+ */
 class AuthController extends Controller
 {
     protected $authService;
@@ -22,6 +43,31 @@ class AuthController extends Controller
 
     /**
      * Demander un code OTP pour connexion
+     * @OA\Post(
+     *     path="/api/auth/request-otp",
+     *     summary="Request OTP for login",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/RequestOtpRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OTP sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Code OTP envoyé avec succès."),
+     *             @OA\Property(property="expires_in", type="string", example="5 minutes")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"telephone": {"Aucun compte associé à ce numéro de téléphone."}})
+     *         )
+     *     )
+     * )
      */
     public function requestOtp(RequestOtpRequest $request): JsonResponse
     {
@@ -30,6 +76,33 @@ class AuthController extends Controller
 
     /**
      * Vérifier l'OTP et se connecter
+     * @OA\Post(
+     *     path="/api/auth/verify-otp",
+     *     summary="Verify OTP and log in",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/VerifyOtpRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Connexion réussie."),
+     *             @OA\Property(property="access_token", type="string", description="Bearer token"),
+     *             @OA\Property(property="token_type", type="string", example="Bearer"),
+     *             @OA\Property(property="user", ref="#/components/schemas/AuthUser")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"otp": {"Code OTP invalide ou expiré."}})
+     *         )
+     *     )
+     * )
      */
     public function verifyOtp(VerifyOtpRequest $request): JsonResponse
     {
@@ -38,6 +111,33 @@ class AuthController extends Controller
 
     /**
      * Connexion classique avec identifiant et mot de passe
+     * @OA\Post(
+     *     path="/api/auth/login",
+     *     summary="Log in with identifier and password",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/LoginRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Connexion réussie."),
+     *             @OA\Property(property="access_token", type="string", description="Bearer token"),
+     *             @OA\Property(property="token_type", type="string", example="Bearer"),
+     *             @OA\Property(property="user", ref="#/components/schemas/AuthUser")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"identifiant": {"Identifiants incorrects."}})
+     *         )
+     *     )
+     * )
      */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -46,6 +146,26 @@ class AuthController extends Controller
 
     /**
      * Déconnexion
+     * @OA\Post(
+     *     path="/api/auth/logout",
+     *     summary="Log out the authenticated user",
+     *     tags={"Authentication"},
+     *     security={ {"passport": {}} },
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Déconnexion réussie.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
      */
     public function logout(Request $request): JsonResponse
     {
@@ -54,6 +174,26 @@ class AuthController extends Controller
 
     /**
      * Obtenir les informations de l'utilisateur connecté
+     * @OA\Get(
+     *     path="/api/auth/me",
+     *     summary="Get authenticated user details",
+     *     tags={"Authentication"},
+     *     security={ {"passport": {}} },
+     *     @OA\Response(
+     *         response=200,
+     *         description="User details retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", ref="#/components/schemas/AuthUser")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
      */
     public function me(Request $request): JsonResponse
     {
@@ -62,6 +202,38 @@ class AuthController extends Controller
 
     /**
      * Changer le mot de passe de l'utilisateur connecté
+     * @OA\Post(
+     *     path="/api/auth/change-password",
+     *     summary="Change authenticated user's password",
+     *     tags={"Authentication"},
+     *     security={ {"passport": {}} },
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ChangerMotDePasseRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password changed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mot de passe changé avec succès.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object", example={"ancien_mot_de_passe": {"L'ancien mot de passe est incorrect."}})
+     *         )
+     *     )
+     * )
      */
     public function changerMotDePasse(ChangerMotDePasseRequest $request): JsonResponse
     {

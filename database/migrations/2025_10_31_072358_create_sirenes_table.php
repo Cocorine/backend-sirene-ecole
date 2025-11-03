@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('sirenes', function (Blueprint $table) {
             $table->string('id', 26)->primary(); // ULID
-            $table->string('modele_id', 26); // ULID - MCD uses modele_id not modele_sirene_id
-            /*$table->string('ecole_id', 26)->nullable(); // ULID
-            $table->string('site_id', 26)->nullable(); // ULID - MCD field*/
+            $table->string('modele_id', 26)->nullable(); // ULID - MCD uses modele_id not modele_sirene_id
+            $table->string('ecole_id', 26)->nullable(); // ULID
+            $table->string('site_id', 26)->nullable(); // ULID - MCD field
             $table->string('numero_serie')->unique(); // Généré à l'usine
-            $table->date('date_installation'); // MCD field (not nullable)
+            $table->date('date_installation')->nullable(); // MCD field (not nullable)
             $table->date('date_fin')->nullable(); // MCD field
             $table->date('date_fabrication')->nullable();
             $table->string('etat')->default('active'); // MCD field
@@ -28,8 +28,8 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('modele_id')->references('id')->on('modeles_sirene')->onDelete('restrict');
-            /*$table->foreign('ecole_id')->references('id')->on('ecoles')->onDelete('restrict');
-            $table->foreign('site_id')->references('id')->on('sites')->onDelete('restrict');*/
+            $table->foreign('ecole_id')->references('id')->on('ecoles')->onDelete('restrict');
+            $table->foreign('site_id')->references('id')->on('sites')->onDelete('restrict');
         });
     }
 

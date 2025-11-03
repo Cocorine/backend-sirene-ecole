@@ -23,7 +23,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     public function find(string $id, array $columns = ['*'], array $relations = []): ?Model
     {
-        return $this->model->with($relations)->find($id, $columns);
+        return $this->model->with($relations)->findOrFail($id, $columns);
     }
 
     public function findBy(array $criteria, array $columns = ['*'], array $relations = []): ?Model
@@ -108,7 +108,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      */
     public function paginate(int $perPage = 15, array $columns = ['*'], array $relations = []): LengthAwarePaginator
     {
-        return $this->model->with($relations)->paginate($perPage);
+        return $this->model->withTrashed()->with($relations)->paginate($perPage);
     }
 
     /**

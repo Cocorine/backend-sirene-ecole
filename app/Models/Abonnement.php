@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ModePaiement;
 use App\Enums\StatutAbonnement;
 use App\Traits\HasUlid;
+use App\Traits\GeneratesQrCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Abonnement extends Model
 {
-    use HasUlid, SoftDeletes;
+    use HasUlid, SoftDeletes, GeneratesQrCode;
+
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
 
     protected $table = 'abonnements';
 

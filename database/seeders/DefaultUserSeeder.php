@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
+use App\Models\User;
+use App\Models\UserInfo;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Database\Seeder;
 
@@ -28,6 +30,9 @@ class DefaultUserSeeder extends Seeder
         $ecoleRole = Role::where('slug', 'ecole')->first();
         $technicienRole = Role::where('slug', 'technicien')->first();
 
+        UserInfo::all()->each->forceDelete();
+        User::all()->each->forceDelete();
+
         // Create Admin User
         if ($adminRole) {
             $adminData = [
@@ -36,7 +41,7 @@ class DefaultUserSeeder extends Seeder
                 'role_id' => $adminRole->id,
                 'userInfoData' => [
                     'email' => 'admin@example.com',
-                    'telephone' => '+1234567890',
+                    'telephone' => '2290162004867',
                     'prenom' => 'Admin',
                     'nom' => 'User',
                 ],
@@ -55,11 +60,11 @@ class DefaultUserSeeder extends Seeder
         if ($userRole) {
             $userData = [
                 'mot_de_passe' => 'password',
-                'type' => 'REGULAR',
+                'type' => 'USER',
                 'role_id' => $userRole->id,
                 'userInfoData' => [
                     'email' => 'user@example.com',
-                    'telephone' => '+2290162004867',
+                    'telephone' => '22962004867',
                     'prenom' => 'Regular',
                     'nom' => 'User',
                 ],
@@ -78,8 +83,8 @@ class DefaultUserSeeder extends Seeder
                 'role_id' => $ecoleRole->id,
                 'userInfoData' => [
                     'email' => 'ecole@example.com',
-                    'telephone' => '+1122334455',
-                    'nom_etablissement' => 'Ecole Test',
+                    'telephone' => '2290167217812',
+                    'nom' => 'Ecole Test',
                 ],
             ];
             if (!$this->userRepository->findByEmail('ecole@example.com')) {
@@ -95,7 +100,7 @@ class DefaultUserSeeder extends Seeder
                 'role_id' => $technicienRole->id,
                 'userInfoData' => [
                     'email' => 'technicien@example.com',
-                    'telephone' => '+1554433221',
+                    'telephone' => '01554433221',
                     'prenom' => 'Tech',
                     'nom' => 'User',
                 ],

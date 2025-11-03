@@ -11,6 +11,10 @@ class TokenSirene extends Model
 {
     use HasUlid, SoftDeletes;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $table = 'tokens_sirene';
 
     protected $fillable = [

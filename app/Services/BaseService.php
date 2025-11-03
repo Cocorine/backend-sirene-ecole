@@ -24,7 +24,7 @@ abstract class BaseService implements BaseServiceInterface
     public function getAll(int $perPage = 15, array $relations = []): JsonResponse
     {
         try {
-            $data = $this->repository->paginate($perPage, $relations);
+            $data = $this->repository->paginate($perPage, relations: $relations);
             return $this->successResponse(null, $data);
         } catch (Exception $e) {
             Log::error("Error in " . get_class($this) . "::getAll - " . $e->getMessage());

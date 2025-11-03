@@ -5,7 +5,7 @@ use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('permissions')->group(function () {
@@ -23,7 +23,7 @@ Route::prefix('roles')->group(function () {
     Route::delete('{id}', [RoleController::class, 'destroy']);
 });
 
-Route::prefix('users')->middleware('auth:api')->group(function () {
+Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index']);
     Route::get('{id}', [UserController::class, 'show']);
     Route::post('/', [UserController::class, 'store']);
@@ -49,10 +49,12 @@ Route::prefix('ecoles')->group(function () {
     // Public: Inscription
     Route::post('inscription', [EcoleController::class, 'inscrire']);
 
-    // Protected: Ecole account management
+    // Protected routes for Ecole management
     Route::middleware('auth:api')->group(function () {
-        Route::get('profil', [EcoleController::class, 'show']);
-        Route::put('profil', [EcoleController::class, 'update']);
+        Route::get('/', [EcoleController::class, 'index']); // List all schools
+        Route::get('me', [EcoleController::class, 'show']); // Get authenticated school details
+        Route::put('me', [EcoleController::class, 'update']); // Update authenticated school details
+        Route::delete('{id}', [EcoleController::class, 'destroy']); // Delete a school by ID
     });
 });
 

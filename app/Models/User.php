@@ -8,10 +8,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use App\Traits\SoftDeletesUniqueFields;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUlid, SoftDeletes, HasApiTokens;
+    use HasFactory, Notifiable, HasUlid, SoftDeletes, HasApiTokens, SoftDeletesUniqueFields;
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $table = 'users';
 
     protected $fillable = [
         'nom_utilisateur',
@@ -26,6 +33,16 @@ class User extends Authenticatable
         'actif',
         'statut',
     ];
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['nom_utilisateur', 'identifiant'];
+    }
 
     protected $hidden = [
         'mot_de_passe',

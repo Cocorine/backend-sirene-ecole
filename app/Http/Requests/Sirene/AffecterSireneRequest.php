@@ -4,6 +4,20 @@ namespace App\Http\Requests\Sirene;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="AffecterSireneRequest",
+ *     title="Affect Sirene Request",
+ *     description="Request body for affecting a sirene to a site",
+ *     required={"site_id"},
+ *     @OA\Property(
+ *         property="site_id",
+ *         type="string",
+ *         format="uuid",
+ *         description="ID of the site to affect the sirene to"
+ *     )
+ * )
+ */
 class AffecterSireneRequest extends FormRequest
 {
     /**

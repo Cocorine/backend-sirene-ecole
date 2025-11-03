@@ -14,6 +14,10 @@ class Technicien extends Model
 {
     use HasUlid, SoftDeletes;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $table = 'techniciens';
 
     protected $fillable = [

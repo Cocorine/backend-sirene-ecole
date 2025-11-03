@@ -143,6 +143,1678 @@
                     }
                 }
             }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Display a listing of roles",
+                "operationId": "getRoles",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of roles per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Role"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Store a newly created role in storage",
+                "operationId": "storeRole",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Role created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Display the specified role",
+                "operationId": "getRoleById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the role to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Update the specified role in storage",
+                "operationId": "updateRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the role to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Role updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Remove the specified role from storage",
+                "operationId": "deleteRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the role to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Role deleted successfully"
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/{roleId}/permissions/assign": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Assign permissions to a role",
+                "operationId": "assignPermissionsToRole",
+                "parameters": [
+                    {
+                        "name": "roleId",
+                        "in": "path",
+                        "description": "ID of the role to assign permissions to",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignPermissionsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permissions assigned successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permissions assigned successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "permission_ids": [
+                                                    "The permission ids field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/{roleId}/permissions/sync": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Sync permissions for a role",
+                "operationId": "syncPermissionsForRole",
+                "parameters": [
+                    {
+                        "name": "roleId",
+                        "in": "path",
+                        "description": "ID of the role to sync permissions for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SyncPermissionsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permissions synced successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permissions synced successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "permission_ids": [
+                                                    "The permission ids field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/roles/{roleId}/permissions/remove": {
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Remove permissions from a role",
+                "operationId": "removePermissionsFromRole",
+                "parameters": [
+                    {
+                        "name": "roleId",
+                        "in": "path",
+                        "description": "ID of the role to remove permissions from",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "ulid",
+                            "example": "01ARZ3NDEKTSV4WS06X8Q1J8Q1"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RemovePermissionsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Permissions removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Permissions removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "permission_ids": [
+                                                    "The permission ids field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/request-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Request OTP for login",
+                "description": "Demander un code OTP pour connexion",
+                "operationId": "10dbaf9fdc7345c44ec7c44e73d10b35",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RequestOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Code OTP envoyé avec succès."
+                                        },
+                                        "expires_in": {
+                                            "type": "string",
+                                            "example": "5 minutes"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "telephone": [
+                                                    "Aucun compte associé à ce numéro de téléphone."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/verify-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify OTP and log in",
+                "description": "Vérifier l'OTP et se connecter",
+                "operationId": "abcb5741589707b15c7ecac7a67c13aa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Connexion réussie."
+                                        },
+                                        "access_token": {
+                                            "description": "Bearer token",
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/AuthUser"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "otp": [
+                                                    "Code OTP invalide ou expiré."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in with identifier and password",
+                "description": "Connexion classique avec identifiant et mot de passe",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Connexion réussie."
+                                        },
+                                        "access_token": {
+                                            "description": "Bearer token",
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/AuthUser"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "identifiant": [
+                                                    "Identifiants incorrects."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log out the authenticated user",
+                "description": "Déconnexion",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Déconnexion réussie."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get authenticated user details",
+                "description": "Obtenir les informations de l'utilisateur connecté",
+                "operationId": "b5de204f5e452ef51327c691aa99e77c",
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/AuthUser"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/change-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Change authenticated user's password",
+                "description": "Changer le mot de passe de l'utilisateur connecté",
+                "operationId": "6ddeabdbd0e16e0dc7cda8677c0ba08e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangerMotDePasseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Mot de passe changé avec succès."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "ancien_mot_de_passe": [
+                                                    "L'ancien mot de passe est incorrect."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/sirenes": {
+            "get": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "List all sirenes",
+                "description": "Lister toutes les sirènes",
+                "operationId": "d6660ba4a14cc54751b48746ec218da0",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of sirenes per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sirene"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Create a new sirene (Admin only)",
+                "description": "Créer une nouvelle sirène (Admin seulement - génération à l'usine)",
+                "operationId": "6ae8c0589d294e9e1ad1d0accf9b111d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSireneRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sirene created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sirene"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/sirenes/{id}": {
+            "get": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Get sirene details by ID",
+                "description": "Afficher les détails d'une sirène",
+                "operationId": "ec68e353ca3cf0348cfb99751cd7717b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the sirene to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sirene"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sirene not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirene not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Update an existing sirene",
+                "description": "Mettre à jour une sirène",
+                "operationId": "bf1e8cedaa14171fd67923d4afc583f8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the sirene to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSireneRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sirene updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sirene"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sirene not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirene not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Delete a sirene by ID",
+                "description": "Supprimer une sirène",
+                "operationId": "3f75f52f33a643d3e841eda4c538558c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the sirene to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sirene deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sirene not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirene not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/sirenes/numero-serie/{numeroSerie}": {
+            "get": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Get sirene details by serial number",
+                "description": "Rechercher une sirène par numéro de série",
+                "operationId": "1f0613a79c653f88d47a0f039c881f3c",
+                "parameters": [
+                    {
+                        "name": "numeroSerie",
+                        "in": "path",
+                        "description": "Serial number of the sirene to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sirene"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sirene not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirene not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/sirenes/{id}/affecter": {
+            "post": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Affect a sirene to a site",
+                "description": "Affecter une sirène à un site",
+                "operationId": "82593255aca606ae99a30ff80003d438",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the sirene to affect",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AffecterSireneRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sirene affected successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirène affectée avec succès."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sirene or Site not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sirene or Site not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/sirenes/disponibles": {
+            "get": {
+                "tags": [
+                    "Sirenes"
+                ],
+                "summary": "Get available sirenes (not assigned to any site)",
+                "description": "Obtenir les sirènes disponibles (non affectées)",
+                "operationId": "dbd50041358d3d767316825fea69231d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Sirene"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -162,6 +1834,649 @@
                     }
                 },
                 "type": "object"
+            },
+            "Role": {
+                "title": "Role",
+                "description": "Role model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the permission",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "description": "Name of the permission",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthUser": {
+                "title": "Authenticated User",
+                "description": "User object returned upon successful authentication",
+                "properties": {
+                    "id": {
+                        "description": "User ID",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "nom_utilisateur": {
+                        "description": "Username",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "User type (e.g., ADMIN, ECOLE)",
+                        "type": "string"
+                    },
+                    "telephone": {
+                        "description": "User's phone number",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "User's email address",
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "doit_changer_mot_de_passe": {
+                        "description": "Indicates if user must change password",
+                        "type": "boolean"
+                    },
+                    "mot_de_passe_change": {
+                        "description": "Indicates if user has changed password at least once",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "Sirene": {
+                "title": "Sirene",
+                "description": "Sirene model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the sirene",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "numero_serie": {
+                        "description": "Serial number of the sirene",
+                        "type": "string"
+                    },
+                    "modele_id": {
+                        "description": "ID of the sirene model",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "date_fabrication": {
+                        "description": "Manufacturing date",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "etat": {
+                        "description": "State of the sirene (e.g., NEUF, BON)",
+                        "type": "string"
+                    },
+                    "statut": {
+                        "description": "Status of the sirene",
+                        "type": "string"
+                    },
+                    "notes": {
+                        "description": "Additional notes",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "ecole_id": {
+                        "description": "ID of the associated school",
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "site_id": {
+                        "description": "ID of the associated site",
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AssignPermissionsRequest": {
+                "title": "Assign Permissions Request",
+                "description": "Request body for assigning permissions to a role",
+                "required": [
+                    "permission_ids"
+                ],
+                "properties": {
+                    "permission_ids": {
+                        "description": "Array of permission IDs to assign to the role",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CreateRoleRequest": {
+                "title": "Create Role Request",
+                "description": "Request body for creating a new role",
+                "required": [
+                    "nom"
+                ],
+                "properties": {
+                    "nom": {
+                        "description": "Name of the role",
+                        "type": "string"
+                    },
+                    "permission_ids": {
+                        "description": "Array of permission IDs to assign to the role",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RemovePermissionsRequest": {
+                "title": "Remove Permissions Request",
+                "description": "Request body for removing permissions from a role",
+                "required": [
+                    "permission_ids"
+                ],
+                "properties": {
+                    "permission_ids": {
+                        "description": "Array of permission IDs to remove from the role",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SyncPermissionsRequest": {
+                "title": "Sync Permissions Request",
+                "description": "Request body for syncing permissions for a role",
+                "required": [
+                    "permission_ids"
+                ],
+                "properties": {
+                    "permission_ids": {
+                        "description": "Array of permission IDs to sync for the role",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRoleRequest": {
+                "title": "Update Role Request",
+                "description": "Request body for updating a role",
+                "properties": {
+                    "nom": {
+                        "description": "Name of the role",
+                        "type": "string"
+                    },
+                    "permission_ids": {
+                        "description": "Array of permission IDs to assign to the role",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ChangerMotDePasseRequest": {
+                "title": "Change Password Request",
+                "description": "Request body for changing user password",
+                "required": [
+                    "nouveau_mot_de_passe",
+                    "nouveau_mot_de_passe_confirmation"
+                ],
+                "properties": {
+                    "ancien_mot_de_passe": {
+                        "description": "User's current password (optional, if admin is changing password)",
+                        "type": "string",
+                        "format": "password",
+                        "nullable": true
+                    },
+                    "nouveau_mot_de_passe": {
+                        "description": "User's new password",
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 8
+                    },
+                    "nouveau_mot_de_passe_confirmation": {
+                        "description": "Confirmation of the new password",
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 8
+                    }
+                },
+                "type": "object"
+            },
+            "LoginRequest": {
+                "title": "Login Request",
+                "description": "Request body for user login with identifier and password",
+                "required": [
+                    "identifiant",
+                    "mot_de_passe"
+                ],
+                "properties": {
+                    "identifiant": {
+                        "description": "User's identifier (e.g., username, email, phone number)",
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "mot_de_passe": {
+                        "description": "User's password",
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 6
+                    }
+                },
+                "type": "object"
+            },
+            "RequestOtpRequest": {
+                "title": "Request OTP Request",
+                "description": "Request body for requesting an OTP",
+                "required": [
+                    "telephone"
+                ],
+                "properties": {
+                    "telephone": {
+                        "description": "User's phone number",
+                        "type": "string",
+                        "pattern": "^[0-9]{8,15}$"
+                    }
+                },
+                "type": "object"
+            },
+            "VerifyOtpRequest": {
+                "title": "Verify OTP Request",
+                "description": "Request body for verifying an OTP and logging in",
+                "required": [
+                    "telephone",
+                    "otp"
+                ],
+                "properties": {
+                    "telephone": {
+                        "description": "User's phone number",
+                        "type": "string",
+                        "pattern": "^[0-9]{8,15}$"
+                    },
+                    "otp": {
+                        "description": "OTP code",
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 6,
+                        "pattern": "^[0-9]{6}$"
+                    }
+                },
+                "type": "object"
+            },
+            "InscriptionEcoleRequest": {
+                "title": "School Registration Request",
+                "description": "Request body for registering a new school",
+                "required": [
+                    "nom",
+                    "nom_complet",
+                    "telephone_contact",
+                    "types_etablissement",
+                    "responsable_nom",
+                    "responsable_prenom",
+                    "responsable_telephone",
+                    "site_principal"
+                ],
+                "properties": {
+                    "nom": {
+                        "description": "Name of the school",
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "nom_complet": {
+                        "description": "Full name of the school",
+                        "type": "string"
+                    },
+                    "telephone_contact": {
+                        "description": "Contact phone number for the school",
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "email_contact": {
+                        "description": "Contact email for the school",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "nullable": true
+                    },
+                    "types_etablissement": {
+                        "description": "Array of establishment type IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    "responsable_nom": {
+                        "description": "Last name of the person in charge",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "responsable_prenom": {
+                        "description": "First name of the person in charge",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "responsable_telephone": {
+                        "description": "Phone number of the person in charge",
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "site_principal": {
+                        "title": "Main Site Request",
+                        "description": "Main site details for school registration",
+                        "required": [
+                            "adresse",
+                            "ville_id",
+                            "sirene"
+                        ],
+                        "properties": {
+                            "nom": {
+                                "description": "Name of the main site",
+                                "type": "string",
+                                "maxLength": 255,
+                                "nullable": true
+                            },
+                            "adresse": {
+                                "description": "Address of the main site",
+                                "type": "string",
+                                "maxLength": 500
+                            },
+                            "ville_id": {
+                                "description": "ID of the city for the main site",
+                                "type": "string",
+                                "format": "uuid"
+                            },
+                            "latitude": {
+                                "description": "Latitude of the main site",
+                                "type": "number",
+                                "format": "float",
+                                "maximum": 90,
+                                "minimum": -90,
+                                "nullable": true
+                            },
+                            "longitude": {
+                                "description": "Longitude of the main site",
+                                "type": "number",
+                                "format": "float",
+                                "maximum": 180,
+                                "minimum": -180,
+                                "nullable": true
+                            },
+                            "sirene": {
+                                "title": "Sirene Request",
+                                "description": "Sirene details for site creation",
+                                "required": [
+                                    "numero_serie"
+                                ],
+                                "properties": {
+                                    "numero_serie": {
+                                        "description": "Serial number of the sirene",
+                                        "type": "string",
+                                        "example": "SN123456789"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "sites_annexe": {
+                        "description": "Array of annex sites (optional for multi-site schools)",
+                        "type": "array",
+                        "items": {
+                            "title": "Annex Site Request",
+                            "description": "Annex site details for school registration",
+                            "required": [
+                                "nom",
+                                "sirene"
+                            ],
+                            "properties": {
+                                "nom": {
+                                    "description": "Name of the annex site",
+                                    "type": "string",
+                                    "maxLength": 255
+                                },
+                                "adresse": {
+                                    "description": "Address of the annex site",
+                                    "type": "string",
+                                    "maxLength": 500,
+                                    "nullable": true
+                                },
+                                "ville_id": {
+                                    "description": "ID of the city for the annex site",
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "nullable": true
+                                },
+                                "latitude": {
+                                    "description": "Latitude of the annex site",
+                                    "type": "number",
+                                    "format": "float",
+                                    "maximum": 90,
+                                    "minimum": -90,
+                                    "nullable": true
+                                },
+                                "longitude": {
+                                    "description": "Longitude of the annex site",
+                                    "type": "number",
+                                    "format": "float",
+                                    "maximum": 180,
+                                    "minimum": -180,
+                                    "nullable": true
+                                },
+                                "sirene": {
+                                    "title": "Sirene Request",
+                                    "description": "Sirene details for site creation",
+                                    "required": [
+                                        "numero_serie"
+                                    ],
+                                    "properties": {
+                                        "numero_serie": {
+                                            "description": "Serial number of the sirene",
+                                            "type": "string",
+                                            "example": "SN123456789"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateEcoleRequest": {
+                "title": "Update School Request",
+                "description": "Request body for updating school information",
+                "properties": {
+                    "nom": {
+                        "description": "Name of the school",
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "nom_complet": {
+                        "description": "Full name of the school",
+                        "type": "string",
+                        "maxLength": 500,
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "School's email address",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "telephone": {
+                        "description": "School's phone number",
+                        "type": "string",
+                        "maxLength": 20,
+                        "nullable": true
+                    },
+                    "email_contact": {
+                        "description": "Contact email for the school",
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "telephone_contact": {
+                        "description": "Contact phone number for the school",
+                        "type": "string",
+                        "maxLength": 20,
+                        "nullable": true
+                    },
+                    "adresse": {
+                        "description": "Address of the school",
+                        "type": "string",
+                        "maxLength": 500,
+                        "nullable": true
+                    },
+                    "responsable_nom": {
+                        "description": "Last name of the person in charge",
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "responsable_prenom": {
+                        "description": "First name of the person in charge",
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "responsable_telephone": {
+                        "description": "Phone number of the person in charge",
+                        "type": "string",
+                        "maxLength": 20,
+                        "nullable": true
+                    },
+                    "latitude": {
+                        "description": "Latitude of the school",
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 90,
+                        "minimum": -90,
+                        "nullable": true
+                    },
+                    "longitude": {
+                        "description": "Longitude of the school",
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 180,
+                        "minimum": -180,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "AffecterSireneRequest": {
+                "title": "Affect Sirene Request",
+                "description": "Request body for affecting a sirene to a site",
+                "required": [
+                    "site_id"
+                ],
+                "properties": {
+                    "site_id": {
+                        "description": "ID of the site to affect the sirene to",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateSireneRequest": {
+                "title": "Create Sirene Request",
+                "description": "Request body for creating a new sirene",
+                "required": [
+                    "modele_id",
+                    "date_fabrication"
+                ],
+                "properties": {
+                    "modele_id": {
+                        "description": "ID of the sirene model",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "date_fabrication": {
+                        "description": "Manufacturing date of the sirene",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "notes": {
+                        "description": "Additional notes for the sirene",
+                        "type": "string",
+                        "maxLength": 1000,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateSireneRequest": {
+                "title": "Update Sirene Request",
+                "description": "Request body for updating an existing sirene",
+                "properties": {
+                    "modele_id": {
+                        "description": "ID of the sirene model",
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "etat": {
+                        "description": "State of the sirene",
+                        "type": "string",
+                        "enum": [
+                            "NEUF",
+                            "BON",
+                            "MOYEN",
+                            "MAUVAIS",
+                            "HORS_SERVICE"
+                        ],
+                        "nullable": true
+                    },
+                    "statut": {
+                        "description": "Status of the sirene",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "description": "Additional notes for the sirene",
+                        "type": "string",
+                        "maxLength": 1000,
+                        "nullable": true
+                    },
+                    "date_fabrication": {
+                        "description": "Manufacturing date of the sirene",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -169,6 +2484,18 @@
         {
             "name": "Permissions",
             "description": "API Endpoints of Permissions"
+        },
+        {
+            "name": "Roles",
+            "description": "API Endpoints of Roles"
+        },
+        {
+            "name": "Authentication",
+            "description": "API Endpoints for User Authentication"
+        },
+        {
+            "name": "Sirenes",
+            "description": "API Endpoints for Sirene Management"
         }
     ]
 }

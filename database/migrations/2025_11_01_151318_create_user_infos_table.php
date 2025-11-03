@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id', 26)->primary(); // ULID
             $table->string('user_id', 26); // ULID
             $table->string('nom');
-            $table->string('prenom');
+            $table->string('prenom')->nullable();
             $table->string('telephone', 20)->unique();
             $table->string('email', 100)->unique()->nullable();
             $table->string('ville_id', 26)->nullable(); // ULID

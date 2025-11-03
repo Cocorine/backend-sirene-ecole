@@ -4,6 +4,20 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="RequestOtpRequest",
+ *     title="Request OTP Request",
+ *     description="Request body for requesting an OTP",
+ *     required={"telephone"},
+ *     @OA\Property(
+ *         property="telephone",
+ *         type="string",
+ *         description="User's phone number",
+ *         pattern="^[0-9]{8,15}$"
+ *     )
+ * )
+ */
 class RequestOtpRequest extends FormRequest
 {
     public function authorize(): bool

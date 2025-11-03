@@ -13,6 +13,10 @@ class RapportIntervention extends Model
 {
     use HasUlid, SoftDeletes;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $table = 'rapports_intervention';
 
     protected $fillable = [

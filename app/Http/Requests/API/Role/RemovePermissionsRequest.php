@@ -4,6 +4,23 @@ namespace App\Http\Requests\API\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="RemovePermissionsRequest",
+ *     title="Remove Permissions Request",
+ *     description="Request body for removing permissions from a role",
+ *     required={"permission_ids"},
+ *     @OA\Property(
+ *         property="permission_ids",
+ *         type="array",
+ *         description="Array of permission IDs to remove from the role",
+ *         @OA\Items(
+ *             type="string",
+ *             format="uuid"
+ *         )
+ *     )
+ * )
+ */
 class RemovePermissionsRequest extends FormRequest
 {
     /**

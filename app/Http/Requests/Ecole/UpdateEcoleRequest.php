@@ -4,7 +4,105 @@ namespace App\Http\Requests\Ecole;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateEcoleRequest",
+ *     title="Update School Request",
+ *     description="Request body for updating school information",
+ *     @OA\Property(
+ *         property="nom",
+ *         type="string",
+ *         description="Name of the school",
+ *         maxLength=255,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="nom_complet",
+ *         type="string",
+ *         description="Full name of the school",
+ *         maxLength=500,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         description="School's email address",
+ *         maxLength=255,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="telephone",
+ *         type="string",
+ *         description="School's phone number",
+ *         maxLength=20,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="email_contact",
+ *         type="string",
+ *         format="email",
+ *         description="Contact email for the school",
+ *         maxLength=255,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="telephone_contact",
+ *         type="string",
+ *         description="Contact phone number for the school",
+ *         maxLength=20,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="adresse",
+ *         type="string",
+ *         description="Address of the school",
+ *         maxLength=500,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_nom",
+ *         type="string",
+ *         description="Last name of the person in charge",
+ *         maxLength=255,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_prenom",
+ *         type="string",
+ *         description="First name of the person in charge",
+ *         maxLength=255,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="responsable_telephone",
+ *         type="string",
+ *         description="Phone number of the person in charge",
+ *         maxLength=20,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="latitude",
+ *         type="number",
+ *         format="float",
+ *         description="Latitude of the school",
+ *         minimum=-90,
+ *         maximum=90,
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="longitude",
+ *         type="number",
+ *         format="float",
+ *         description="Longitude of the school",
+ *         minimum=-180,
+ *         maximum=180,
+ *         nullable=true
+ *     )
+ * )
+ */
 class UpdateEcoleRequest extends FormRequest
 {
     /**

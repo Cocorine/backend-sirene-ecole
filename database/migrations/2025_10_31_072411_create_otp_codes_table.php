@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('utilise')->default(false); // MCD field
             $table->string('telephone');
             $table->string('code', 6);
-            $table->boolean('valide')->default(false); // MCD field
+            $table->boolean('valide')->default(true); // MCD field
             $table->boolean('est_verifie')->default(false); // MCD field name (was verifie)
             $table->boolean('verifie')->default(false);
             $table->timestamp('date_expiration')->nullable();

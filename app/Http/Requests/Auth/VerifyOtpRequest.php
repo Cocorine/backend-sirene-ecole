@@ -4,6 +4,28 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="VerifyOtpRequest",
+ *     title="Verify OTP Request",
+ *     description="Request body for verifying an OTP and logging in",
+ *     required={"telephone", "otp"},
+ *     @OA\Property(
+ *         property="telephone",
+ *         type="string",
+ *         description="User's phone number",
+ *         pattern="^[0-9]{8,15}$"
+ *     ),
+ *     @OA\Property(
+ *         property="otp",
+ *         type="string",
+ *         description="OTP code",
+ *         pattern="^[0-9]{6}$",
+ *         minLength=6,
+ *         maxLength=6
+ *     )
+ * )
+ */
 class VerifyOtpRequest extends FormRequest
 {
     public function authorize(): bool

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Contracts\EcoleRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Contracts\SireneRepositoryInterface;
+use App\Services\Contracts\AbonnementServiceInterface;
 use App\Services\Contracts\EcoleServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -15,15 +16,18 @@ class EcoleService extends BaseService implements EcoleServiceInterface
 {
     protected $userRepository;
     protected $sireneRepository;
+    protected $abonnementService;
 
     public function __construct(
         EcoleRepositoryInterface $repository,
         UserRepositoryInterface $userRepository,
-        SireneRepositoryInterface $sireneRepository
+        SireneRepositoryInterface $sireneRepository,
+        AbonnementServiceInterface $abonnementService
     ) {
         parent::__construct($repository);
         $this->userRepository = $userRepository;
         $this->sireneRepository = $sireneRepository;
+        $this->abonnementService = $abonnementService;
     }
 
     /**
@@ -123,6 +127,21 @@ class EcoleService extends BaseService implements EcoleServiceInterface
 
             // Affecter la sirène au site
             $this->sireneRepository->affecterSireneASite($sirene->id, $site->id);
+
+            // Créer un abonnement en attente pour l'école
+            $abonnement = $this->abonnementService->create([
+                'ecole_id' => $ecoleId,
+                'site_id' => $site->id, // Link abonnement to the site
+                'sirene_id' => $sirene->id, // Link abonnement to the sirene
+                'statut' => \App\Enums\StatutAbonnement::EN_ATTENTE->value,
+                // Autres champs nécessaires pour l'abonnement, si applicable
+                // Par exemple, date_debut, date_fin, etc.
+                // Pour l'instant, nous créons un abonnement minimal en attente.
+            ]);
+
+            // Générer et sauvegarder le QR code pour l'abonnement
+            $qrCodePath = $abonnement->generateAndSaveQrCode();
+            $abonnement->update(['qr_code_path' => $qrCodePath]);
         }
 
         return $site;

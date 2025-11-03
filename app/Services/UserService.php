@@ -21,9 +21,9 @@ class UserService extends BaseService implements UserServiceInterface
     {
         try {
             DB::beginTransaction();
-            $userInfoData = $data['userInfoData'] ?? [];
-            unset($data['userInfoData']);
-            $model = $this->repository->create($data, $userInfoData);
+            /*$userInfoData = $data['userInfoData'] ?? [];
+            unset($data['userInfoData']);*/
+            $model = $this->repository->create($data);
             DB::commit();
             return $this->createdResponse($model);
         } catch (\Exception $e) {
@@ -37,9 +37,9 @@ class UserService extends BaseService implements UserServiceInterface
     {
         try {
             DB::beginTransaction();
-            $userInfoData = $data['userInfoData'] ?? [];
-            unset($data['userInfoData']);
-            $this->repository->update($id, $data, $userInfoData);
+            /*$userInfoData = $data['userInfoData'] ?? [];
+            unset($data['userInfoData']);*/
+            $this->repository->update($id, $data);
             DB::commit();
             $model = $this->repository->find($id);
             return $this->successResponse(null, $model);

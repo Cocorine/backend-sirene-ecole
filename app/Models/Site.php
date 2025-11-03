@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasUlid;
+use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,9 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Site extends Model
 {
-    use HasUlid, SoftDeletes;
+    use HasUlid, SoftDeletes, SoftDeletesUniqueFields;
 
     protected $table = 'sites';
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'ecole_principale_id',
@@ -33,6 +38,16 @@ class Site extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    /**
+     * Get the unique fields that should be updated on soft delete.
+     *
+     * @return array
+     */
+    protected function getUniqueSoftDeleteFields(): array
+    {
+        return ['nom'];
+    }
 
     // Relations
     public function ecolePrincipale(): BelongsTo
