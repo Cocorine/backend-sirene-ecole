@@ -43,6 +43,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // This customizes the HTTP response for exceptions.
         $exceptions->renderable(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
+
+                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
+                }
+
                 $statusCode = match (true) {
                     method_exists($e, 'getStatusCode') => $e->getStatusCode(),
                     $e instanceof ValidationException => 422,
@@ -67,4 +72,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json($response, $statusCode);
             }
         });
-    })->create();
+    })
+    ->withSchedule(function ($schedule) {
+        $schedule->command('abonnements:renouveler-auto')->daily();
+    })
+    ->create();

@@ -21,6 +21,13 @@ abstract class BaseService implements BaseServiceInterface
         $this->repository = $repository;
     }
 
+    /**
+     * Get the repository instance.
+     */
+    public function getRepository(): BaseRepositoryInterface{
+        return $this->repository;
+    }
+
     public function getAll(int $perPage = 15, array $relations = []): JsonResponse
     {
         try {

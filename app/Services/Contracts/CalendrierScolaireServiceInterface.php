@@ -23,5 +23,14 @@ interface CalendrierScolaireServiceInterface extends BaseServiceInterface
      */
     public function calculateSchoolDays(string $calendrierScolaireId, string $ecoleId = null): \Illuminate\Http\JsonResponse;
 
+    /**
+     * Load the school calendar for a specific school, including global and school-specific holidays.
+     *
+     * @param string $calendrierScolaireId The ID of the school calendar.
+     * @param string|null $ecoleId The ID of the school (optional).
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCalendrierScolaireWithJoursFeries(string $calendrierScolaireId, string $ecoleId = null): \Illuminate\Http\JsonResponse;
+
     // Add specific methods for CalendrierScolaireService here if needed
 }

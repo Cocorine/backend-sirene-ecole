@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Repositories\Contracts\CalendrierScolaireRepositoryInterface;
 use App\Services\Contracts\CalendrierScolaireServiceInterface;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class CalendrierScolaireService extends BaseService implements CalendrierScolaireServiceInterface
 {
@@ -29,7 +31,7 @@ class CalendrierScolaireService extends BaseService implements CalendrierScolair
             }
 
             return $this->successResponse(null, $calendrierScolaire->joursFeries);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::getJoursFeries - " . $e->getMessage());
             return $this->errorResponse($e->getMessage(), 500);
         }
@@ -110,8 +112,66 @@ class CalendrierScolaireService extends BaseService implements CalendrierScolair
             }
 
             return $this->successResponse(null, ['school_days' => $schoolDays]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Error in " . get_class($this) . "::calculateSchoolDays - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Load the school calendar for a specific school, including global and school-specific holidays.
+     *
+     * @param string $calendrierScolaireId The ID of the school calendar.
+     * @param string|null $ecoleId The ID of the school (optional).
+     * @return JsonResponse
+     */
+    public function getCalendrierScolaireWithJoursFeries(string $calendrierScolaireId, string $ecoleId = null): JsonResponse
+    {
+        try {
+            $calendrierScolaire = $this->repository->find($calendrierScolaireId, relations: ['joursFeries']);
+
+            if (!$calendrierScolaire) {
+                return $this->notFoundResponse('School calendar not found.');
+            }
+
+            $globalJoursFeries = $calendrierScolaire->joursFeries->map(function ($jourFerie) {
+                return [
+                    'id' => $jourFerie->id,
+                    'nom' => $jourFerie->nom,
+                    'date' => $jourFerie->date_ferie->format('Y-m-d'),
+                    'actif' => $jourFerie->actif,
+                    'type' => $jourFerie->type,
+                    'recurrent' => $jourFerie->recurrent,
+                ];
+            })->keyBy('date'); // Key by date for easy merging
+
+            $mergedJoursFeries = $globalJoursFeries;
+
+            if ($ecoleId) {
+                $ecole = \App\Models\Ecole::with('joursFeries')->find($ecoleId);
+                if ($ecole) {
+                    $ecoleJoursFeries = $ecole->joursFeries->map(function ($jourFerie) {
+                        return [
+                            'id' => $jourFerie->id,
+                            'nom' => $jourFerie->nom,
+                            'date' => $jourFerie->date_ferie->format('Y-m-d'),
+                            'actif' => $jourFerie->actif,
+                            'type' => $jourFerie->type,
+                            'recurrent' => $jourFerie->recurrent,
+                        ];
+                    })->keyBy('date');
+
+                    // Merge school-specific holidays, overriding global ones
+                    $mergedJoursFeries = $globalJoursFeries->merge($ecoleJoursFeries);
+                }
+            }
+
+            $calendrierScolaireArray = $calendrierScolaire->toArray();
+            $calendrierScolaireArray['jours_feries_merged'] = $mergedJoursFeries->values()->toArray(); // Convert back to indexed array
+
+            return $this->successResponse(null, $calendrierScolaireArray);
+        } catch (\Exception $e) {
+            Log::error("Error in " . get_class($this) . "::getCalendrierScolaireWithJoursFeries - " . $e->getMessage());
             return $this->errorResponse($e->getMessage(), 500);
         }
     }

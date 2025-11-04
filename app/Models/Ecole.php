@@ -106,6 +106,16 @@ class Ecole extends Model
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
+    public function moyensPaiement(): MorphMany
+    {
+        return $this->morphMany(MoyenPaiement::class, 'paiementable');
+    }
+
+    public function moyenPaiementDefaut()
+    {
+        return $this->morphOne(MoyenPaiement::class, 'paiementable')->where('par_defaut', true)->where('actif', true);
+    }
+
     // Helpers
     public function hasActiveSubscription(): bool
     {

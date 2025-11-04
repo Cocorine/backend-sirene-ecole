@@ -2,9 +2,10 @@
 
 namespace App\Services\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\JourFerie;
+use Illuminate\Database\Eloquent\Collection;
 
 interface JourFerieServiceInterface extends BaseServiceInterface
 {
-    // Add specific methods for JourFerieService here if needed
+    
 }

@@ -86,22 +86,75 @@ class CreateCalendrierScolaireRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'date_rentree' => \Carbon\Carbon::createFromFormat('d/m/Y', $this->date_rentree)->format('Y-m-d'),
+            'date_fin_annee' => \Carbon\Carbon::createFromFormat('d/m/Y', $this->date_fin_annee)->format('Y-m-d'),
+        ]);
+
+        if ($this->has('periodes_vacances')) {
+            $periodesVacances = collect($this->periodes_vacances)->map(function ($periode) {
+                $periode['date_debut'] = \Carbon\Carbon::createFromFormat('d/m/Y', $periode['date_debut'])->format('Y-m-d');
+                $periode['date_fin'] = \Carbon\Carbon::createFromFormat('d/m/Y', $periode['date_fin'])->format('Y-m-d');
+                return $periode;
+            })->toArray();
+            $this->merge(['periodes_vacances' => $periodesVacances]);
+        }
+
+        if ($this->has('jours_feries_defaut')) {
+            $joursFeriesDefaut = collect($this->jours_feries_defaut)->map(function ($jourFerie) {
+                $jourFerie['date'] = \Carbon\Carbon::createFromFormat('d/m/Y', $jourFerie['date'])->format('Y-m-d');
+                return $jourFerie;
+            })->toArray();
+            $this->merge(['jours_feries_defaut' => $joursFeriesDefaut]);
+        }
+    }
+
     public function rules(): array
     {
         return [
             'pays_id' => ['required', 'string', 'exists:pays,id'],
-            'annee_scolaire' => ['required', 'string', 'max:20'],
+            'annee_scolaire' => [
+                'required',
+                'regex:/^\d{4}-\d{4}$/', // Ensures format YYYY-YYYY
+                function ($attribute, $value, $fail) {
+                    $years = explode('-', $value);
+                    $startYear = (int) $years[0];
+                    $endYear = (int) $years[1];
+
+                    if ($endYear !== $startYear + 1) {
+                        $fail('The ' . $attribute . ' must be in consecutive years (e.g., 2025-2026).');
+                    }
+
+                    $currentYear = (int) date('Y');
+                    $currentMonth = (int) date('m');
+
+                    // Determine the current academic year based on the month
+                    // Assuming academic year starts around September (month 9)
+                    $academicCurrentYearStart = ($currentMonth >= 9) ? $currentYear : $currentYear - 1;
+                    $academicCurrentYearEnd = $academicCurrentYearStart + 1;
+
+                    if ($startYear < $academicCurrentYearStart) {
+                        $fail('The ' . $attribute . ' cannot be in a past academic year.');
+                    }
+
+                    // Allow current and next academic year
+                    if ($startYear > $academicCurrentYearStart + 1) {
+                        $fail('The ' . $attribute . ' cannot be more than one academic year in the future.');
+                    }
+                },
+            ],
             'description' => ['nullable', 'string', 'max:500'],
-            'date_rentree' => ['required', 'date'],
-            'date_fin_annee' => ['required', 'date', 'after:date_rentree'],
+            'date_rentree' => ['required', 'date_format:Y-m-d'],
+            'date_fin_annee' => ['required', 'date_format:Y-m-d', 'after:date_rentree'],
             'periodes_vacances' => ['nullable', 'array'],
             'periodes_vacances.*.nom' => ['required_with:periodes_vacances', 'string', 'max:100'],
-            'periodes_vacances.*.date_debut' => ['required_with:periodes_vacances', 'date'],
-            'periodes_vacances.*.date_fin' => ['required_with:periodes_vacances', 'date', 'after_or_equal:periodes_vacances.*.date_debut'],
+            'periodes_vacances.*.date_debut' => ['required_with:periodes_vacances', 'date_format:Y-m-d'],
+            'periodes_vacances.*.date_fin' => ['required_with:periodes_vacances', 'date_format:Y-m-d', 'after_or_equal:periodes_vacances.*.date_debut'],
             'jours_feries_defaut' => ['nullable', 'array'],
             'jours_feries_defaut.*.nom' => ['required_with:jours_feries_defaut', 'string', 'max:100'],
-            'jours_feries_defaut.*.date' => ['required_with:jours_feries_defaut', 'date'],
-            'actif' => ['boolean'],
+            'jours_feries_defaut.*.date' => ['required_with:jours_feries_defaut', 'date_format:Y-m-d']
         ];
     }
 }

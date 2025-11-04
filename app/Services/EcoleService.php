@@ -153,8 +153,6 @@ class EcoleService extends BaseService implements EcoleServiceInterface
             // Générer et sauvegarder le QR code pour l'abonnement
             $qrCodePath = $abonnement->generateAndSaveQrCode();
             $abonnement->update(['qr_code_path' => $qrCodePath]); */
-
-            dd($ecoleId);
         }
 
         return $site;

@@ -6,6 +6,7 @@ use App\Enums\MoyenPaiement;
 use App\Traits\HasUlid;
 use App\Traits\SoftDeletesUniqueFields;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Paiement extends Model
@@ -50,5 +51,15 @@ class Paiement extends Model
     protected function getUniqueSoftDeleteFields(): array
     {
         return ['numero_transaction', 'reference_externe'];
+    }
+
+    public function abonnement(): BelongsTo
+    {
+        return $this->belongsTo(Abonnement::class, 'abonnement_id');
+    }
+
+    public function ecole(): BelongsTo
+    {
+        return $this->belongsTo(Ecole::class, 'ecole_id');
     }
 }

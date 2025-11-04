@@ -12,14 +12,30 @@ trait HasTokenCrypte
 {
     protected static function bootHasTokenCrypte(): void
     {
-        static::updated(function (Model $model) {
+        static::updating(function (Model $model) {
             // Génère un nouveau token quand l'abonnement passe à 'actif'
-            if ($model->isDirty('statut') && $model->statut->value === 'actif') {
+            /* if ($model->isDirty('statut') && $model->statut->value === 'actif') {
+
                 // Désactiver les anciens tokens pour cet abonnement
                 TokenSirene::where('abonnement_id', $model->id)
                     ->update(['actif' => false]);
 
                 // Générer un nouveau token
+                self::genererTokenCrypte($model);
+            } */
+
+            $oldStatut = $model->getOriginal('statut');
+            $oldValue = $oldStatut instanceof \BackedEnum ? $oldStatut->value : $oldStatut;
+            $newStatut = $model->statut instanceof \BackedEnum
+                ? $model->statut->value
+                : $model->statut;
+
+            // ✅ On compare les valeurs brutes
+            if ($oldValue !== $newStatut && $newStatut === \App\Enums\StatutAbonnement::ACTIF->value) {
+                // Avant de créer un nouveau token, désactiver les anciens
+                \App\Models\TokenSirene::where('abonnement_id', $model->id)
+                    ->update(['actif' => false]);
+
                 self::genererTokenCrypte($model);
             }
         });

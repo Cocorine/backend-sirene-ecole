@@ -9,4 +9,5 @@ interface PaiementServiceInterface extends BaseServiceInterface
     public function traiterPaiement(string $abonnementId, array $paiementData): JsonResponse;
     public function validerPaiement(string $paiementId): JsonResponse;
     public function getPaiementsByAbonnement(string $abonnementId): JsonResponse;
+    public function processAutomaticPayment(string $abonnementId): JsonResponse;
 }

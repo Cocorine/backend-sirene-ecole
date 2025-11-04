@@ -2,80 +2,44 @@
 
 namespace App\Services\Contracts;
 
-use App\Models\Abonnement;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 interface AbonnementServiceInterface extends BaseServiceInterface
 {
+    // Override de BaseServiceInterface avec validation métier
+    public function update(string $id, array $data): JsonResponse;
 
-    /**
-     * Récupérer l'abonnement actif d'une école
-     */
-    //public function getActiveByEcole(string $ecoleId): ?Abonnement;
+    // 1. Gestion du cycle de vie
+    public function renouvelerAbonnement(string $abonnementId): JsonResponse;
+    public function suspendre(string $abonnementId, string $raison): JsonResponse;
+    public function reactiver(string $abonnementId): JsonResponse;
+    public function annuler(string $abonnementId, string $raison): JsonResponse;
 
-    /**
-     * Récupérer tous les abonnements d'une école
-     */
-    //public function getAllByEcole(string $ecoleId): Collection;
+    // 2. Recherche et filtrage
+    public function getAbonnementActif(string $ecoleId): JsonResponse;
+    public function getAbonnementsByEcole(string $ecoleId): JsonResponse;
+    public function getAbonnementsBySirene(string $sireneId): JsonResponse;
+    public function getExpirantBientot(int $jours = 30): JsonResponse;
+    public function getExpires(): JsonResponse;
+    public function getActifs(): JsonResponse;
+    public function getEnAttente(): JsonResponse;
 
-    /**
-     * Renouveler un abonnement
-     */
-    //public function renew(string $abonnementId, array $data): Abonnement;
+    // 3. Vérifications et validations
+    public function estValide(string $abonnementId): JsonResponse;
+    public function ecoleAAbonnementActif(string $ecoleId): JsonResponse;
+    public function peutEtreRenouvele(string $abonnementId): JsonResponse;
 
-    /**
-     * Générer le token crypté de l'abonnement
-     */
-    //public function generateToken(string $abonnementId): Abonnement;
+    // 4. Tâches automatiques
+    public function marquerExpires(): JsonResponse;
+    public function envoyerNotificationsExpiration(): JsonResponse;
+    public function autoRenouveler(): JsonResponse;
 
-    /**
-     * Activer un abonnement après paiement
-     */
-    //public function activateAfterPayment(string $abonnementId): Abonnement;
+    // 5. Statistiques
+    public function getStatistiques(): JsonResponse;
+    public function getRevenusPeriode(string $dateDebut, string $dateFin): JsonResponse;
+    public function getTauxRenouvellement(): JsonResponse;
 
-    /**
-     * Suspendre un abonnement
-     */
-    //public function suspend(string $abonnementId, string $raison): Abonnement;
-
-    /**
-     * Réactiver un abonnement suspendu
-     */
-    //public function reactivate(string $abonnementId): Abonnement;
-
-    /**
-     * Récupérer les abonnements expirant bientôt
-     */
-    //public function getExpiringSoon(int $days = 30): Collection;
-
-    /**
-     * Récupérer les abonnements expirés
-     */
-    //public function getExpired(): Collection;
-
-    /**
-     * Récupérer les abonnements actifs
-     */
-    //public function getActive(): Collection;
-
-    /**
-     * Marquer les abonnements expirés
-     */
-    //public function markExpiredSubscriptions(): int;
-
-    /**
-     * Vérifier la validité d'un abonnement
-     */
-    //public function isValid(string $abonnementId): bool;
-
-    /**
-     * Calculer le prix de renouvellement
-     */
-    //public function calculateRenewalPrice(string $abonnementId): float;
-
-    /**
-     * Obtenir l'historique des abonnements d'une école
-     */
-    //public function getHistory(string $ecoleId): Collection;
+    // 6. Calculs
+    public function calculerPrixRenouvellement(string $abonnementId): JsonResponse;
+    public function getJoursRestants(string $abonnementId): JsonResponse;
 }

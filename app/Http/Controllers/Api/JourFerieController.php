@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JourFerie\CreateJourFerieRequest;
+use App\Http\Requests\JourFerie\UpdateJourFerieRequest;
 use App\Services\Contracts\JourFerieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -55,7 +57,7 @@ class JourFerieController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->get('per_page', 15);
-        return $this->jourFerieService->paginate($perPage);
+        return $this->jourFerieService->getAll($perPage);
     }
 
     /**
@@ -84,7 +86,7 @@ class JourFerieController extends Controller
      *     )
      * )
      */
-    public function store(Request $request): JsonResponse
+    public function store(CreateJourFerieRequest $request): JsonResponse
     {
         return $this->jourFerieService->create($request->all());
     }
@@ -120,7 +122,7 @@ class JourFerieController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return $this->jourFerieService->find($id);
+        return $this->jourFerieService->getById($id);
     }
 
     /**
@@ -163,7 +165,7 @@ class JourFerieController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdateJourFerieRequest $request, string $id): JsonResponse
     {
         return $this->jourFerieService->update($id, $request->all());
     }
@@ -199,5 +201,92 @@ class JourFerieController extends Controller
     public function destroy(string $id): JsonResponse
     {
         return $this->jourFerieService->delete($id);
+    }
+
+    /**
+     * Display a listing of the public holidays for a specific school.
+     *
+     * @OA\\Get(
+     *     path=\"/api/ecoles/{ecoleId}/jours-feries\",
+     *     summary=\"List all public holidays for a specific school\",
+     *     tags={\"Jours Fériés\"},
+     *     security={ {\"passport\": {}} },
+     *     @OA\\Parameter(
+     *         name=\"ecoleId\",
+     *         in=\"path\",
+     *         description=\"ID of the school\",
+     *         required=true,
+     *         @OA\\Schema(type=\"string\", format=\"uuid\")
+     *     ),
+     *     @OA\\Response(
+     *         response=200,
+     *         description=\"Successful operation\",
+     *         @OA\\JsonContent(type=\"array\", @OA\\Items(ref=\"#/components/schemas/JourFerie\"))
+     *     ),
+     *     @OA\\Response(
+     *         response=401,
+     *         description=\"Unauthenticated\",
+     *         @OA\\JsonContent(
+     *             @OA\\Property(property=\"message\", type=\"string\", example=\"Unauthenticated.\")
+     *         )
+     *     )
+     * )
+     */
+    public function indexForEcole(string $ecoleId): JsonResponse
+    {
+        return $this->jourFerieService->findAllBy(['ecole_id' => $ecoleId]);
+    }
+
+    /**
+     * Store a newly created or updated public holiday for a specific school.
+     *
+     * @OA\\Post(
+     *     path=\"/api/ecoles/{ecoleId}/jours-feries\",
+     *     summary=\"Create or update a public holiday for a specific school\",
+     *     tags={\"Jours Fériés\"},
+     *     security={ {\"passport\": {}} },
+     *     @OA\\Parameter(
+     *         name=\"ecoleId\",
+     *         in=\"path\",
+     *         description=\"ID of the school\",
+     *         required=true,
+     *         @OA\\Schema(type=\"string\", format=\"uuid\")
+     *     ),
+     *     @OA\\RequestBody(
+     *         required=true,
+     *         @OA\\JsonContent(ref=\"#/components/schemas/CreateJourFerieRequest\")
+     *     ),
+     *     @OA\\Response(
+     *         response=201,
+     *         description=\"Public holiday created or updated successfully\",
+     *         @OA\\JsonContent(ref=\"#/components/schemas/JourFerie\")
+     *     ),
+     *     @OA\\Response(
+     *         response=422,
+     *         description=\"Validation error\",
+     *         @OA\\JsonContent(
+     *             @OA\\Property(property=\"message\", type=\"string\", example=\"The given data was invalid.\")
+     *         )
+     *     )
+     * )
+     */
+    public function storeForEcole(CreateJourFerieRequest $request, string $ecoleId): JsonResponse
+    {
+        $data = $request->all();
+        $data['ecole_id'] = $ecoleId;
+
+        // Check if a JourFerie with the same date already exists for this school
+        $existingJourFerie = $this->jourFerieService->findBy([
+            'ecole_id' => $ecoleId,
+            'date_ferie' => $data['date_ferie'],
+        ]);
+
+        if ($existingJourFerie) {
+            // If it exists, update it
+            return $this->jourFerieService->update($existingJourFerie->id, $data);
+        } else {
+            // Otherwise, create a new one
+            return $this->jourFerieService->create($data);
+        }
     }
 }

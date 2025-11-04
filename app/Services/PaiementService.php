@@ -122,4 +122,54 @@ class PaiementService extends BaseService implements PaiementServiceInterface
 
         return $numero;
     }
+
+    public function processAutomaticPayment(string $abonnementId): JsonResponse
+    {
+        try {
+            DB::beginTransaction();
+
+            $abonnement = $this->abonnementRepository->find($abonnementId);
+            if (!$abonnement) {
+                DB::rollBack();
+                return $this->notFoundResponse('Abonnement non trouvé pour le paiement automatique.');
+            }
+
+            if (!$abonnement->auto_renouvellement) {
+                DB::rollBack();
+                return $this->errorResponse('L\'abonnement n\'est pas configuré pour le renouvellement automatique.', 400);
+            }
+
+            // TODO: Ici, la logique réelle d'intégration avec le fournisseur de paiement
+            // et l'utilisation des informations de paiement enregistrées de l'école.
+            // Pour l'instant, nous simulons un paiement réussi.
+
+            // Créer un enregistrement de paiement "simulé"
+            $paiement = $this->repository->create([
+                'abonnement_id' => $abonnementId,
+                'ecole_id' => $abonnement->ecole_id,
+                'numero_transaction' => $this->generateNumeroTransaction(),
+                'montant' => $abonnement->montant,
+                'moyen' => 'auto_prelevement', // Ou le moyen de paiement réel
+                'statut' => 'en_attente', // Sera validé par validerPaiement
+                'reference_externe' => 'AUTO_PAY_' . Str::random(10),
+                'date_paiement' => now(),
+            ]);
+
+            // Valider le paiement (ce qui activera l'abonnement)
+            $response = $this->validerPaiement($paiement->id);
+
+            if ($response->getStatusCode() !== 200) {
+                DB::rollBack();
+                return $this->errorResponse('Échec de la validation du paiement automatique.', 500);
+            }
+
+            DB::commit();
+            return $this->successResponse('Paiement automatique traité avec succès.', ['paiement_id' => $paiement->id]);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error("Error in PaiementService::processAutomaticPayment - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
 }

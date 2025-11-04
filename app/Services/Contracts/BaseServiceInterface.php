@@ -60,4 +60,9 @@ interface BaseServiceInterface
      * Compter les enregistrements
      */
     public function count(array $criteria = []): JsonResponse;
+
+    /**
+     * Get the repository instance.
+     */
+    public function getRepository(): \App\Repositories\Contracts\BaseRepositoryInterface;
 }

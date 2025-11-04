@@ -19,7 +19,7 @@ class PaiementController extends Controller
     /**
      * Traiter un paiement pour un abonnement
      */
-    public function traiter(Request $request, string $abonnementId): JsonResponse
+    public function traiter(Request $request, string $ecoleId, string $abonnementId = null): JsonResponse
     {
         $validated = $request->validate([
             'montant' => 'required|numeric|min:0',
@@ -27,6 +27,8 @@ class PaiementController extends Controller
             'reference_externe' => 'nullable|string',
             'metadata' => 'nullable|array',
         ]);
+
+        if($abonnementId == null) $abonnementId = $ecoleId;
 
         return $this->paiementService->traiterPaiement($abonnementId, $validated);
     }

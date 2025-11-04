@@ -35,13 +35,17 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp")
  * )
  */
+use App\Services\Contracts\CalendrierScolaireServiceInterface;
+
 class EcoleController extends Controller
 {
     protected $ecoleService;
+    protected $calendrierScolaireService;
 
-    public function __construct(EcoleServiceInterface $ecoleService)
+    public function __construct(EcoleServiceInterface $ecoleService, CalendrierScolaireServiceInterface $calendrierScolaireService)
     {
         $this->ecoleService = $ecoleService;
+        $this->calendrierScolaireService = $calendrierScolaireService;
     }
 
     /**
@@ -246,5 +250,51 @@ class EcoleController extends Controller
     public function destroy(string $id): JsonResponse
     {
         return $this->ecoleService->delete($id);
+    }
+
+    /**
+     * Load the school calendar for the authenticated school, including global and school-specific holidays.
+     *
+     * @OA\\Get(
+     *     path=\"/api/ecoles/me/calendrier-scolaire/{calendrierScolaireId}/with-ecole-holidays\",
+     *     summary=\"Load school calendar with merged holidays for authenticated school\",
+     *     tags={\"Ecoles\"},
+     *     security={ {\"passport\": {}} },
+     *     @OA\\Parameter(
+     *         name=\"calendrierScolaireId\",
+     *         in=\"path\",
+     *         description=\"ID of the school calendar\",
+     *         required=true,
+     *         @OA\\Schema(type=\"string\", format=\"uuid\")
+     *     ),
+     *     @OA\\Response(
+     *         response=200,
+     *         description=\"Successful operation\",
+     *         @OA\\JsonContent(
+     *             @OA\\Property(property=\"id\", type=\"string\", format=\"uuid\"),
+     *             @OA\\Property(property=\"annee_scolaire\", type=\"string\"),
+     *             @OA\\Property(property=\"jours_feries_merged\", type=\"array\", @OA\\Items(type=\"object\"))
+     *         )
+     *     ),
+     *     @OA\\Response(
+     *         response=401,
+     *         description=\"Unauthenticated\",
+     *         @OA\\JsonContent(
+     *             @OA\\Property(property=\"message\", type=\"string\", example=\"Unauthenticated.\")
+     *         )
+     *     ),
+     *     @OA\\Response(
+     *         response=404,
+     *         description=\"School calendar or school not found\",
+     *         @OA\\JsonContent(
+     *             @OA\\Property(property=\"message\", type=\"string\", example=\"School calendar or school not found.\")
+     *         )
+     *     )
+     * )
+     */
+    public function getCalendrierScolaireWithJoursFeries(string $calendrierScolaireId): JsonResponse
+    {
+        $ecoleId = auth()->user()->user_account_type_id;
+        return $this->calendrierScolaireService->getCalendrierScolaireWithJoursFeries($calendrierScolaireId, $ecoleId);
     }
 }

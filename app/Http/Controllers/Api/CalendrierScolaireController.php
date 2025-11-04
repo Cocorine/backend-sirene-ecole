@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CalendrierScolaire\CreateCalendrierScolaireRequest;
+use App\Http\Requests\CalendrierScolaire\UpdateCalendrierScolaireRequest;
 use App\Services\Contracts\CalendrierScolaireServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -55,7 +57,7 @@ class CalendrierScolaireController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->get('per_page', 15);
-        return $this->calendrierScolaireService->paginate($perPage);
+        return $this->calendrierScolaireService->getAll($perPage);
     }
 
     /**
@@ -84,7 +86,7 @@ class CalendrierScolaireController extends Controller
      *     )
      * )
      */
-    public function store(Request $request): JsonResponse
+    public function store(CreateCalendrierScolaireRequest $request): JsonResponse
     {
         return $this->calendrierScolaireService->create($request->all());
     }
@@ -120,7 +122,7 @@ class CalendrierScolaireController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return $this->calendrierScolaireService->find($id);
+        return $this->calendrierScolaireService->getById($id);
     }
 
     /**
@@ -163,7 +165,7 @@ class CalendrierScolaireController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdateCalendrierScolaireRequest $request, string $id): JsonResponse
     {
         return $this->calendrierScolaireService->update($id, $request->all());
     }

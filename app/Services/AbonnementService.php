@@ -154,7 +154,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
             $abonnement = $this->repository->findBy([
                 'ecole_id' => $ecoleId,
                 'statut' => StatutAbonnement::ACTIF
-            ], ['sirene', 'site', 'token']);
+            ], relations: ['sirene', 'site', 'token']);
 
             if (!$abonnement) {
                 return $this->notFoundResponse('Aucun abonnement actif trouvé pour cette école.');
@@ -171,7 +171,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
     public function getAbonnementsByEcole(string $ecoleId): JsonResponse
     {
         try {
-            $abonnements = $this->repository->findAllBy(['ecole_id' => $ecoleId], ['sirene', 'site', 'paiements']);
+            $abonnements = $this->repository->findAllBy(['ecole_id' => $ecoleId], relations: ['sirene', 'site', 'paiements']);
             return $this->successResponse(null, $abonnements);
 
         } catch (Exception $e) {
@@ -183,7 +183,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
     public function getAbonnementsBySirene(string $sireneId): JsonResponse
     {
         try {
-            $abonnements = $this->repository->findAllBy(['sirene_id' => $sireneId], ['ecole', 'site', 'paiements']);
+            $abonnements = $this->repository->findAllBy(['sirene_id' => $sireneId], relations: ['ecole', 'site', 'paiements']);
             return $this->successResponse(null, $abonnements);
 
         } catch (Exception $e) {
@@ -232,7 +232,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
     public function getActifs(): JsonResponse
     {
         try {
-            $abonnements = $this->repository->findAllBy(['statut' => StatutAbonnement::ACTIF], ['ecole', 'sirene', 'site']);
+            $abonnements = $this->repository->findAllBy(['statut' => StatutAbonnement::ACTIF], relations: ['ecole', 'sirene', 'site']);
             return $this->successResponse(null, $abonnements);
 
         } catch (Exception $e) {
@@ -244,7 +244,7 @@ class AbonnementService extends BaseService implements AbonnementServiceInterfac
     public function getEnAttente(): JsonResponse
     {
         try {
-            $abonnements = $this->repository->findAllBy(['statut' => StatutAbonnement::EN_ATTENTE], ['ecole', 'sirene', 'site']);
+            $abonnements = $this->repository->findAllBy(['statut' => StatutAbonnement::EN_ATTENTE], relations: ['ecole', 'sirene', 'site']);
             return $this->successResponse(null, $abonnements);
 
         } catch (Exception $e) {

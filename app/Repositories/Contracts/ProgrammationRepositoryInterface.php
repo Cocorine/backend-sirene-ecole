@@ -2,9 +2,13 @@
 
 namespace App\Repositories\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
-interface ProgrammationRepositoryInterface extends BaseRepositoryInterface
+interface ProgrammationRepositoryInterface
 {
-    // Add specific methods for ProgrammationRepository here if needed
+    /**
+     * @param int $sireneId
+     * @return Collection
+     */
+    public function getBySireneId(int $sireneId): Collection;
 }

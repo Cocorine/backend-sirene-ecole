@@ -50,6 +50,23 @@ class ServiceLayerServiceProvider extends ServiceProvider
             \App\Services\Contracts\TechnicienServiceInterface::class,
             \App\Services\TechnicienService::class
         );
+        $this->app->bind(
+            \App\Services\Contracts\PaiementServiceInterface::class,
+            \App\Services\PaiementService::class
+        );
+        $this->app->bind(
+            \App\Services\Contracts\JourFerieServiceInterface::class,
+            \App\Services\JourFerieService::class
+        );
+        $this->app->bind(
+            \App\Services\Contracts\CalendrierScolaireServiceInterface::class,
+            \App\Services\CalendrierScolaireService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Contracts\ProgrammationServiceInterface::class,
+            \App\Services\ProgrammationService::class
+        );
 
         // Repositories
         $this->app->bind(
@@ -105,8 +122,16 @@ class ServiceLayerServiceProvider extends ServiceProvider
             \App\Repositories\JourFerieRepository::class
         );
         $this->app->bind(
+            \App\Repositories\Contracts\CalendrierScolaireRepositoryInterface::class,
+            \App\Repositories\CalendrierScolaireRepository::class
+        );
+        $this->app->bind(
             \App\Repositories\Contracts\TechnicienRepositoryInterface::class,
             \App\Repositories\TechnicienRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\PaiementRepositoryInterface::class,
+            \App\Repositories\PaiementRepository::class
         );
 
     }

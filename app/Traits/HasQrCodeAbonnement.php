@@ -29,23 +29,16 @@ trait HasQrCodeAbonnement
         $model->load(['sirene.ecole', 'ecole']);
 
         $ecole = $model->ecole ?? $model->sirene?->ecole;
-        
+
         if (!$ecole) {
             return; // Pas d'école, pas de QR code
         }
 
-        // URL de paiement pour le QR code
-        // Si l'abonnement est déjà actif, on affiche les détails
-        // Sinon on redirige vers la page de paiement
-        if ($model->statut->value === 'actif') {
-            $url = config('app.url') . '/api/abonnements/' . $model->id . '/details';
-        } else {
-            $url = config('app.url') . '/api/abonnements/' . $model->id . '/paiement';
-        }
-
-        // Le QR code contient directement l'URL
-        // L'utilisateur scannera et sera redirigé vers la page appropriée
-        $qrContent = $url;
+        // URL frontend - Scan ouvre le navigateur
+        $frontendUrl = config('app.frontend_url', config('app.url'));
+        $qrContent = $model->statut->value === 'actif'
+            ? $frontendUrl . '/abonnements/' . $model->id
+            : $frontendUrl . '/paiement/' . $model->id;
 
         // Générer le QR code en PNG
         $qrCode = QrCode::format('png')
@@ -54,7 +47,7 @@ trait HasQrCodeAbonnement
             ->generate($qrContent);
 
         // Sauvegarder le QR code
-        $filename = 'qrcodes/abonnement_' . $model->id . '.png';
+        $filename = "ecoles/{$ecole->id}/qrcodes/{$model->sirene->id}/abonnement_" . $model->id . '.png';
         Storage::disk('public')->put($filename, $qrCode);
 
         // Mettre à jour le modèle avec le chemin du QR code

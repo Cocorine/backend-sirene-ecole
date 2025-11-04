@@ -10,13 +10,18 @@ use App\Http\Controllers\Api\SireneController;
 use App\Http\Controllers\API\TechnicienController;
 use App\Http\Controllers\Api\CalendrierScolaireController;
 use App\Http\Controllers\Api\JourFerieController;
+use App\Http\Controllers\ProgrammationController;
 use App\Http\Controllers\Api\UserController;
+use App\Models\Pays;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/villes", function(Request $request){
     return Ville::all();
+});
+Route::get("/pays", function(Request $request){
+    return Pays::all();
 });
 
 Route::prefix('permissions')->group(function () {
@@ -67,6 +72,15 @@ Route::prefix('ecoles')->group(function () {
         Route::get('me', [EcoleController::class, 'show']); // Get authenticated school details
         Route::put('me', [EcoleController::class, 'update']); // Update authenticated school details
         Route::delete('{id}', [EcoleController::class, 'destroy']); // Delete a school by ID
+
+        // School-specific holidays
+        Route::get('{ecoleId}/jours-feries', [JourFerieController::class, 'indexForEcole']);
+        Route::get('{ecoleId}/abonnements', [AbonnementController::class, 'parEcole']);
+        Route::post('{ecoleId}/abonnements/{abonnementId}', [PaiementController::class, 'traiter']);
+        Route::post('{ecoleId}/jours-feries', [JourFerieController::class, 'storeForEcole']);
+
+        // School calendar with merged holidays
+        Route::get('me/calendrier-scolaire/{calendrierScolaireId}/with-ecole-holidays', [EcoleController::class, 'getCalendrierScolaireWithJoursFeries']);
     });
 });
 
@@ -80,6 +94,9 @@ Route::prefix('sirenes')->middleware('auth:api')->group(function () {
     Route::put('{id}', [SireneController::class, 'update']); // Admin/Technicien
     Route::post('{id}/affecter', [SireneController::class, 'affecter']); // Admin/Technicien
     Route::delete('{id}', [SireneController::class, 'destroy']); // Admin only
+
+    // Programmations for a sirene
+    Route::apiResource('{sirene}/programmations', ProgrammationController::class);
 });
 
 // Technicien routes (Protected)
