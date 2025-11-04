@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\TypeOtp;
 use App\Services\Contracts\AuthServiceInterface;
 use App\Services\OtpService;
 use App\Services\SmsService;
@@ -47,15 +48,16 @@ class AuthService implements AuthServiceInterface
                 ]);
             }
 
-            // Générer l'OTP
-            $otp = $this->otpService->generate($telephone, $user->id);
+            // Générer l'OTP de type LOGIN
+            $result = $this->otpService->generate($telephone, $user->id, TypeOtp::LOGIN);
 
-            // Envoyer l'OTP par SMS
-            //$this->smsService->sendOtpSms($telephone, $otp);
+            if (!$result['success']) {
+                throw new Exception($result['message']);
+            }
 
             return $this->successResponse(
-                'Code OTP envoyé avec succès.',
-                $otp,//['expires_in' => config('otp.expiration', 5) . ' minutes']
+                $result['message'],
+                ['expires_in' => $result['expires_in'] . ' minutes']
             );
 
         } catch (\Exception $e) {
@@ -70,10 +72,12 @@ class AuthService implements AuthServiceInterface
     public function verifyOtpAndLogin(string $telephone, string $otp): JsonResponse
     {
         try {
-            // Vérifier l'OTP
-            if (!$this->otpService->verify($telephone, $otp)) {
+            // Vérifier l'OTP de type LOGIN
+            $result = $this->otpService->verify($telephone, $otp, TypeOtp::LOGIN);
+
+            if (!$result['success']) {
                 throw ValidationException::withMessages([
-                    'otp' => ['Code OTP invalide ou expiré.'],
+                    'otp' => [$result['message']],
                 ]);
             }
 
@@ -139,7 +143,7 @@ class AuthService implements AuthServiceInterface
 
             if($user->actif == false && $user->statut !== 1)
             {
-                throw new \Exception("Veuillez changer le mot de passe temporaire", 206);
+                //throw new \Exception("Veuillez changer le mot de passe temporaire", 206);
             }
 
             if (!$user || !Hash::check($motDePasse, $user->mot_de_passe)) {

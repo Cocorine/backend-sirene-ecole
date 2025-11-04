@@ -26,4 +26,5 @@ return new class extends Migration
             $table->string('reference')->nullable(false)->change();
             $table->unique('reference');
         });
-    };
+    }
+};

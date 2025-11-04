@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TypeOtp;
 use App\Traits\HasUlid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class OtpCode extends Model
         'utilise',
         'telephone',
         'code',
+        'type',
         'valide',
         'est_verifie',
         'verifie',
@@ -42,6 +44,7 @@ class OtpCode extends Model
         'date_expiration' => 'datetime',
         'date_verification' => 'datetime',
         'tentatives' => 'integer',
+        'type' => TypeOtp::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

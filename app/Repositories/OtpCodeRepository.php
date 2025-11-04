@@ -47,7 +47,7 @@ class OtpCodeRepository extends BaseRepository implements OtpCodeRepositoryInter
         try {
             return $this->model->where('telephone', $telephone)
                                ->where('code', $code)
-                               ->where('verifie', false)
+                               ->where('est_verifie', false)
                                ->first();
         } catch (Exception $e) {
             Log::error("Error in " . get_class($this) . "::findByTelephoneAndCode - " . $e->getMessage());
@@ -61,6 +61,8 @@ class OtpCodeRepository extends BaseRepository implements OtpCodeRepositoryInter
             $otpCode = $this->find($id);
             if ($otpCode) {
                 $otpCode->utilise = true;
+                $otpCode->verifie = true;
+                $otpCode->est_verifie = true;
                 $otpCode->date_verification = now();
                 $otpCode->save();
             }
@@ -76,7 +78,7 @@ class OtpCodeRepository extends BaseRepository implements OtpCodeRepositoryInter
         try {
             $otpCode = $this->find($id);
             if ($otpCode) {
-                $otpCode->verifie = true;
+                $otpCode->est_verifie = true;
                 $otpCode->date_verification = now();
                 $otpCode->save();
             }
@@ -91,7 +93,7 @@ class OtpCodeRepository extends BaseRepository implements OtpCodeRepositoryInter
     {
         try {
             return $this->model->where('telephone', $telephone)
-                               ->where('verifie', false)
+                               ->where('est_verifie', false)
                                ->delete();
         } catch (Exception $e) {
             Log::error("Error in " . get_class($this) . "::deleteUnverifiedByPhone - " . $e->getMessage());
@@ -102,9 +104,9 @@ class OtpCodeRepository extends BaseRepository implements OtpCodeRepositoryInter
     public function deleteExpired(): int
     {
         try {
-            return $this->model->where('date_expiration', '<', now())
+            return $this->model->where('expire_le', '<', now())
                                ->orWhere(function ($query) {
-                                   $query->where('verifie', true)
+                                   $query->where('est_verifie', true)
                                          ->where('updated_at', '<', now()->subDays(1));
                                })
                                ->delete();

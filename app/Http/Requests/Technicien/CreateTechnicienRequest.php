@@ -54,16 +54,13 @@ class CreateTechnicienRequest extends FormRequest
         return [
 
             // UserInfo related fields (assuming they come in the same request)
-            'userInfoData.email' => ['nullable', 'string', 'email', 'max:255', 'unique:user_infos,email'],
-            'userInfoData.telephone' => ['required', 'string', 'max:20', 'unique:user_infos,telephone'],
-            'userInfoData.prenom' => ['nullable', 'string', 'max:255'],
-            'userInfoData.nom' => ['required', 'string', 'max:255'],
-            'userInfoData.adresse' => ['nullable', 'string', 'max:255'],
-            'userInfoData.ville_id' => ['nullable', 'string', 'exists:villes,id']
+            'user.userInfoData.email' => ['nullable', 'string', 'email', 'max:255', 'unique:user_infos,email'],
+            'user.userInfoData.telephone' => ['required', 'string', 'max:20', 'unique:user_infos,telephone'],
+            'user.userInfoData.prenom' => ['nullable', 'string', 'max:255'],
+            'user.userInfoData.nom' => ['required', 'string', 'max:255'],
+            'user.userInfoData.adresse' => ['nullable', 'string', 'max:255'],
+            'user.userInfoData.ville_id' => ['nullable', 'string', 'exists:villes,id'],
 
-            'user.type' => ['required', 'string', Rule::in(['TECHNICIEN'])],
-            'user.role_id' => ['sometimes', 'string', 'exists:roles,id'],
-            'ville_id' => ['required', 'string', 'exists:villes,id'],
             'specialite' => ['required', 'string', 'max:255'],
             'disponibilite' => ['boolean'],
             'date_embauche' => ['nullable', 'date'],

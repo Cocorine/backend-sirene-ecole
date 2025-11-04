@@ -1,13 +1,15 @@
 <?php
 
+use App\Http\Controllers\API\AbonnementController;
+use App\Http\Controllers\API\PaiementController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
 use App\Http\Controllers\API\TechnicienController;
-use App\Http\Controllers\Api\CalendrierScolaireController; // Add this line
-use App\Http\Controllers\Api\JourFerieController; // Add this line
+use App\Http\Controllers\Api\CalendrierScolaireController;
+use App\Http\Controllers\Api\JourFerieController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\Ville;
 use Illuminate\Http\Request;
@@ -50,6 +52,7 @@ Route::prefix('auth')->group(function () {
 // Protected authentication routes
 Route::prefix('auth')->middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('changerMotDePasse', [AuthController::class, 'changerMotDePasse']);
     Route::get('me', [AuthController::class, 'me']);
 });
 
@@ -94,6 +97,8 @@ Route::prefix('calendrier-scolaire')->middleware('auth:api')->group(function () 
     Route::post('/', [CalendrierScolaireController::class, 'store']);
     Route::get('{id}', [CalendrierScolaireController::class, 'show']);
     Route::put('{id}', [CalendrierScolaireController::class, 'update']);
+    Route::get('{id}/jours-feries', [CalendrierScolaireController::class, 'getJoursFeries']);
+    Route::get('{id}/calculate-school-days', [CalendrierScolaireController::class, 'calculateSchoolDays']);
 });
 
 // JoursFeries routes (Protected)
@@ -103,4 +108,68 @@ Route::prefix('jours-feries')->middleware('auth:api')->group(function () {
     Route::get('{id}', [JourFerieController::class, 'show']);
     Route::put('{id}', [JourFerieController::class, 'update']);
     Route::delete('{id}', [JourFerieController::class, 'destroy']);
+});
+
+// Abonnement routes
+Route::prefix('abonnements')->group(function () {
+    // Public: Accès via QR Code
+    Route::get('{id}/details', [AbonnementController::class, 'details']);
+    Route::get('{id}/paiement', [AbonnementController::class, 'paiement']);
+
+    // Protected routes
+    Route::middleware('auth:api')->group(function () {
+        // CRUD de base
+        Route::get('/', [AbonnementController::class, 'index']);
+        Route::get('{id}', [AbonnementController::class, 'show']);
+        Route::put('{id}', [AbonnementController::class, 'update']);
+        Route::delete('{id}', [AbonnementController::class, 'destroy']);
+
+        // Gestion du cycle de vie
+        Route::post('{id}/renouveler', [AbonnementController::class, 'renouveler']);
+        Route::post('{id}/suspendre', [AbonnementController::class, 'suspendre']);
+        Route::post('{id}/reactiver', [AbonnementController::class, 'reactiver']);
+        Route::post('{id}/annuler', [AbonnementController::class, 'annuler']);
+
+        // Recherche
+        Route::get('ecole/{ecoleId}/actif', [AbonnementController::class, 'getActif']);
+        Route::get('ecole/{ecoleId}', [AbonnementController::class, 'parEcole']);
+        Route::get('sirene/{sireneId}', [AbonnementController::class, 'parSirene']);
+        Route::get('liste/expirant-bientot', [AbonnementController::class, 'expirantBientot']);
+        Route::get('liste/expires', [AbonnementController::class, 'expires']);
+        Route::get('liste/actifs', [AbonnementController::class, 'actifs']);
+        Route::get('liste/en-attente', [AbonnementController::class, 'enAttente']);
+
+        // Vérifications
+        Route::get('{id}/est-valide', [AbonnementController::class, 'estValide']);
+        Route::get('ecole/{ecoleId}/a-abonnement-actif', [AbonnementController::class, 'ecoleAAbonnementActif']);
+        Route::get('{id}/peut-etre-renouvele', [AbonnementController::class, 'peutEtreRenouvele']);
+
+        // Statistiques (Admin)
+        Route::get('stats/global', [AbonnementController::class, 'statistiques']);
+        Route::get('stats/revenus-periode', [AbonnementController::class, 'revenusPeriode']);
+        Route::get('stats/taux-renouvellement', [AbonnementController::class, 'tauxRenouvellement']);
+
+        // Calculs
+        Route::get('{id}/prix-renouvellement', [AbonnementController::class, 'prixRenouvellement']);
+        Route::get('{id}/jours-restants', [AbonnementController::class, 'joursRestants']);
+
+        // Tâches automatiques (CRON - Admin only)
+        Route::post('cron/marquer-expires', [AbonnementController::class, 'marquerExpires']);
+        Route::post('cron/envoyer-notifications', [AbonnementController::class, 'envoyerNotifications']);
+        Route::post('cron/auto-renouveler', [AbonnementController::class, 'autoRenouveler']);
+    });
+});
+
+// Paiement routes
+Route::prefix('paiements')->group(function () {
+    // Public: Traiter un paiement via QR Code
+    Route::post('abonnements/{abonnementId}', [PaiementController::class, 'traiter']);
+
+    // Protected routes
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/', [PaiementController::class, 'index']);
+        Route::get('{id}', [PaiementController::class, 'show']);
+        Route::put('{id}/valider', [PaiementController::class, 'valider']);
+        Route::get('abonnements/{abonnementId}', [PaiementController::class, 'parAbonnement']);
+    });
 });

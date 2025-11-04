@@ -57,12 +57,12 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             if (auth()->check() && auth()->user()->userAccount) {
                 $data['user_account_type_id'] = auth()->user()->userAccount->id;
                 $data['user_account_type_type'] = get_class(auth()->user()->userAccount);
-            } else {
+            } /* else {
 
                 // Ensure user_account_type_id and user_account_type_type default to null if not provided
                 $data['user_account_type_id'] = null;
                 $data['user_account_type_type'] =  null;
-            }
+            } */
 
             $userInfoData = $data['userInfoData'] ?? [];
 

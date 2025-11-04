@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\TypeUtilisateur;
 use App\Repositories\Contracts\TechnicienRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Contracts\TechnicienServiceInterface;
@@ -36,7 +37,7 @@ class TechnicienService extends BaseService implements TechnicienServiceInterfac
             $userData = [
                 'nom_utilisateur' => $technicienData['nom'] . ' ' . $technicienData['prenom'],
                 'mot_de_passe' => $motDePasse, // Password en clair (sera haché automatiquement dans UserRepository)
-                'type' => 'TECHNICIEN',
+                'type' => TypeUtilisateur::TECHNICIEN,
                 'user_account_type_id' => $technicien->id,
                 'user_account_type_type' => get_class($technicien),
                 'userInfoData' => [

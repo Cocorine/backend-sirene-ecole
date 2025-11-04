@@ -150,7 +150,7 @@ class TechnicienController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        return $this->techniqueService->getById($id, relations:['user.userInfo']);
+        return $this->techniqueService->getById($id, relations:['user']);
     }
 
     /**

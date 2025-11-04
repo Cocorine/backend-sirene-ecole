@@ -42,6 +42,7 @@ class TechnicienRepository extends BaseRepository implements TechnicienRepositor
 
             // Assuming $data contains 'user' key for user data and other keys for technician data
             $userData = $data['user'] ?? [];
+
             $technicienData = array_diff_key($data, array_flip(['user'])); // Remove 'user' key from technician data
 
             // 1. Create the Technicien first
