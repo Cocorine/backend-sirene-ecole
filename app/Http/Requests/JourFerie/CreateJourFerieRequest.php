@@ -89,12 +89,13 @@ class CreateJourFerieRequest extends FormRequest
             'calendrier_id' => ['nullable', 'string', 'exists:calendriers_scolaires,id'],
             'ecole_id' => ['nullable', 'string', 'exists:ecoles,id'],
             'pays_id' => ['nullable', 'string', 'exists:pays,id'],
-            'libelle' => ['nullable', 'string', 'max:255'],
-            'nom' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
-            'type' => ['nullable', 'string', 'max:50'],
+            'intitule_journee' => ['required', 'string'],
+            'type_jour' => ['required', 'string', 'in:ferie,conge_fin_annee,conge_detente,conge_paque,autre_conge'],
+            'date_debut' => ['required', 'date', 'unique:jours_feries,date_debut'],
+            'date_fin' => ['nullable', 'date', 'after_or_equal:date_debut'],
             'recurrent' => ['required', 'boolean'],
             'actif' => ['boolean'],
+            'est_national' => ['boolean'],
         ];
     }
 }

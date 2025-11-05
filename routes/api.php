@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
 use App\Http\Controllers\API\TechnicienController;
+use App\Http\Controllers\API\PanneController;
+use App\Http\Controllers\API\InterventionController;
+use App\Http\Controllers\API\OrdreMissionController;
 use App\Http\Controllers\Api\CalendrierScolaireController;
 use App\Http\Controllers\Api\JourFerieController;
 use App\Http\Controllers\ProgrammationController;
@@ -114,6 +117,7 @@ Route::prefix('calendrier-scolaire')->middleware('auth:api')->group(function () 
     Route::post('/', [CalendrierScolaireController::class, 'store']);
     Route::get('{id}', [CalendrierScolaireController::class, 'show']);
     Route::put('{id}', [CalendrierScolaireController::class, 'update']);
+    Route::delete('{id}', [CalendrierScolaireController::class, 'destroy']);
     Route::get('{id}/jours-feries', [CalendrierScolaireController::class, 'getJoursFeries']);
     Route::get('{id}/calculate-school-days', [CalendrierScolaireController::class, 'calculateSchoolDays']);
 });
@@ -189,4 +193,45 @@ Route::prefix('paiements')->group(function () {
         Route::put('{id}/valider', [PaiementController::class, 'valider']);
         Route::get('abonnements/{abonnementId}', [PaiementController::class, 'parAbonnement']);
     });
+});
+
+// Panne routes
+Route::prefix('pannes')->middleware('auth:api')->group(function () {
+    Route::post('sirenes/{sireneId}/declarer', [PanneController::class, 'declarer']);
+    Route::put('{panneId}/valider', [PanneController::class, 'valider']);
+    Route::put('{panneId}/cloturer', [PanneController::class, 'cloturer']);
+});
+
+// Ordre de mission routes
+Route::prefix('ordres-mission')->middleware('auth:api')->group(function () {
+    Route::get('/', [OrdreMissionController::class, 'index']);
+    Route::get('{id}', [OrdreMissionController::class, 'show']);
+    Route::post('/', [OrdreMissionController::class, 'store']);
+    Route::put('{id}', [OrdreMissionController::class, 'update']);
+    Route::delete('{id}', [OrdreMissionController::class, 'destroy']);
+    Route::get('{id}/candidatures', [OrdreMissionController::class, 'getCandidatures']);
+    Route::get('ville/{villeId}', [OrdreMissionController::class, 'getByVille']);
+    Route::put('{id}/cloturer-candidatures', [OrdreMissionController::class, 'cloturerCandidatures']);
+    Route::put('{id}/rouvrir-candidatures', [OrdreMissionController::class, 'rouvrirCandidatures']);
+});
+
+// Intervention routes
+Route::prefix('interventions')->middleware('auth:api')->group(function () {
+    Route::get('/', [InterventionController::class, 'index']);
+    Route::get('{id}', [InterventionController::class, 'show']);
+
+    // Gestion des candidatures
+    Route::post('ordres-mission/{ordreMissionId}/candidature', [InterventionController::class, 'soumettreCandidature']);
+    Route::put('candidatures/{missionTechnicienId}/accepter', [InterventionController::class, 'accepterCandidature']);
+    Route::put('candidatures/{missionTechnicienId}/refuser', [InterventionController::class, 'refuserCandidature']);
+    Route::put('candidatures/{missionTechnicienId}/retirer', [InterventionController::class, 'retirerCandidature']);
+
+    // Gestion des interventions
+    Route::put('{interventionId}/demarrer', [InterventionController::class, 'demarrer']);
+    Route::put('{interventionId}/retirer-mission', [InterventionController::class, 'retirerMission']);
+    Route::post('{interventionId}/rapport', [InterventionController::class, 'redigerRapport']);
+
+    // Notations
+    Route::put('{interventionId}/noter', [InterventionController::class, 'noterIntervention']);
+    Route::put('rapports/{rapportId}/noter', [InterventionController::class, 'noterRapport']);
 });

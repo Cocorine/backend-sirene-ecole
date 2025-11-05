@@ -91,12 +91,13 @@ class UpdateJourFerieRequest extends FormRequest
             'calendrier_id' => ['sometimes', 'nullable', 'string', 'exists:calendriers_scolaires,id'],
             'ecole_id' => ['sometimes', 'nullable', 'string', 'exists:ecoles,id'],
             'pays_id' => ['sometimes', 'nullable', 'string', 'exists:pays,id'],
-            'libelle' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'nom' => ['sometimes', 'string', 'max:255'],
-            'date' => ['sometimes', 'date'],
-            'type' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'intitule_journee' => ['sometimes', 'required', 'string'],
+            'type_jour' => ['sometimes', 'required', 'string', 'in:ferie,conge_fin_annee,conge_detente,conge_paque,autre_conge'],
+            'date_debut' => ['sometimes', 'required', 'date', 'unique:jours_feries,date_debut,' . $this->route('jour_fery') . ',id'],
+            'date_fin' => ['sometimes', 'nullable', 'date', 'after_or_equal:date_debut'],
             'recurrent' => ['sometimes', 'boolean'],
             'actif' => ['sometimes', 'boolean'],
+            'est_national' => ['sometimes', 'boolean'],
         ];
     }
 }

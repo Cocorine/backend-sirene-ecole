@@ -50,19 +50,33 @@ class ProgrammationService extends BaseService implements ProgrammationServiceIn
 
         $isHoliday = $this->jourFerieService->isJourFerie($date);
 
-        return $programmations->filter(function (Programmation $programmation) use ($isHoliday, $dayOfWeek) {
+        return $programmations->filter(function (Programmation $programmation) use ($isHoliday, $dayOfWeek, $date) {
             // Check if the programming is active for the current day of the week
             if (!in_array($dayOfWeek, $programmation->jour_semaine)) {
                 return false;
             }
 
-            // If it's a holiday and holidays are NOT included, filter it out
-            if ($isHoliday && !$programmation->jours_feries_inclus) {
+            $shouldIncludeHoliday = $programmation->jours_feries_inclus;
+
+            // Check for specific holiday exceptions
+            if (is_array($programmation->jours_feries_exceptions)) {
+                foreach ($programmation->jours_feries_exceptions as $exception) {
+                    if (isset($exception['date']) && $exception['date'] === $date) {
+                        if (isset($exception['action'])) {
+                            $shouldIncludeHoliday = ($exception['action'] === 'include');
+                        }
+                        break; // Found an exception for this date, no need to check further
+                    }
+                }
+            }
+
+            // If it's a holiday and the final decision is NOT to include it, filter it out
+            if ($isHoliday && !$shouldIncludeHoliday) {
                 return false;
             }
 
             // Further checks could include date_debut, date_fin, vacances, etc.
-            // For now, we focus on jours_feries_inclus and jour_semaine
+            // For now, we focus on jours_feries_inclus, jours_feries_exceptions and jour_semaine
 
             return true;
         });

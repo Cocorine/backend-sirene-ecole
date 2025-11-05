@@ -4,17 +4,19 @@ namespace App\Enums;
 
 enum StatutPanne: string
 {
-    case EN_ATTENTE = 'EN_ATTENTE';
-    case OUVERTE = 'OUVERTE';
-    case EN_COURS = 'EN_COURS';
-    case RESOLUE = 'RESOLUE';
-    case CLOTUREE = 'CLOTUREE';
+    case DECLAREE = 'declaree';
+    case VALIDEE = 'validee';
+    case ASSIGNEE = 'assignee';
+    case EN_COURS = 'en_cours';
+    case RESOLUE = 'resolue';
+    case CLOTUREE = 'cloturee';
 
     public function label(): string
     {
         return match($this) {
-            self::EN_ATTENTE => 'En attente',
-            self::OUVERTE => 'Ouverte',
+            self::DECLAREE => 'Déclarée',
+            self::VALIDEE => 'Validée',
+            self::ASSIGNEE => 'Assignée',
             self::EN_COURS => 'En cours',
             self::RESOLUE => 'Résolue',
             self::CLOTUREE => 'Clôturée',

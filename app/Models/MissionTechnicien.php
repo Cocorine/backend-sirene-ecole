@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\StatutCandidature;
+use App\Enums\StatutMission;
+
 use App\Traits\HasUlid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +23,7 @@ class MissionTechnicien extends Model
     protected $fillable = [
         'ordre_mission_id',
         'technicien_id',
+        'statut_candidature',
         'statut',
         'date_acceptation',
         'date_cloture',
@@ -28,6 +32,8 @@ class MissionTechnicien extends Model
     ];
 
     protected $casts = [
+        'statut' => StatutMission::class,
+        'statut_candidature' => StatutCandidature::class,
         'date_acceptation' => 'datetime',
         'date_cloture' => 'datetime',
         'date_retrait' => 'datetime',

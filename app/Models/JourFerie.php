@@ -22,20 +22,21 @@ class JourFerie extends Model
         'calendrier_id',
         'ecole_id',
         'pays_id',
-        'libelle',
-        'nom',
-        'date_ferie',
-        'date',
-        'type',
+        'intitule_journee',
+        'type_jour',
+        'date_debut',
+        'date_fin',
         'recurrent',
         'actif',
+        'est_national',
     ];
 
     protected $casts = [
-        'date_ferie' => 'date',
-        'date' => 'date',
+        'date_debut' => 'date',
+        'date_fin' => 'date',
         'recurrent' => 'boolean',
         'actif' => 'boolean',
+        'est_national' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -47,6 +48,22 @@ class JourFerie extends Model
      */
     protected function getUniqueSoftDeleteFields(): array
     {
-        return ['libelle', 'nom'];
+        return ['intitule_journee']; // Assuming intitule_journee is now the primary unique identifier
+    }
+
+    // Relations
+    public function ecole(): BelongsTo
+    {
+        return $this->belongsTo(Ecole::class, 'ecole_id');
+    }
+
+    public function calendrier(): BelongsTo
+    {
+        return $this->belongsTo(CalendrierScolaire::class, 'calendrier_id');
+    }
+
+    public function pays(): BelongsTo
+    {
+        return $this->belongsTo(Pays::class, 'pays_id');
     }
 }

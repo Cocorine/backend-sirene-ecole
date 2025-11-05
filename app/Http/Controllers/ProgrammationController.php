@@ -11,10 +11,6 @@ use App\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-use App\Models\Sirene;
-
-use Illuminate\Http\Request;
-
 class ProgrammationController extends Controller
 {
     use JsonResponseTrait;

@@ -21,6 +21,9 @@ class StoreProgrammationRequest extends FormRequest
             'horaire_json.*.jour' => ['required_with:horaire_json', 'string', Rule::in(['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'])],
             'horaire_json.*.heure' => ['required_with:horaire_json', 'date_format:H:i'],
             'jours_feries_inclus' => ['boolean'],
+            'jours_feries_exceptions' => ['nullable', 'array'],
+            'jours_feries_exceptions.*.date' => ['required', 'date_format:Y-m-d'],
+            'jours_feries_exceptions.*.action' => ['required', 'string', Rule::in(['include', 'exclude'])],
             'date_debut' => ['required', 'date', 'before_or_equal:date_fin'], //peut etre date de debut de la periode d'evaluation
             'date_fin' => ['required', 'date', 'after_or_equal:date_debut'] //peut etre date de debut de la periode d'evaluation
         ];

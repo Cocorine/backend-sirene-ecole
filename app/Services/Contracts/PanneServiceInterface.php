@@ -4,6 +4,7 @@ namespace App\Services\Contracts;
 
 use App\Models\Panne;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface PanneServiceInterface extends BaseServiceInterface
@@ -87,4 +88,7 @@ interface PanneServiceInterface extends BaseServiceInterface
      * Rechercher des pannes
      */
     //public function search(string $query, array $filters = []): LengthAwarePaginator;
+
+    public function validerPanne(string $panneId): JsonResponse;
+    public function cloturerPanne(string $panneId): JsonResponse;
 }

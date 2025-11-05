@@ -68,6 +68,21 @@ class ServiceLayerServiceProvider extends ServiceProvider
             \App\Services\ProgrammationService::class
         );
 
+        $this->app->bind(
+            \App\Services\Contracts\PanneServiceInterface::class,
+            \App\Services\PanneService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Contracts\InterventionServiceInterface::class,
+            \App\Services\InterventionService::class
+        );
+
+        $this->app->bind(
+            \App\Services\Contracts\OrdreMissionServiceInterface::class,
+            \App\Services\OrdreMissionService::class
+        );
+
         // Repositories
         $this->app->bind(
             \App\Repositories\Contracts\PermissionRepositoryInterface::class,
@@ -112,6 +127,22 @@ class ServiceLayerServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\Contracts\PanneRepositoryInterface::class,
             \App\Repositories\PanneRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\InterventionRepositoryInterface::class,
+            \App\Repositories\InterventionRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\RapportInterventionRepositoryInterface::class,
+            \App\Repositories\RapportInterventionRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\OrdreMissionRepositoryInterface::class,
+            \App\Repositories\OrdreMissionRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\MissionTechnicienRepositoryInterface::class,
+            \App\Repositories\MissionTechnicienRepository::class
         );
         $this->app->bind(
             \App\Repositories\Contracts\ProgrammationRepositoryInterface::class,

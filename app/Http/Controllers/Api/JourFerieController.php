@@ -278,7 +278,7 @@ class JourFerieController extends Controller
         // Check if a JourFerie with the same date already exists for this school
         $existingJourFerie = $this->jourFerieService->findBy([
             'ecole_id' => $ecoleId,
-            'date_ferie' => $data['date_ferie'],
+            'date_debut' => $data['date_debut'],
         ]);
 
         if ($existingJourFerie) {
