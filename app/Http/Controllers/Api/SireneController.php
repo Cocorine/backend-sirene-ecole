@@ -9,6 +9,7 @@ use App\Http\Requests\Sirene\UpdateSireneRequest;
 use App\Services\Contracts\SireneServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
 /**
@@ -39,7 +40,14 @@ class SireneController extends Controller
 
     public function __construct(SireneServiceInterface $sireneService)
     {
+        parent::__construct();
         $this->sireneService = $sireneService;
+        $this->middleware('can:viewAny-sirene')->only(['index', 'disponibles']);
+        $this->middleware('can:create-sirene')->only('store');
+        $this->middleware('can:view-sirene')->only(['show', 'showByNumeroSerie']);
+        $this->middleware('can:update-sirene')->only('update');
+        $this->middleware('can:affect-sirene')->only('affecter');
+        $this->middleware('can:delete-sirene')->only('destroy');
     }
 
     /**
@@ -72,6 +80,7 @@ class SireneController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_sirenes');
         $perPage = $request->get('per_page', 15);
         return $this->sireneService->getAll($perPage, relations:['modeleSirene', 'ecole', 'site']);
     }
@@ -117,6 +126,7 @@ class SireneController extends Controller
      */
     public function store(CreateSireneRequest $request): JsonResponse
     {
+        Gate::authorize('creer_sirene');
         return $this->sireneService->create($request->validated());
     }
 
@@ -157,6 +167,7 @@ class SireneController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_sirene');
         return $this->sireneService->getById($id, relations:[
             'modeleSirene',
             'ecole',
@@ -202,6 +213,7 @@ class SireneController extends Controller
      */
     public function showByNumeroSerie(string $numeroSerie): JsonResponse
     {
+        Gate::authorize('voir_sirene');
         return $this->sireneService->findByNumeroSerie($numeroSerie, [
             'modeleSirene',
             'ecole',
@@ -264,6 +276,7 @@ class SireneController extends Controller
      */
     public function update(UpdateSireneRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_sirene');
         return $this->sireneService->update($id, $request->validated());
     }
 
@@ -324,6 +337,7 @@ class SireneController extends Controller
      */
     public function affecter(AffecterSireneRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_sirene');
         return $this->sireneService->affecterSireneASite($id, $request->site_id, $request->ecole_id ?? null);
     }
 
@@ -350,6 +364,7 @@ class SireneController extends Controller
      */
     public function disponibles(): JsonResponse
     {
+        Gate::authorize('voir_les_sirenes');
         return $this->sireneService->getSirenesDisponibles(['modeleSirene']);
     }
 
@@ -389,6 +404,7 @@ class SireneController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_sirene');
         return $this->sireneService->delete($id);
     }
 }

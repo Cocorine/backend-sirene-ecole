@@ -23,6 +23,7 @@ class JourFerieController extends Controller
     public function __construct(JourFerieServiceInterface $jourFerieService)
     {
         $this->jourFerieService = $jourFerieService;
+        $this->middleware('auth:api');
     }
 
     /**
@@ -56,6 +57,7 @@ class JourFerieController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_jours_feries');
         $perPage = $request->get('per_page', 15);
         return $this->jourFerieService->getAll($perPage);
     }
@@ -88,6 +90,7 @@ class JourFerieController extends Controller
      */
     public function store(CreateJourFerieRequest $request): JsonResponse
     {
+        Gate::authorize('creer_jour_ferie');
         return $this->jourFerieService->create($request->all());
     }
 
@@ -122,6 +125,7 @@ class JourFerieController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_jour_ferie');
         return $this->jourFerieService->getById($id);
     }
 
@@ -167,6 +171,7 @@ class JourFerieController extends Controller
      */
     public function update(UpdateJourFerieRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_jour_ferie');
         return $this->jourFerieService->update($id, $request->all());
     }
 
@@ -200,6 +205,7 @@ class JourFerieController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_jour_ferie');
         return $this->jourFerieService->delete($id);
     }
 
@@ -234,6 +240,7 @@ class JourFerieController extends Controller
      */
     public function indexForEcole(string $ecoleId): JsonResponse
     {
+        Gate::authorize('voir_les_jours_feries');
         return $this->jourFerieService->findAllBy(['ecole_id' => $ecoleId]);
     }
 
@@ -272,6 +279,7 @@ class JourFerieController extends Controller
      */
     public function storeForEcole(CreateJourFerieRequest $request, string $ecoleId): JsonResponse
     {
+        Gate::authorize('creer_jour_ferie');
         $data = $request->all();
         $data['ecole_id'] = $ecoleId;
 

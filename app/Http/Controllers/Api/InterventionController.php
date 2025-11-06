@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Contracts\InterventionServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
 class InterventionController extends Controller
@@ -14,6 +15,7 @@ class InterventionController extends Controller
 
     public function __construct(InterventionServiceInterface $interventionService)
     {
+        $this->middleware('auth:api');
         $this->interventionService = $interventionService;
     }
 
@@ -48,6 +50,7 @@ class InterventionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_interventions');
         $perPage = $request->get('per_page', 15);
         return $this->interventionService->getAll($perPage, ['technicien', 'panne', 'ordreMission']);
     }
@@ -81,6 +84,7 @@ class InterventionController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_intervention');
         return $this->interventionService->getById($id, ['technicien', 'panne', 'rapport']);
     }
 
@@ -120,6 +124,7 @@ class InterventionController extends Controller
      */
     public function soumettreCandidature(Request $request, string $ordreMissionId): JsonResponse
     {
+        Gate::authorize('creer_mission_technicien');
         $validated = $request->validate([
             'technicien_id' => 'required|string|exists:techniciens,id',
         ]);
@@ -163,6 +168,7 @@ class InterventionController extends Controller
      */
     public function accepterCandidature(Request $request, string $missionTechnicienId): JsonResponse
     {
+        Gate::authorize('assigner_technicien_intervention');
         $validated = $request->validate([
             'admin_id' => 'required|string|exists:users,id',
         ]);
@@ -206,6 +212,7 @@ class InterventionController extends Controller
      */
     public function refuserCandidature(Request $request, string $missionTechnicienId): JsonResponse
     {
+        Gate::authorize('modifier_mission_technicien');
         $validated = $request->validate([
             'admin_id' => 'required|string|exists:users,id',
         ]);
@@ -249,6 +256,7 @@ class InterventionController extends Controller
      */
     public function retirerCandidature(Request $request, string $missionTechnicienId): JsonResponse
     {
+        Gate::authorize('modifier_mission_technicien');
         $validated = $request->validate([
             'motif_retrait' => 'required|string',
         ]);
@@ -293,6 +301,7 @@ class InterventionController extends Controller
      */
     public function retirerMission(Request $request, string $interventionId): JsonResponse
     {
+        Gate::authorize('modifier_intervention');
         $validated = $request->validate([
             'motif_retrait' => 'required|string',
             'admin_id' => 'required|string|exists:users,id',
@@ -338,6 +347,7 @@ class InterventionController extends Controller
      */
     public function demarrer(string $interventionId): JsonResponse
     {
+        Gate::authorize('modifier_intervention');
         return $this->interventionService->demarrerIntervention($interventionId);
     }
 
@@ -374,6 +384,7 @@ class InterventionController extends Controller
      */
     public function terminer(string $interventionId): JsonResponse
     {
+        Gate::authorize('modifier_intervention');
         return $this->interventionService->terminerIntervention($interventionId);
     }
 
@@ -421,6 +432,7 @@ class InterventionController extends Controller
      */
     public function redigerRapport(Request $request, string $interventionId): JsonResponse
     {
+        Gate::authorize('creer_rapport_intervention');
         $validated = $request->validate([
             'rapport' => 'required|string',
             'diagnostic' => 'nullable|string',
@@ -471,6 +483,7 @@ class InterventionController extends Controller
      */
     public function noterIntervention(Request $request, string $interventionId): JsonResponse
     {
+        Gate::authorize('creer_avis_intervention');
         $validated = $request->validate([
             'note' => 'required|integer|min:1|max:5',
             'commentaire' => 'nullable|string',
@@ -520,6 +533,7 @@ class InterventionController extends Controller
      */
     public function noterRapport(Request $request, string $rapportId): JsonResponse
     {
+        Gate::authorize('creer_avis_rapport');
         $validated = $request->validate([
             'note' => 'required|integer|min:1|max:5',
             'review' => 'required|string',
@@ -571,6 +585,7 @@ class InterventionController extends Controller
      */
     public function ajouterAvisIntervention(Request $request, string $interventionId): JsonResponse
     {
+        Gate::authorize('creer_avis_intervention');
         $validated = $request->validate([
             'ecole_id' => 'required|string|exists:ecoles,id',
             'auteur_id' => 'nullable|string|exists:users,id',
@@ -627,6 +642,7 @@ class InterventionController extends Controller
      */
     public function ajouterAvisRapport(Request $request, string $rapportId): JsonResponse
     {
+        Gate::authorize('creer_avis_rapport');
         $validated = $request->validate([
             'admin_id' => 'required|string|exists:users,id',
             'note' => 'required|integer|min:1|max:5',
@@ -678,6 +694,7 @@ class InterventionController extends Controller
      */
     public function getAvisIntervention(string $interventionId): JsonResponse
     {
+        Gate::authorize('voir_les_avis_intervention');
         return $this->interventionService->getAvisIntervention($interventionId);
     }
 
@@ -721,6 +738,7 @@ class InterventionController extends Controller
      */
     public function getAvisRapport(string $rapportId): JsonResponse
     {
+        Gate::authorize('voir_les_avis_rapport');
         return $this->interventionService->getAvisRapport($rapportId);
     }
 }

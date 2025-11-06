@@ -15,6 +15,7 @@ class PaiementController extends Controller
     public function __construct(PaiementServiceInterface $paiementService)
     {
         $this->paiementService = $paiementService;
+        $this->middleware('auth:api')->except(['traiter']);
     }
 
     /**
@@ -70,6 +71,7 @@ class PaiementController extends Controller
      */
     public function traiter(Request $request, string $ecoleId, string $abonnementId = null): JsonResponse
     {
+        Gate::authorize('creer_paiement');
         $validated = $request->validate([
             'montant' => 'required|numeric|min:0',
             'moyen' => 'required|in:MOBILE_MONEY,CARTE_BANCAIRE,QR_CODE,VIREMENT',
@@ -119,6 +121,7 @@ class PaiementController extends Controller
      */
     public function valider(string $paiementId): JsonResponse
     {
+        Gate::authorize('modifier_paiement');
         return $this->paiementService->validerPaiement($paiementId);
     }
 
@@ -163,6 +166,7 @@ class PaiementController extends Controller
      */
     public function parAbonnement(string $abonnementId): JsonResponse
     {
+        Gate::authorize('voir_les_paiements');
         return $this->paiementService->getPaiementsByAbonnement($abonnementId);
     }
 
@@ -212,6 +216,7 @@ class PaiementController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_paiement');
         return $this->paiementService->getById($id, relations: ['abonnement.ecole']);
     }
 
@@ -258,6 +263,7 @@ class PaiementController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_paiements');
         $perPage = $request->get('per_page', 15);
         return $this->paiementService->getAll($perPage, ['abonnement', 'ecole']);
     }

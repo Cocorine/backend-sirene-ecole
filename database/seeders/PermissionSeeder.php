@@ -236,6 +236,8 @@ class PermissionSeeder extends Seeder
             ['nom' => 'Supprimer un utilisateur', 'slug' => 'supprimer_utilisateur'],
             ['nom' => 'Assigner des rôles à un utilisateur', 'slug' => 'assigner_roles_utilisateur'],
             ['nom' => 'Réinitialiser le mot de passe d\'un utilisateur', 'slug' => 'reinitialiser_mot_de_passe_utilisateur'],
+            ['nom' => 'Voir son propre profil', 'slug' => 'voir_son_propre_profil'],
+            ['nom' => 'Changer son propre mot de passe', 'slug' => 'changer_son_propre_mot_de_passe'],
 
             // Informations Utilisateur (UserInfo)
             ['nom' => 'Voir les informations utilisateur', 'slug' => 'voir_les_informations_utilisateur'],

@@ -3,7 +3,21 @@
 namespace App\Http\Requests\Abonnement;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateAbonnementRequest",
+ *     title="Update Abonnement Request",
+ *     description="Request body for updating an abonnement",
+ *     @OA\Property(property="date_debut", type="string", format="date", description="Date de début de l'abonnement"),
+ *     @OA\Property(property="date_fin", type="string", format="date", description="Date de fin de l'abonnement"),
+ *     @OA\Property(property="montant", type="number", format="float", description="Montant de l'abonnement"),
+ *     @OA\Property(property="statut", type="string", enum={"actif", "expire", "en_attente", "suspendu"}, description="Statut de l'abonnement"),
+ *     @OA\Property(property="auto_renouvellement", type="boolean", description="Indique si le renouvellement automatique est activé"),
+ *     @OA\Property(property="notes", type="string", nullable=true, description="Notes additionnelles"),
+ * )
+ */
 class UpdateAbonnementRequest extends FormRequest
 {
     public function authorize(): bool

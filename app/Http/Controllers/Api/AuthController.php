@@ -39,6 +39,7 @@ class AuthController extends Controller
     public function __construct(AuthServiceInterface $authService)
     {
         $this->authService = $authService;
+        $this->middleware('auth:api')->only(['logout', 'me', 'changerMotDePasse']);
     }
 
     /**
@@ -169,6 +170,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
+        Gate::authorize('voir_son_propre_profil');
         return $this->authService->logout($request->user());
     }
 
@@ -197,6 +199,7 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
+        Gate::authorize('voir_son_propre_profil');
         return $this->authService->me($request->user());
     }
 
@@ -237,6 +240,7 @@ class AuthController extends Controller
      */
     public function changerMotDePasse(ChangerMotDePasseRequest $request): JsonResponse
     {
+        Gate::authorize('changer_son_propre_mot_de_passe');
         return $this->authService->changerMotDePasse(
             $request->user(),
             $request->nouveau_mot_de_passe,

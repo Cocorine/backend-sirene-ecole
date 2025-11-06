@@ -40,6 +40,7 @@ class PermissionController extends Controller
     public function __construct(PermissionServiceInterface $permissionService)
     {
         $this->permissionService = $permissionService;
+        $this->middleware('auth:api');
     }
 
     /**
@@ -59,6 +60,7 @@ class PermissionController extends Controller
      */
     public function index(): JsonResponse
     {
+        Gate::authorize('voir_les_permissions');
         return $this->permissionService->getAll();
     }
 
@@ -90,6 +92,7 @@ class PermissionController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_permission');
         return $this->permissionService->getById($id);
     }
 
@@ -121,6 +124,7 @@ class PermissionController extends Controller
      */
     public function showBySlug(string $slug): JsonResponse
     {
+        Gate::authorize('voir_permission');
         return $this->permissionService->findBySlug($slug);
     }
 
@@ -153,6 +157,7 @@ class PermissionController extends Controller
      */
     public function showByRole(string $roleId): JsonResponse
     {
+        Gate::authorize('voir_les_permissions');
         return $this->permissionService->getByRole($roleId);
     }
 }

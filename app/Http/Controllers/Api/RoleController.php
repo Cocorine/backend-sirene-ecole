@@ -11,7 +11,7 @@ use App\Http\Requests\API\Role\UpdateRoleRequest;
 use App\Services\Contracts\RoleServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Class RoleController
@@ -45,6 +45,12 @@ class RoleController extends Controller
     public function __construct(RoleServiceInterface $roleService)
     {
         $this->roleService = $roleService;
+        $this->middleware('can:voir_les_roles')->only('index');
+        $this->middleware('can:creer_role')->only('store');
+        $this->middleware('can:voir_role')->only('show');
+        $this->middleware('can:modifier_role')->only('update');
+        $this->middleware('can:supprimer_role')->only('destroy');
+        $this->middleware('can:assigner_permissions_role')->only(['assignPermissions', 'syncPermissions', 'removePermissions']);
     }
 
     /**
@@ -76,6 +82,7 @@ class RoleController extends Controller
      */
     public function index(): JsonResponse
     {
+        Gate::authorize('voir_les_roles');
         return $this->roleService->getAll(15, ['permissions']);
     }
 
@@ -113,6 +120,7 @@ class RoleController extends Controller
      */
     public function store(CreateRoleRequest $request): JsonResponse
     {
+        Gate::authorize('creer_role');
         return $this->roleService->createRole($request->validated());
     }
 
@@ -152,6 +160,7 @@ class RoleController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_role');
         return $this->roleService->getById($id, relations:['permissions']);
     }
 
@@ -203,6 +212,7 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_role');
         return $this->roleService->updateRole($id, $request->validated());
     }
 
@@ -241,6 +251,7 @@ class RoleController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_role');
         return $this->roleService->delete($id);
     }
 
@@ -294,6 +305,7 @@ class RoleController extends Controller
      */
     public function assignPermissions(AssignPermissionsRequest $request, string $roleId): JsonResponse
     {
+        Gate::authorize('assigner_permissions_role');
         return $this->roleService->assignPermissionsToRole($roleId, $request->input('permission_ids'));
     }
 
@@ -347,6 +359,7 @@ class RoleController extends Controller
      */
     public function syncPermissions(SyncPermissionsRequest $request, string $roleId): JsonResponse
     {
+        Gate::authorize('assigner_permissions_role');
         return $this->roleService->syncPermissionsToRole($roleId, $request->input('permission_ids'));
     }
 
@@ -400,6 +413,7 @@ class RoleController extends Controller
      */
     public function removePermissions(RemovePermissionsRequest $request, string $roleId): JsonResponse
     {
+        Gate::authorize('assigner_permissions_role');
         return $this->roleService->removePermissionsFromRole($roleId, $request->input('permission_ids'));
     }
 }

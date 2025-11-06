@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sirene;
 use App\Services\Contracts\PanneServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
 class PanneController extends Controller
@@ -15,6 +16,7 @@ class PanneController extends Controller
     public function __construct(PanneServiceInterface $panneService)
     {
         $this->panneService = $panneService;
+        $this->middleware('auth:api');
     }
 
     /**
@@ -63,6 +65,7 @@ class PanneController extends Controller
      */
     public function declarer(Request $request, $sireneId)
     {
+        Gate::authorize('creer_panne');
         $sirene = Sirene::findOrFail($sireneId);
 
         $validated = $request->validate([
@@ -122,6 +125,7 @@ class PanneController extends Controller
      */
     public function valider(Request $request, $panneId)
     {
+        Gate::authorize('modifier_panne');
         $validated = $request->validate([
             'nombre_techniciens_requis' => 'nullable|integer|min:1',
             'date_debut_candidature' => 'nullable|date',
@@ -169,6 +173,7 @@ class PanneController extends Controller
      */
     public function cloturer($panneId)
     {
+        Gate::authorize('resoudre_panne');
         return $this->panneService->cloturerPanne($panneId);
     }
 }

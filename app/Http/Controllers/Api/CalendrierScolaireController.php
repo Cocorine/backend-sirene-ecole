@@ -10,6 +10,7 @@ use App\Http\Requests\CalendrierScolaire\UpdateCalendrierScolaireRequest;
 use App\Services\Contracts\CalendrierScolaireServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
 /**
@@ -56,6 +57,7 @@ class CalendrierScolaireController extends Controller
 
     public function __construct(CalendrierScolaireServiceInterface $calendrierScolaireService)
     {
+        $this->middleware('auth:api');
         $this->calendrierScolaireService = $calendrierScolaireService;
     }
 
@@ -90,6 +92,7 @@ class CalendrierScolaireController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_calendriers_scolaires');
         $perPage = $request->get('per_page', 15);
         return $this->calendrierScolaireService->getAll($perPage);
     }
@@ -122,6 +125,7 @@ class CalendrierScolaireController extends Controller
      */
     public function store(CreateCalendrierScolaireRequest $request): JsonResponse
     {
+        Gate::authorize('creer_calendrier_scolaire');
         return $this->calendrierScolaireService->create($request->all());
     }
 
@@ -156,6 +160,7 @@ class CalendrierScolaireController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_calendrier_scolaire');
         return $this->calendrierScolaireService->getById($id);
     }
 
@@ -201,6 +206,7 @@ class CalendrierScolaireController extends Controller
      */
     public function update(UpdateCalendrierScolaireRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_calendrier_scolaire');
         return $this->calendrierScolaireService->update($id, $request->all());
     }
 
@@ -234,6 +240,7 @@ class CalendrierScolaireController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_calendrier_scolaire');
         return $this->calendrierScolaireService->delete($id);
     }
 
@@ -275,6 +282,7 @@ class CalendrierScolaireController extends Controller
      */
     public function getJoursFeries(string $id): JsonResponse
     {
+        Gate::authorize('voir_calendrier_scolaire');
         return $this->calendrierScolaireService->getJoursFeries($id);
     }
 
@@ -325,6 +333,7 @@ class CalendrierScolaireController extends Controller
      */
     public function calculateSchoolDays(Request $request, string $id): JsonResponse
     {
+        Gate::authorize('voir_calendrier_scolaire');
         $ecoleId = $request->get('ecole_id');
         return $this->calendrierScolaireService->calculateSchoolDays($id, $ecoleId);
     }
@@ -364,6 +373,7 @@ class CalendrierScolaireController extends Controller
      */
     public function storeMultipleJoursFeries(StoreMultipleJoursFeriesRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('creer_calendrier_scolaire');
         return $this->calendrierScolaireService->storeMultipleJoursFeries($id, $request->validated());
     }
 
@@ -402,6 +412,7 @@ class CalendrierScolaireController extends Controller
      */
     public function updateMultipleJoursFeries(UpdateMultipleJoursFeriesRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_calendrier_scolaire');
         return $this->calendrierScolaireService->updateMultipleJoursFeries($id, $request->validated());
     }
 }

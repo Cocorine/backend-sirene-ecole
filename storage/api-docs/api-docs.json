@@ -20,6 +20,985 @@
         }
     ],
     "paths": {
+        "/api/abonnements/{id}/details": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Afficher les détails d'un abonnement (via QR Code)",
+                "operationId": "f2e5aa3b17fa79daa670fc7a6fe21121",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}/paiement": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Afficher la page de paiement d'un abonnement (via QR Code)",
+                "operationId": "04e4e5de0335939900ab9cf2be05a6aa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister tous les abonnements (admin)",
+                "operationId": "e6992a00883ec59c10f94eee01c18598",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Afficher un abonnement",
+                "operationId": "2ef79f65d3202be51bffcd7d634f4ea9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Mettre à jour un abonnement",
+                "operationId": "c375281f9a45a4f2fe9d72e7c729f59d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAbonnementRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Supprimer un abonnement",
+                "operationId": "980919c92443291057449e0071030341",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}/renouveler": {
+            "post": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Renouveler un abonnement",
+                "operationId": "b6df7afa73c4ca55fc528efc39f29268",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}/suspendre": {
+            "post": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Suspendre un abonnement",
+                "operationId": "a15e4d160f88a085701503ec17b51e3e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "raison"
+                                ],
+                                "properties": {
+                                    "raison": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}/reactiver": {
+            "post": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Réactiver un abonnement",
+                "operationId": "29a94f6e18a5139bc8f54bed0ef794d2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/{id}/annuler": {
+            "post": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Annuler un abonnement",
+                "operationId": "15919a0c0a3555c872333f5d105365bb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "raison"
+                                ],
+                                "properties": {
+                                    "raison": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/ecole/{ecoleId}/actif": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Récupérer l'abonnement actif d'une école",
+                "operationId": "1c45bb488059ab5fc7ee17d25fc9bf2d",
+                "parameters": [
+                    {
+                        "name": "ecoleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Abonnement"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/ecole/{ecoleId}": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements d'une école",
+                "operationId": "b57da8c54f70c9497f7fdb749c8a7609",
+                "parameters": [
+                    {
+                        "name": "ecoleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/sirene/{sireneId}": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements d'une sirène",
+                "operationId": "edc9d9de76a5df3d35851eb373dc7924",
+                "parameters": [
+                    {
+                        "name": "sireneId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/abonnements/expirant-bientot": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements expirant bientôt",
+                "operationId": "6d0dd39aa4f4da1d792827166c91057a",
+                "parameters": [
+                    {
+                        "name": "jours",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/expires": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements expirés",
+                "operationId": "22c3a89a55d1f5d7c8e0fa2064e43715",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/actifs": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements actifs",
+                "operationId": "60be2c0ec3f9a45da11c0c7f633875b1",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/en-attente": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Lister les abonnements en attente",
+                "operationId": "83daf4737a4b97d46f95779d29d32d26",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Abonnement"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/{id}/est-valide": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Vérifier si un abonnement est valide",
+                "operationId": "c8b7f7643d351529dd84272ae442208e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "est_valide": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/ecole/{ecoleId}/a-abonnement-actif": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Vérifier si une école a un abonnement actif",
+                "operationId": "4658dd8cf1d077f5fbef4fc9f284f350",
+                "parameters": [
+                    {
+                        "name": "ecoleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "a_abonnement_actif": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/{id}/peut-etre-renouvele": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Vérifier si un abonnement peut être renouvelé",
+                "operationId": "b656756bc32a836c2d945e675bcae3ec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "peut_etre_renouvele": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/statistiques": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Récupérer les statistiques des abonnements",
+                "operationId": "5d3b11179e62ff0675d70695c23f7e67",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/revenus-periode": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Récupérer les revenus sur une période",
+                "operationId": "e7642b4efb4d92b883cc6ed817115c7e",
+                "parameters": [
+                    {
+                        "name": "date_debut",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "date_fin",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/taux-renouvellement": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Récupérer le taux de renouvellement",
+                "operationId": "1ab84bca9dd1d0d6c3719fe2782c53ca",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/{id}/prix-renouvellement": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Calculer le prix de renouvellement d'un abonnement",
+                "operationId": "582d0759f39323c38f2eb61638f11eee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/{id}/jours-restants": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Récupérer le nombre de jours restants d'un abonnement",
+                "operationId": "2d3c69d88998bcf15b176c13d1b93851",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/abonnements/marquer-expires": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Marquer les abonnements expirés",
+                "operationId": "af0089e47d017e144bc2533a67ffb44b",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/abonnements/envoyer-notifications": {
+            "get": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Envoyer les notifications d'expiration",
+                "operationId": "af15f06213f925918ce1e002ae324e78",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/abonnements/auto-renouveler": {
+            "post": {
+                "tags": [
+                    "Abonnements"
+                ],
+                "summary": "Renouveler automatiquement les abonnements",
+                "operationId": "31435e7b98a65204d5a48e899fea1b03",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/auth/request-otp": {
             "post": {
                 "tags": [
@@ -4543,6 +5522,216 @@
                 }
             }
         },
+        "/api/sirenes/{sirene}/programmations": {
+            "get": {
+                "tags": [
+                    "Programmations"
+                ],
+                "summary": "Lister les programmations d'une sirène",
+                "operationId": "e3ffb025b87574aef47a35a66f83f9d1",
+                "parameters": [
+                    {
+                        "name": "sirene",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Programmation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Programmations"
+                ],
+                "summary": "Créer une programmation pour une sirène",
+                "operationId": "0d24654b8f213599a294529bcd75e230",
+                "parameters": [
+                    {
+                        "name": "sirene",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProgrammationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Programmation"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/api/sirenes/{sirene}/programmations/{programmation}": {
+            "get": {
+                "tags": [
+                    "Programmations"
+                ],
+                "summary": "Afficher une programmation",
+                "operationId": "16ed439ef5b1f0f02454d321364d99bc",
+                "parameters": [
+                    {
+                        "name": "sirene",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "programmation",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Programmation"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Programmations"
+                ],
+                "summary": "Mettre à jour une programmation",
+                "operationId": "e4e035e644b8bccf1b29a9e14e81ed1e",
+                "parameters": [
+                    {
+                        "name": "sirene",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "programmation",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProgrammationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Programmation"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Programmations"
+                ],
+                "summary": "Supprimer une programmation",
+                "operationId": "9c1813a339f1bb690dd51452020165fe",
+                "parameters": [
+                    {
+                        "name": "sirene",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "programmation",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -6199,6 +7388,329 @@
     },
     "components": {
         "schemas": {
+            "Abonnement": {
+                "title": "Abonnement",
+                "description": "Détails d'un abonnement",
+                "properties": {
+                    "id": {
+                        "description": "ID de l'abonnement",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "ecole_id": {
+                        "description": "ID de l'école associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "site_id": {
+                        "description": "ID du site associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "sirene_id": {
+                        "description": "ID de la sirène associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "parent_abonnement_id": {
+                        "description": "ID de l'abonnement parent (pour les renouvellements)",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "numero_abonnement": {
+                        "description": "Numéro unique de l'abonnement",
+                        "type": "string"
+                    },
+                    "date_debut": {
+                        "description": "Date de début de l'abonnement",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de l'abonnement",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "montant": {
+                        "description": "Montant de l'abonnement",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "statut": {
+                        "description": "Statut de l'abonnement",
+                        "type": "string",
+                        "enum": [
+                            "en_attente",
+                            "actif",
+                            "suspendu",
+                            "expire",
+                            "annule"
+                        ]
+                    },
+                    "auto_renouvellement": {
+                        "description": "Indique si le renouvellement automatique est activé",
+                        "type": "boolean"
+                    },
+                    "notes": {
+                        "description": "Notes additionnelles",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "qr_code_path": {
+                        "description": "Chemin vers le QR code de l'abonnement",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ecole": {
+                        "$ref": "#/components/schemas/Ecole"
+                    },
+                    "site": {
+                        "$ref": "#/components/schemas/Site"
+                    },
+                    "sirene": {
+                        "$ref": "#/components/schemas/Sirene"
+                    },
+                    "paiements": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Paiement"
+                        }
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/TokenSirene"
+                    }
+                },
+                "type": "object"
+            },
+            "Paiement": {
+                "title": "Paiement",
+                "description": "Détails d'un paiement",
+                "properties": {
+                    "id": {
+                        "description": "ID du paiement",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "abonnement_id": {
+                        "description": "ID de l'abonnement associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "ecole_id": {
+                        "description": "ID de l'école associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "numero_transaction": {
+                        "description": "Numéro de transaction unique",
+                        "type": "string"
+                    },
+                    "montant": {
+                        "description": "Montant du paiement",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "moyen": {
+                        "description": "Moyen de paiement",
+                        "type": "string",
+                        "enum": [
+                            "cinetpay",
+                            "virement",
+                            "especes"
+                        ]
+                    },
+                    "statut": {
+                        "description": "Statut du paiement",
+                        "type": "string",
+                        "enum": [
+                            "en_attente",
+                            "valide",
+                            "echoue",
+                            "annule"
+                        ]
+                    },
+                    "reference_externe": {
+                        "description": "Référence de la transaction externe",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "description": "Métadonnées du paiement",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "date_paiement": {
+                        "description": "Date du paiement",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "date_validation": {
+                        "description": "Date de validation du paiement",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "TokenSirene": {
+                "title": "Token Sirene",
+                "description": "Détails d'un token de sirène",
+                "properties": {
+                    "id": {
+                        "description": "ID du token",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "abonnement_id": {
+                        "description": "ID de l'abonnement associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "sirene_id": {
+                        "description": "ID de la sirène associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "site_id": {
+                        "description": "ID du site associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "token_crypte": {
+                        "description": "Token crypté",
+                        "type": "string"
+                    },
+                    "token_hash": {
+                        "description": "Hash du token",
+                        "type": "string"
+                    },
+                    "date_debut": {
+                        "description": "Date de début de validité du token",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de validité du token",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "actif": {
+                        "description": "Indique si le token est actif",
+                        "type": "boolean"
+                    },
+                    "date_generation": {
+                        "description": "Date de génération du token",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "date_expiration": {
+                        "description": "Date d'expiration du token",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "date_activation": {
+                        "description": "Date d'activation du token",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "genere_par": {
+                        "description": "ID de l'utilisateur ayant généré le token",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Site": {
+                "title": "Site",
+                "description": "Détails d'un site",
+                "properties": {
+                    "id": {
+                        "description": "ID du site",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "ecole_principale_id": {
+                        "description": "ID de l'école principale",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "nom": {
+                        "description": "Nom du site",
+                        "type": "string"
+                    },
+                    "est_principale": {
+                        "description": "Indique si le site est le site principal",
+                        "type": "boolean"
+                    },
+                    "adresse": {
+                        "description": "Adresse du site",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "ville_id": {
+                        "description": "ID de la ville",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "latitude": {
+                        "description": "Latitude du site",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "longitude": {
+                        "description": "Longitude du site",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ville": {
+                        "$ref": "#/components/schemas/Ville"
+                    },
+                    "sirene": {
+                        "$ref": "#/components/schemas/Sirene"
+                    }
+                },
+                "type": "object"
+            },
             "AuthUser": {
                 "title": "Authenticated User",
                 "description": "User object returned upon successful authentication",
@@ -6892,6 +8404,116 @@
                 },
                 "type": "object"
             },
+            "Programmation": {
+                "title": "Programmation",
+                "description": "Détails d'une programmation de sonnerie",
+                "properties": {
+                    "id": {
+                        "description": "ID de la programmation",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "ecole_id": {
+                        "description": "ID de l'école associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "site_id": {
+                        "description": "ID du site associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "sirene_id": {
+                        "description": "ID de la sirène associée",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "abonnement_id": {
+                        "description": "ID de l'abonnement associé",
+                        "type": "string",
+                        "format": "ulid"
+                    },
+                    "calendrier_id": {
+                        "description": "ID du calendrier scolaire associé",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "nom_programmation": {
+                        "description": "Nom de la programmation",
+                        "type": "string"
+                    },
+                    "horaires_sonneries": {
+                        "description": "Horaires des sonneries",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "time"
+                        }
+                    },
+                    "jour_semaine": {
+                        "description": "Jours de la semaine concernés",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "jours_feries_inclus": {
+                        "description": "Indique si les jours fériés sont inclus",
+                        "type": "boolean"
+                    },
+                    "jours_feries_exceptions": {
+                        "description": "Exceptions pour les jours fériés",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "nullable": true
+                    },
+                    "chaine_programmee": {
+                        "description": "Chaîne de programmation générée",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "chaine_cryptee": {
+                        "description": "Chaîne de programmation cryptée",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "date_debut": {
+                        "description": "Date de début de la programmation",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de la programmation",
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "actif": {
+                        "description": "Indique si la programmation est active",
+                        "type": "boolean"
+                    },
+                    "cree_par": {
+                        "description": "ID de l'utilisateur ayant créé la programmation",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Role": {
                 "title": "Role",
                 "description": "Role model",
@@ -7098,6 +8720,47 @@
                             "type": "string",
                             "format": "uuid"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAbonnementRequest": {
+                "title": "Update Abonnement Request",
+                "description": "Request body for updating an abonnement",
+                "properties": {
+                    "date_debut": {
+                        "description": "Date de début de l'abonnement",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de l'abonnement",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "montant": {
+                        "description": "Montant de l'abonnement",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "statut": {
+                        "description": "Statut de l'abonnement",
+                        "type": "string",
+                        "enum": [
+                            "actif",
+                            "expire",
+                            "en_attente",
+                            "suspendu"
+                        ]
+                    },
+                    "auto_renouvellement": {
+                        "description": "Indique si le renouvellement automatique est activé",
+                        "type": "boolean"
+                    },
+                    "notes": {
+                        "description": "Notes additionnelles",
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7873,6 +9536,100 @@
                 },
                 "type": "object"
             },
+            "StoreProgrammationRequest": {
+                "title": "Store Programmation Request",
+                "description": "Request body for storing a new programmation",
+                "required": [
+                    "nom_programmation",
+                    "date_debut",
+                    "date_fin",
+                    "horaires_sonneries",
+                    "jour_semaine"
+                ],
+                "properties": {
+                    "nom_programmation": {
+                        "description": "Nom de la programmation",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "date_debut": {
+                        "description": "Date de début de la programmation",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de la programmation",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "actif": {
+                        "description": "Indique si la programmation est active",
+                        "type": "boolean"
+                    },
+                    "calendrier_id": {
+                        "description": "ID du calendrier scolaire associé",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "horaires_sonneries": {
+                        "description": "Horaires des sonneries",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "time"
+                        }
+                    },
+                    "jour_semaine": {
+                        "description": "Jours de la semaine concernés",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "Lundi",
+                                "Mardi",
+                                "Mercredi",
+                                "Jeudi",
+                                "Vendredi",
+                                "Samedi",
+                                "Dimanche"
+                            ]
+                        }
+                    },
+                    "jours_feries_inclus": {
+                        "description": "Indique si les jours fériés sont inclus",
+                        "type": "boolean"
+                    },
+                    "jours_feries_exceptions": {
+                        "description": "Exceptions pour les jours fériés",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "date": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "action": {
+                                    "type": "string",
+                                    "enum": [
+                                        "include",
+                                        "exclude"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "abonnement_id": {
+                        "description": "ID de l'abonnement associé",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "CreateTechnicienRequest": {
                 "title": "Create Technicien Request",
                 "description": "Request body for creating a new technician",
@@ -8003,6 +9760,93 @@
                     }
                 },
                 "type": "object"
+            },
+            "UpdateProgrammationRequest": {
+                "title": "Update Programmation Request",
+                "description": "Request body for updating an existing programmation",
+                "properties": {
+                    "nom_programmation": {
+                        "description": "Nom de la programmation",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "date_debut": {
+                        "description": "Date de début de la la programmation",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "date_fin": {
+                        "description": "Date de fin de la programmation",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "actif": {
+                        "description": "Indique si la programmation est active",
+                        "type": "boolean"
+                    },
+                    "calendrier_id": {
+                        "description": "ID du calendrier scolaire associé",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    },
+                    "horaires_sonneries": {
+                        "description": "Horaires des sonneries",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "time"
+                        }
+                    },
+                    "jour_semaine": {
+                        "description": "Jours de la semaine concernés",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "Lundi",
+                                "Mardi",
+                                "Mercredi",
+                                "Jeudi",
+                                "Vendredi",
+                                "Samedi",
+                                "Dimanche"
+                            ]
+                        }
+                    },
+                    "jours_feries_inclus": {
+                        "description": "Indique si les jours fériés sont inclus",
+                        "type": "boolean"
+                    },
+                    "jours_feries_exceptions": {
+                        "description": "Exceptions pour les jours fériés",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "date": {
+                                    "type": "string",
+                                    "format": "date"
+                                },
+                                "action": {
+                                    "type": "string",
+                                    "enum": [
+                                        "include",
+                                        "exclude"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "abonnement_id": {
+                        "description": "ID de l'abonnement associé",
+                        "type": "string",
+                        "format": "ulid",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -8015,6 +9859,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Abonnements",
+            "description": "Gestion des abonnements des écoles"
+        },
         {
             "name": "Authentication",
             "description": "Endpoints pour l'authentification (OTP, Login, Logout)"
@@ -8038,6 +9886,10 @@
         {
             "name": "Permissions",
             "description": "API Endpoints of Permissions"
+        },
+        {
+            "name": "Programmations",
+            "description": "Gestion des programmations de sonneries"
         },
         {
             "name": "Roles",

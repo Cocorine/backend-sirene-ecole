@@ -5,7 +5,28 @@ namespace App\Http\Requests;
 use App\Models\Ecole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateProgrammationRequest",
+ *     title="Update Programmation Request",
+ *     description="Request body for updating an existing programmation",
+ *     @OA\Property(property="nom_programmation", type="string", maxLength=255, description="Nom de la programmation"),
+ *     @OA\Property(property="date_debut", type="string", format="date", description="Date de début de la la programmation"),
+ *     @OA\Property(property="date_fin", type="string", format="date", description="Date de fin de la programmation"),
+ *     @OA\Property(property="actif", type="boolean", description="Indique si la programmation est active"),
+ *     @OA\Property(property="calendrier_id", type="string", format="ulid", nullable=true, description="ID du calendrier scolaire associé"),
+ *     @OA\Property(property="horaires_sonneries", type="array", @OA\Items(type="string", format="time"), description="Horaires des sonneries"),
+ *     @OA\Property(property="jour_semaine", type="array", @OA\Items(type="string", enum={"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"}), description="Jours de la semaine concernés"),
+ *     @OA\Property(property="jours_feries_inclus", type="boolean", description="Indique si les jours fériés sont inclus"),
+ *     @OA\Property(property="jours_feries_exceptions", type="array", @OA\Items(type="object",
+ *         @OA\Property(property="date", type="string", format="date"),
+ *         @OA\Property(property="action", type="string", enum={"include", "exclude"})
+ *     ), nullable=true, description="Exceptions pour les jours fériés"),
+ *     @OA\Property(property="abonnement_id", type="string", format="ulid", nullable=true, description="ID de l'abonnement associé"),
+ * )
+ */
 class UpdateProgrammationRequest extends FormRequest
 {
     /**

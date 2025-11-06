@@ -8,18 +8,119 @@ use App\Services\Contracts\AbonnementServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Abonnements",
+ *     description="Gestion des abonnements"
+ * )
+ *
+ * @OA\Schema(
+ *     schema="Abonnement",
+ *     title="Abonnement",
+ *     description="Détails d'un abonnement",
+ *     @OA\Property(property="id", type="string", format="ulid", description="ID de l'abonnement"),
+ *     @OA\Property(property="ecole_id", type="string", format="ulid", description="ID de l'école associée"),
+ *     @OA\Property(property="site_id", type="string", format="ulid", description="ID du site associé"),
+ *     @OA\Property(property="sirene_id", type="string", format="ulid", description="ID de la sirène associée"),
+ *     @OA\Property(property="parent_abonnement_id", type="string", format="ulid", nullable=true, description="ID de l'abonnement parent (pour les renouvellements)"),
+ *     @OA\Property(property="numero_abonnement", type="string", description="Numéro unique de l'abonnement"),
+ *     @OA\Property(property="date_debut", type="string", format="date", description="Date de début de l'abonnement"),
+ *     @OA\Property(property="date_fin", type="string", format="date", description="Date de fin de l'abonnement"),
+ *     @OA\Property(property="montant", type="number", format="float", description="Montant de l'abonnement"),
+ *     @OA\Property(property="statut", type="string", enum={"en_attente", "actif", "suspendu", "expire", "annule"}, description="Statut de l'abonnement"),
+ *     @OA\Property(property="auto_renouvellement", type="boolean", description="Indique si le renouvellement automatique est activé"),
+ *     @OA\Property(property="notes", type="string", nullable=true, description="Notes additionnelles"),
+ *     @OA\Property(property="qr_code_path", type="string", nullable=true, description="Chemin vers le QR code de l'abonnement"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="ecole", ref="#/components/schemas/Ecole", description="Détails de l'école associée"),
+ *     @OA\Property(property="site", ref="#/components/schemas/Site", description="Détails du site associé"),
+ *     @OA\Property(property="sirene", ref="#/components/schemas/Sirene", description="Détails de la sirène associée"),
+ *     @OA\Property(property="paiements", type="array", @OA\Items(ref="#/components/schemas/Paiement")),
+ *     @OA\Property(property="token", ref="#/components/schemas/TokenSirene"),
+ * )
+ *
+ * @OA\Schema(
+ *     schema="Paiement",
+ *     title="Paiement",
+ *     description="Détails d'un paiement",
+ *     @OA\Property(property="id", type="string", format="ulid", description="ID du paiement"),
+ *     @OA\Property(property="abonnement_id", type="string", format="ulid", description="ID de l'abonnement associé"),
+ *     @OA\Property(property="ecole_id", type="string", format="ulid", description="ID de l'école associée"),
+ *     @OA\Property(property="numero_transaction", type="string", description="Numéro de transaction unique"),
+ *     @OA\Property(property="montant", type="number", format="float", description="Montant du paiement"),
+ *     @OA\Property(property="moyen", type="string", enum={"cinetpay", "virement", "especes"}, description="Moyen de paiement"),
+ *     @OA\Property(property="statut", type="string", enum={"en_attente", "valide", "echoue", "annule"}, description="Statut du paiement"),
+ *     @OA\Property(property="reference_externe", type="string", nullable=true, description="Référence de la transaction externe"),
+ *     @OA\Property(property="metadata", type="object", nullable=true, description="Métadonnées du paiement"),
+ *     @OA\Property(property="date_paiement", type="string", format="date-time", description="Date du paiement"),
+ *     @OA\Property(property="date_validation", type="string", format="date-time", nullable=true, description="Date de validation du paiement"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ * )
+ *
+ * @OA\Schema(
+ *     schema="TokenSirene",
+ *     title="Token Sirene",
+ *     description="Détails d'un token de sirène",
+ *     @OA\Property(property="id", type="string", format="ulid", description="ID du token"),
+ *     @OA\Property(property="abonnement_id", type="string", format="ulid", description="ID de l'abonnement associé"),
+ *     @OA\Property(property="sirene_id", type="string", format="ulid", description="ID de la sirène associée"),
+ *     @OA\Property(property="site_id", type="string", format="ulid", description="ID du site associé"),
+ *     @OA\Property(property="token_crypte", type="string", description="Token crypté"),
+ *     @OA\Property(property="token_hash", type="string", description="Hash du token"),
+ *     @OA\Property(property="date_debut", type="string", format="date", description="Date de début de validité du token"),
+ *     @OA\Property(property="date_fin", type="string", format="date", description="Date de fin de validité du token"),
+ *     @OA\Property(property="actif", type="boolean", description="Indique si le token est actif"),
+ *     @OA\Property(property="date_generation", type="string", format="date-time", description="Date de génération du token"),
+ *     @OA\Property(property="date_expiration", type="string", format="date-time", description="Date d'expiration du token"),
+ *     @OA\Property(property="date_activation", type="string", format="date-time", nullable=true, description="Date d'activation du token"),
+ *     @OA\Property(property="genere_par", type="string", format="ulid", nullable=true, description="ID de l'utilisateur ayant généré le token"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ * )
+ *
+ * @OA\Schema(
+ *     schema="Site",
+ *     title="Site",
+ *     description="Détails d'un site",
+ *     @OA\Property(property="id", type="string", format="ulid", description="ID du site"),
+ *     @OA\Property(property="ecole_principale_id", type="string", format="ulid", description="ID de l'école principale"),
+ *     @OA\Property(property="nom", type="string", description="Nom du site"),
+ *     @OA\Property(property="est_principale", type="boolean", description="Indique si le site est le site principal"),
+ *     @OA\Property(property="adresse", type="string", nullable=true, description="Adresse du site"),
+ *     @OA\Property(property="ville_id", type="string", format="ulid", nullable=true, description="ID de la ville"),
+ *     @OA\Property(property="latitude", type="number", format="float", nullable=true, description="Latitude du site"),
+ *     @OA\Property(property="longitude", type="number", format="float", nullable=true, description="Longitude du site"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="ville", ref="#/components/schemas/Ville", description="Détails de la ville"),
+ *     @OA\Property(property="sirene", ref="#/components/schemas/Sirene", description="Détails de la sirène"),
+ * )
+ */
 class AbonnementController extends Controller
 {
     protected AbonnementServiceInterface $abonnementService;
 
     public function __construct(AbonnementServiceInterface $abonnementService)
     {
+        $this->middleware('auth:api')->except(['details', 'paiement']);
         $this->abonnementService = $abonnementService;
     }
 
     /**
-     * Afficher les détails d'un abonnement (via QR Code)
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/details",
+     *     tags={"Abonnements"},
+     *     summary="Afficher les détails d'un abonnement (via QR Code)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
      */
     public function details(string $id): JsonResponse
     {
@@ -35,7 +136,16 @@ class AbonnementController extends Controller
     }
 
     /**
-     * Afficher la page de paiement d'un abonnement (via QR Code)
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/paiement",
+     *     tags={"Abonnements"},
+     *     summary="Afficher la page de paiement d'un abonnement (via QR Code)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
      */
     public function paiement(string $id): JsonResponse
     {
@@ -49,7 +159,15 @@ class AbonnementController extends Controller
     }
 
     /**
-     * Lister tous les abonnements (admin)
+     * @OA\Get(
+     *     path="/api/abonnements",
+     *     tags={"Abonnements"},
+     *     summary="Lister tous les abonnements (admin)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer", default=15)),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement"))),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
      */
     public function index(Request $request): JsonResponse
     {
@@ -60,7 +178,16 @@ class AbonnementController extends Controller
     }
 
     /**
-     * Afficher un abonnement
+     * @OA\Get(
+     *     path="/api/abonnements/{id}",
+     *     tags={"Abonnements"},
+     *     summary="Afficher un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
      */
     public function show(string $id): JsonResponse
     {
@@ -76,15 +203,35 @@ class AbonnementController extends Controller
     }
 
     /**
-     * Mettre à jour un abonnement avec validation métier
+     * @OA\Put(
+     *     path="/api/abonnements/{id}",
+     *     tags={"Abonnements"},
+     *     summary="Mettre à jour un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/UpdateAbonnementRequest")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
      */
     public function update(UpdateAbonnementRequest $request, string $id): JsonResponse
     {
         Gate::authorize('modifier_abonnement');
         return $this->abonnementService->update($id, $request->validated());
     }
+
     /**
-     * Supprimer un abonnement
+     * @OA\Delete(
+     *     path="/api/abonnements/{id}",
+     *     tags={"Abonnements"},
+     *     summary="Supprimer un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=204, description="No Content"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
      */
     public function destroy(string $id): JsonResponse
     {
@@ -94,12 +241,37 @@ class AbonnementController extends Controller
 
     // ========== GESTION DU CYCLE DE VIE ==========
 
+    /**
+     * @OA\Post(
+     *     path="/api/abonnements/{id}/renouveler",
+     *     tags={"Abonnements"},
+     *     summary="Renouveler un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
+     */
     public function renouveler(string $id): JsonResponse
     {
         Gate::authorize('modifier_abonnement');
         return $this->abonnementService->renouvelerAbonnement($id);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/abonnements/{id}/suspendre",
+     *     tags={"Abonnements"},
+     *     summary="Suspendre un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\RequestBody(@OA\JsonContent(required={"raison"}, @OA\Property(property="raison", type="string"))),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
+     */
     public function suspendre(Request $request, string $id): JsonResponse
     {
         Gate::authorize('modifier_abonnement');
@@ -107,6 +279,18 @@ class AbonnementController extends Controller
         return $this->abonnementService->suspendre($id, $validated['raison']);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/abonnements/{id}/reactiver",
+     *     tags={"Abonnements"},
+     *     summary="Réactiver un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
+     */
     public function reactiver(string $id): JsonResponse
     {
         Gate::authorize('modifier_abonnement');
@@ -114,6 +298,19 @@ class AbonnementController extends Controller
         return $this->abonnementService->reactiver($id);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/abonnements/{id}/annuler",
+     *     tags={"Abonnements"},
+     *     summary="Annuler un abonnement",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\RequestBody(@OA\JsonContent(required={"raison"}, @OA\Property(property="raison", type="string"))),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
+     */
     public function annuler(Request $request, string $id): JsonResponse
     {
         Gate::authorize('modifier_abonnement');
@@ -124,6 +321,18 @@ class AbonnementController extends Controller
 
     // ========== RECHERCHE ==========
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/ecole/{ecoleId}/actif",
+     *     tags={"Abonnements"},
+     *     summary="Récupérer l'abonnement actif d'une école",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="ecoleId", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/Abonnement")),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found")
+     * )
+     */
     public function getActif(string $ecoleId): JsonResponse
     {
         Gate::authorize('voir_les_abonnements');
@@ -131,6 +340,17 @@ class AbonnementController extends Controller
         return $this->abonnementService->getAbonnementActif($ecoleId);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/ecole/{ecoleId}",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements d'une école",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="ecoleId", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement"))),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
+     */
     public function parEcole(string $ecoleId): JsonResponse
     {
         Gate::authorize('voir_les_abonnements');
@@ -138,59 +358,157 @@ class AbonnementController extends Controller
         return $this->abonnementService->getAbonnementsByEcole($ecoleId);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/sirene/{sireneId}",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements d'une sirène",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="sireneId", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement"))),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
+     */
     public function parSirene(string $sireneId): JsonResponse
     {
         Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->getAbonnementsBySirene($sireneId);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/expirant-bientot",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements expirant bientôt",
+     *     @OA\Parameter(name="jours", in="query", @OA\Schema(type="integer", default=30)),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement")))
+     * )
+     */
     public function expirantBientot(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         $jours = $request->get('jours', 30);
         return $this->abonnementService->getExpirantBientot($jours);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/expires",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements expirés",
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement")))
+     * )
+     */
     public function expires(): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->getExpires();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/actifs",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements actifs",
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement")))
+     * )
+     */
     public function actifs(): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->getActifs();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/en-attente",
+     *     tags={"Abonnements"},
+     *     summary="Lister les abonnements en attente",
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Abonnement")))
+     * )
+     */
     public function enAttente(): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->getEnAttente();
     }
 
     // ========== VÉRIFICATIONS ==========
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/est-valide",
+     *     tags={"Abonnements"},
+     *     summary="Vérifier si un abonnement est valide",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(@OA\Property(property="est_valide", type="boolean")))
+     * )
+     */
     public function estValide(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
         return $this->abonnementService->estValide($id);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/ecole/{ecoleId}/a-abonnement-actif",
+     *     tags={"Abonnements"},
+     *     summary="Vérifier si une école a un abonnement actif",
+     *     @OA\Parameter(name="ecoleId", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(@OA\Property(property="a_abonnement_actif", type="boolean")))
+     * )
+     */
     public function ecoleAAbonnementActif(string $ecoleId): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->ecoleAAbonnementActif($ecoleId);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/peut-etre-renouvele",
+     *     tags={"Abonnements"},
+     *     summary="Vérifier si un abonnement peut être renouvelé",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(@OA\Property(property="peut_etre_renouvele", type="boolean")))
+     * )
+     */
     public function peutEtreRenouvele(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
         return $this->abonnementService->peutEtreRenouvele($id);
     }
 
     // ========== STATISTIQUES ==========
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/statistiques",
+     *     tags={"Abonnements"},
+     *     summary="Récupérer les statistiques des abonnements",
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="object"))
+     * )
+     */
     public function statistiques(): JsonResponse
     {
+        Gate::authorize('voir_tableau_de_bord');
         return $this->abonnementService->getStatistiques();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/revenus-periode",
+     *     tags={"Abonnements"},
+     *     summary="Récupérer les revenus sur une période",
+     *     @OA\Parameter(name="date_debut", in="query", required=true, @OA\Schema(type="string", format="date")),
+     *     @OA\Parameter(name="date_fin", in="query", required=true, @OA\Schema(type="string", format="date")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="object"))
+     * )
+     */
     public function revenusPeriode(Request $request): JsonResponse
     {
+        Gate::authorize('voir_tableau_de_bord');
         $validated = $request->validate([
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after:date_debut',
@@ -198,37 +516,93 @@ class AbonnementController extends Controller
         return $this->abonnementService->getRevenusPeriode($validated['date_debut'], $validated['date_fin']);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/taux-renouvellement",
+     *     tags={"Abonnements"},
+     *     summary="Récupérer le taux de renouvellement",
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="object"))
+     * )
+     */
     public function tauxRenouvellement(): JsonResponse
     {
+        Gate::authorize('voir_tableau_de_bord');
         return $this->abonnementService->getTauxRenouvellement();
     }
 
     // ========== CALCULS ==========
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/prix-renouvellement",
+     *     tags={"Abonnements"},
+     *     summary="Calculer le prix de renouvellement d'un abonnement",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="object"))
+     * )
+     */
     public function prixRenouvellement(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
         return $this->abonnementService->calculerPrixRenouvellement($id);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/{id}/jours-restants",
+     *     tags={"Abonnements"},
+     *     summary="Récupérer le nombre de jours restants d'un abonnement",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(type="object"))
+     * )
+     */
     public function joursRestants(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
         return $this->abonnementService->getJoursRestants($id);
     }
 
     // ========== TÂCHES AUTOMATIQUES (CRON) ==========
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/marquer-expires",
+     *     tags={"Abonnements"},
+     *     summary="Marquer les abonnements expirés",
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
     public function marquerExpires(): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
         return $this->abonnementService->marquerExpires();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/abonnements/envoyer-notifications",
+     *     tags={"Abonnements"},
+     *     summary="Envoyer les notifications d'expiration",
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
     public function envoyerNotifications(): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->envoyerNotificationsExpiration();
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/abonnements/auto-renouveler",
+     *     tags={"Abonnements"},
+     *     summary="Renouveler automatiquement les abonnements",
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
     public function autoRenouveler(): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
         return $this->abonnementService->autoRenouveler();
     }
 }

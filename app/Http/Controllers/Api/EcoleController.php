@@ -37,6 +37,7 @@ use OpenApi\Annotations as OA;
  */
 use App\Services\Contracts\CalendrierScolaireServiceInterface;
 use App\Http\Requests\CalendrierFiltreRequest;
+use Illuminate\Support\Facades\Gate;
 
 class EcoleController extends Controller
 {
@@ -45,6 +46,7 @@ class EcoleController extends Controller
 
     public function __construct(EcoleServiceInterface $ecoleService, CalendrierScolaireServiceInterface $calendrierScolaireService)
     {
+        $this->middleware('auth:api')->except(['inscrire']);
         $this->ecoleService = $ecoleService;
         $this->calendrierScolaireService = $calendrierScolaireService;
     }
@@ -79,6 +81,7 @@ class EcoleController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_ecoles');
         $perPage = $request->get('per_page', 15);
         return $this->ecoleService->getAll($perPage, ['sites', 'abonnementActif', 'user']);
     }
@@ -153,6 +156,7 @@ class EcoleController extends Controller
      */
     public function show(Request $request): JsonResponse
     {
+        Gate::authorize('voir_ecole');
         return $this->ecoleService->getById($request->user()->user_account_type_id);
     }
 
@@ -204,6 +208,7 @@ class EcoleController extends Controller
      */
     public function update(UpdateEcoleRequest $request): JsonResponse
     {
+        Gate::authorize('modifier_ecole');
         return $this->ecoleService->update($request->user()->user_account_type_id, $request->validated());
     }
 
@@ -250,6 +255,7 @@ class EcoleController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_ecole');
         return $this->ecoleService->delete($id);
     }
 
@@ -288,6 +294,7 @@ class EcoleController extends Controller
      */
     public function getCalendrierScolaireWithJoursFeries(CalendrierFiltreRequest $request): JsonResponse
     {
+        Gate::authorize('voir_ecole');
         $filtres = $request->getFiltres();
         if (!isset($filtres['ecoleId'])) {
             $filtres['ecoleId'] = auth()->user()->user_account_type_id;

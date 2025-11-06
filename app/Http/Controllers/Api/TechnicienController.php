@@ -9,6 +9,7 @@ use App\Repositories\Contracts\TechnicienRepositoryInterface;
 use App\Services\Contracts\TechnicienServiceInterface;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Class TechnicienController
@@ -41,6 +42,11 @@ class TechnicienController extends Controller
     public function __construct(TechnicienServiceInterface $techniqueService)
     {
         $this->techniqueService = $techniqueService;
+        $this->middleware('can:voir_les_techniciens')->only('index');
+        $this->middleware('can:creer_technicien')->only('store');
+        $this->middleware('can:voir_technicien')->only('show');
+        $this->middleware('can:modifier_technicien')->only('update');
+        $this->middleware('can:supprimer_technicien')->only('destroy');
     }
 
     /**
@@ -66,6 +72,7 @@ class TechnicienController extends Controller
      */
     public function index(): JsonResponse
     {
+        Gate::authorize('voir_les_techniciens');
         return $this->techniqueService->getAll(15, ['user.userInfo']);
     }
 
@@ -110,6 +117,7 @@ class TechnicienController extends Controller
      */
     public function store(CreateTechnicienRequest $request): JsonResponse
     {
+        Gate::authorize('creer_technicien');
         return $this->techniqueService->create($request->validated());
     }
 
@@ -150,6 +158,7 @@ class TechnicienController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_technicien');
         return $this->techniqueService->getById($id, relations:['user']);
     }
 
@@ -208,6 +217,7 @@ class TechnicienController extends Controller
      */
     public function update(UpdateTechnicienRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_technicien');
         return $this->techniqueService->update($id, $request->validated());
     }
 
@@ -247,6 +257,7 @@ class TechnicienController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        \Illuminate\Support\Facades\Gate::authorize('supprimer_technicien');
         return $this->techniqueService->delete($id);
     }
 }
