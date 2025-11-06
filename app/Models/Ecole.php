@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Ecole extends Model
 {
-    use HasUlid, HasCodeEtablissement, SoftDeletes, SoftDeletesUniqueFields;
+    use HasUlid, HasCodeEtablissement, SoftDeletes, SoftDeletesUniqueFields, Notifiable;
 
     protected $primaryKey = 'id';
     public $incrementing = false;

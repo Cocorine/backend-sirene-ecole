@@ -47,19 +47,7 @@ class RoleSeeder extends Seeder
             $userRole->nom = 'User';
             $userRole->save();
         }
-        $userPermissions = Permission::whereIn('slug', [
-            'voir_tableau_de_bord',
-            'voir_les_abonnements',
-            'voir_abonnement',
-            'initier_paiement_abonnement',
-            'voir_les_notifications',
-            'voir_notification',
-            'modifier_notification',
-            'voir_les_paiements',
-            'voir_paiement',
-            'voir_les_informations_utilisateur',
-            'modifier_informations_utilisateur',
-        ])->get()->pluck('id');
+        $userPermissions = Permission::whereIn('slug', ['view-permission', 'view-role'])->get()->pluck('id');
 
         $userRole->permissions()->sync(
             $userPermissions->mapWithKeys(function ($permissionId) {
@@ -81,47 +69,7 @@ class RoleSeeder extends Seeder
             $ecoleRole->nom = 'ecole';
             $ecoleRole->save();
         }
-        $ecolePermissions = Permission::whereIn('slug', [
-            'voir_tableau_de_bord',
-            'voir_ecole',
-            'modifier_ecole',
-            'gerer_sirenes_ecole',
-            'gerer_abonnements_ecole',
-            'voir_les_abonnements',
-            'voir_abonnement',
-            'creer_abonnement',
-            'modifier_abonnement',
-            'initier_paiement_abonnement',
-            'voir_les_sirenes',
-            'voir_sirene',
-            'creer_sirene',
-            'modifier_sirene',
-            'activer_sirene',
-            'desactiver_sirene',
-            'tester_sirene',
-            'configurer_sirene',
-            'voir_les_pannes',
-            'voir_panne',
-            'creer_panne',
-            'voir_les_interventions',
-            'voir_intervention',
-            'voir_les_rapports_intervention',
-            'voir_rapport_intervention',
-            'voir_les_notifications',
-            'voir_notification',
-            'modifier_notification',
-            'voir_les_paiements',
-            'voir_paiement',
-            'voir_les_calendriers_scolaires',
-            'voir_calendrier_scolaire',
-            'voir_les_jours_feries',
-            'voir_jour_ferie',
-            'voir_les_programmations',
-            'voir_programmation',
-            'voir_les_fichiers',
-            'voir_fichier',
-            'telecharger_fichier',
-        ])->get()->pluck('id');
+        $ecolePermissions = Permission::whereIn('slug', ['view-permission', 'view-role'])->get()->pluck('id');
 
         $ecoleRole->permissions()->sync(
             $ecolePermissions->mapWithKeys(function ($permissionId) {
@@ -143,40 +91,7 @@ class RoleSeeder extends Seeder
             $technicienRole->nom = 'technicien';
             $technicienRole->save();
         }
-        $technicienPermissions = Permission::whereIn('slug', [
-            'voir_tableau_de_bord',
-            'voir_les_interventions',
-            'voir_intervention',
-            'modifier_intervention',
-            'cloturer_intervention',
-            'voir_les_missions_technicien',
-            'voir_mission_technicien',
-            'modifier_mission_technicien',
-            'completer_mission_technicien',
-            'voir_les_pannes',
-            'voir_panne',
-            'resoudre_panne',
-            'voir_les_rapports_intervention',
-            'voir_rapport_intervention',
-            'creer_rapport_intervention',
-            'modifier_rapport_intervention',
-            'voir_les_sirenes',
-            'voir_sirene',
-            'activer_sirene',
-            'desactiver_sirene',
-            'tester_sirene',
-            'configurer_sirene',
-            'voir_les_ecoles',
-            'voir_ecole',
-            'voir_les_sites',
-            'voir_site',
-            'voir_les_notifications',
-            'voir_notification',
-            'modifier_notification',
-            'voir_les_fichiers',
-            'voir_fichier',
-            'telecharger_fichier',
-        ])->get()->pluck('id');
+        $technicienPermissions = Permission::whereIn('slug', ['view-permission', 'view-role'])->get()->pluck('id');
 
         $technicienRole->permissions()->sync(
             $technicienPermissions->mapWithKeys(function ($permissionId) {

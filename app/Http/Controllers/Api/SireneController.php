@@ -7,7 +7,6 @@ use App\Http\Requests\Sirene\AffecterSireneRequest;
 use App\Http\Requests\Sirene\CreateSireneRequest;
 use App\Http\Requests\Sirene\UpdateSireneRequest;
 use App\Services\Contracts\SireneServiceInterface;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;

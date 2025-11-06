@@ -23,14 +23,14 @@ class PanneService extends BaseService implements PanneServiceInterface
         $this->ordreMissionRepository = $ordreMissionRepository;
     }
 
-    public function validerPanne(string $panneId, string $adminId, array $ordreMissionData = []): JsonResponse
+    public function validerPanne(string $panneId, array $ordreMissionData = []): JsonResponse
     {
         try {
             DB::beginTransaction();
 
             $panne = $this->repository->update($panneId, [
                 'statut' => StatutPanne::VALIDEE,
-                'valide_par' => $adminId,
+                'valide_par' => auth()->id(),
                 'date_validation' => now(),
             ]);
 
@@ -44,7 +44,7 @@ class PanneService extends BaseService implements PanneServiceInterface
             $ordreMissionPayload = array_merge([
                 'panne_id' => $panneWithSite->id,
                 'ville_id' => $panneWithSite->site->ville_id,
-                'valide_par' => $adminId,
+                'valide_par' => auth()->user()->id,
                 'numero_ordre' => $numeroOrdre,
                 'statut' => 'en_attente',
                 'date_generation' => now(),
@@ -52,6 +52,7 @@ class PanneService extends BaseService implements PanneServiceInterface
                 'nombre_techniciens_acceptes' => 0,
             ], $ordreMissionData);
 
+            dd($ordreMissionPayload);
             // Create OrdreMission
             $ordreMission = $this->ordreMissionRepository->create($ordreMissionPayload);
 

@@ -12,6 +12,7 @@ use App\Repositories\Contracts\MissionTechnicienRepositoryInterface;
 use App\Repositories\Contracts\RapportInterventionRepositoryInterface;
 use App\Repositories\Contracts\OrdreMissionRepositoryInterface;
 use App\Services\Contracts\InterventionServiceInterface;
+use App\Services\Contracts\NotificationServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,17 +23,20 @@ class InterventionService extends BaseService implements InterventionServiceInte
     protected MissionTechnicienRepositoryInterface $missionRepository;
     protected RapportInterventionRepositoryInterface $rapportRepository;
     protected OrdreMissionRepositoryInterface $ordreMissionRepository;
+    protected NotificationServiceInterface $notificationService;
 
     public function __construct(
         InterventionRepositoryInterface $repository,
         MissionTechnicienRepositoryInterface $missionRepository,
         RapportInterventionRepositoryInterface $rapportRepository,
-        OrdreMissionRepositoryInterface $ordreMissionRepository
+        OrdreMissionRepositoryInterface $ordreMissionRepository,
+        NotificationServiceInterface $notificationService
     ) {
         parent::__construct($repository);
         $this->missionRepository = $missionRepository;
         $this->rapportRepository = $rapportRepository;
         $this->ordreMissionRepository = $ordreMissionRepository;
+        $this->notificationService = $notificationService;
     }
 
     public function soumettreCandidatureMission(string $ordreMissionId, string $technicienId): JsonResponse
@@ -74,6 +78,14 @@ class InterventionService extends BaseService implements InterventionServiceInte
                 'ordre_mission_id' => $ordreMissionId,
                 'technicien_id' => $technicienId,
                 'statut_candidature' => StatutCandidature::SOUMISE,
+            ]);
+
+            // Envoyer la notification à l'admin
+            $this->notificationService->sendAdminCandidatureSubmissionNotification([
+                'technicien_id' => $technicienId,
+                'technicien_nom' => $mission->technicien->user->full_name ?? 'Technicien Inconnu', // Assuming relations exist
+                'ordre_mission_id' => $ordreMissionId,
+                'numero_ordre' => $ordreMission->numero_ordre,
             ]);
 
             DB::commit();
@@ -269,6 +281,21 @@ class InterventionService extends BaseService implements InterventionServiceInte
         }
     }
 
+
+    public function terminerIntervention(string $interventionId): JsonResponse
+    {
+        try {
+            $intervention = $this->repository->update($interventionId, [
+                'statut' => 'en_cours',
+                'date_debut' => now(),
+            ]);
+
+            return $this->successResponse('Intervention terminée.', $intervention);
+        } catch (Exception $e) {
+            Log::error("Error in InterventionService::demarrerIntervention - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
     public function redigerRapport(string $interventionId, array $rapportData): JsonResponse
     {
         try {
@@ -286,6 +313,28 @@ class InterventionService extends BaseService implements InterventionServiceInte
                 'statut' => 'terminee',
                 'date_fin' => now(),
             ]);
+
+            // Récupérer l'intervention mise à jour avec ses relations
+            $intervention = $this->repository->find($interventionId, relations: ['ordreMission.ecole']);
+
+            // Vérifier si toutes les interventions de cet ordre de mission sont terminées
+            if ($intervention && $intervention->ordreMission) {
+                $allInterventionsTerminated = $this->repository->model->where('ordre_mission_id', $intervention->ordreMission->id)
+                    ->where('statut', '!=', 'terminee')
+                    ->doesntExist();
+
+                if ($allInterventionsTerminated) {
+                    // Notifier l'école de la fin de la mission
+                    $this->notificationService->sendMissionCompletionNotificationToEcole(
+                        $intervention->ordreMission->ecole->id,
+                        [
+                            'id' => $intervention->ordreMission->id,
+                            'numero_ordre' => $intervention->ordreMission->numero_ordre,
+                            'ecole_nom' => $intervention->ordreMission->ecole->nom,
+                        ]
+                    );
+                }
+            }
 
             DB::commit();
             return $this->createdResponse($rapport);

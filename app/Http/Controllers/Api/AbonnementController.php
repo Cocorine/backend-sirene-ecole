@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Abonnement\UpdateAbonnementRequest;
 use App\Services\Contracts\AbonnementServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AbonnementController extends Controller
 {
@@ -22,6 +23,8 @@ class AbonnementController extends Controller
      */
     public function details(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
+
         return $this->abonnementService->getById($id, relations: [
             'ecole',
             'site',
@@ -36,6 +39,8 @@ class AbonnementController extends Controller
      */
     public function paiement(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
+
         return $this->abonnementService->getById($id, relations: [
             'ecole',
             'site',
@@ -48,6 +53,8 @@ class AbonnementController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
+
         $perPage = $request->get('per_page', 15);
         return $this->abonnementService->getAll($perPage, ['ecole', 'site', 'sirene']);
     }
@@ -57,6 +64,8 @@ class AbonnementController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        Gate::authorize('voir_abonnement');
+
         return $this->abonnementService->getById($id, relations: [
             'ecole',
             'site',
@@ -71,14 +80,15 @@ class AbonnementController extends Controller
      */
     public function update(UpdateAbonnementRequest $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
         return $this->abonnementService->update($id, $request->validated());
     }
-
     /**
      * Supprimer un abonnement
      */
     public function destroy(string $id): JsonResponse
     {
+        Gate::authorize('supprimer_abonnement');
         return $this->abonnementService->delete($id);
     }
 
@@ -86,22 +96,28 @@ class AbonnementController extends Controller
 
     public function renouveler(string $id): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
         return $this->abonnementService->renouvelerAbonnement($id);
     }
 
     public function suspendre(Request $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
         $validated = $request->validate(['raison' => 'required|string']);
         return $this->abonnementService->suspendre($id, $validated['raison']);
     }
 
     public function reactiver(string $id): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
+
         return $this->abonnementService->reactiver($id);
     }
 
     public function annuler(Request $request, string $id): JsonResponse
     {
+        Gate::authorize('modifier_abonnement');
+
         $validated = $request->validate(['raison' => 'required|string']);
         return $this->abonnementService->annuler($id, $validated['raison']);
     }
@@ -110,16 +126,21 @@ class AbonnementController extends Controller
 
     public function getActif(string $ecoleId): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
+
         return $this->abonnementService->getAbonnementActif($ecoleId);
     }
 
     public function parEcole(string $ecoleId): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
+
         return $this->abonnementService->getAbonnementsByEcole($ecoleId);
     }
 
     public function parSirene(string $sireneId): JsonResponse
     {
+        Gate::authorize('voir_les_abonnements');
         return $this->abonnementService->getAbonnementsBySirene($sireneId);
     }
 

@@ -1,20 +1,20 @@
 <?php
 
-use App\Http\Controllers\API\AbonnementController;
-use App\Http\Controllers\API\PaiementController;
-use App\Http\Controllers\API\PermissionController;
-use App\Http\Controllers\API\RoleController;
+use App\Http\Controllers\Api\AbonnementController;
+use App\Http\Controllers\Api\PaiementController;
+use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EcoleController;
 use App\Http\Controllers\Api\SireneController;
 use App\Http\Controllers\Api\CinetPayController;
-use App\Http\Controllers\API\TechnicienController;
-use App\Http\Controllers\API\PanneController;
-use App\Http\Controllers\API\InterventionController;
-use App\Http\Controllers\API\OrdreMissionController;
+use App\Http\Controllers\Api\TechnicienController;
+use App\Http\Controllers\Api\PanneController;
+use App\Http\Controllers\Api\InterventionController;
+use App\Http\Controllers\Api\OrdreMissionController;
 use App\Http\Controllers\Api\CalendrierScolaireController;
 use App\Http\Controllers\Api\JourFerieController;
-use App\Http\Controllers\ProgrammationController;
+use App\Http\Controllers\Api\ProgrammationController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\Pays;
 use App\Models\Ville;
@@ -98,6 +98,8 @@ Route::prefix('sirenes')->middleware('auth:api')->group(function () {
     Route::put('{id}', [SireneController::class, 'update']); // Admin/Technicien
     Route::post('{id}/affecter', [SireneController::class, 'affecter']); // Admin/Technicien
     Route::delete('{id}', [SireneController::class, 'destroy']); // Admin only
+
+    Route::post('{id}/declarer-panne', [PanneController::class, 'declarer']);
 
     // Programmations for a sirene
     Route::apiResource('{sirene}/programmations', ProgrammationController::class);
@@ -215,7 +217,6 @@ Route::prefix('cinetpay')->group(function () {
 
 // Panne routes
 Route::prefix('pannes')->middleware('auth:api')->group(function () {
-    Route::post('sirenes/{sireneId}/declarer', [PanneController::class, 'declarer']);
     Route::put('{panneId}/valider', [PanneController::class, 'valider']);
     Route::put('{panneId}/cloturer', [PanneController::class, 'cloturer']);
 });
@@ -246,6 +247,7 @@ Route::prefix('interventions')->middleware('auth:api')->group(function () {
 
     // Gestion des interventions
     Route::put('{interventionId}/demarrer', [InterventionController::class, 'demarrer']);
+    Route::put('{interventionId}/terminer', [InterventionController::class, 'terminer']);
     Route::put('{interventionId}/retirer-mission', [InterventionController::class, 'retirerMission']);
     Route::post('{interventionId}/rapport', [InterventionController::class, 'redigerRapport']);
 

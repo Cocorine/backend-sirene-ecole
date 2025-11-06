@@ -7,7 +7,14 @@ use App\Services\CinetPayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="CinetPay",
+ *     description="Intégration avec l'agrégateur de paiement CinetPay"
+ * )
+ */
 class CinetPayController extends Controller
 {
     protected CinetPayService $cinetpayService;
@@ -20,6 +27,37 @@ class CinetPayController extends Controller
     /**
      * Callback de notification de CinetPay
      * Appelé par CinetPay pour notifier du statut du paiement
+     *
+     * @OA\Post(
+     *     path="/api/cinetpay/notify",
+     *     tags={"CinetPay"},
+     *     summary="Callback de notification CinetPay",
+     *     description="Endpoint appelé automatiquement par CinetPay pour notifier le statut d'un paiement",
+     *     operationId="cinetpayNotify",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Données envoyées par CinetPay",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="cpm_trans_id", type="string", example="ABN-20251105-ABCDEF", description="Transaction ID"),
+     *             @OA\Property(property="cpm_trans_status", type="string", example="ACCEPTED", description="Statut de la transaction (ACCEPTED, 00, REFUSED, etc.)"),
+     *             @OA\Property(property="cpm_amount", type="number", example=50000, description="Montant du paiement"),
+     *             @OA\Property(property="cpm_payment_token", type="string", description="Token de paiement CinetPay"),
+     *             @OA\Property(property="metadata", type="string", description="Métadonnées JSON contenant les informations d'abonnement")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notification traitée avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Notification traitée avec succès")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Échec du traitement de la notification"
+     *     )
+     * )
      *
      * @param Request $request
      * @return JsonResponse

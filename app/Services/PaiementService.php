@@ -6,6 +6,7 @@ use App\Enums\StatutAbonnement;
 use App\Repositories\Contracts\AbonnementRepositoryInterface;
 use App\Repositories\Contracts\PaiementRepositoryInterface;
 use App\Services\Contracts\PaiementServiceInterface;
+use App\Services\Contracts\NotificationServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,13 +16,16 @@ use Exception;
 class PaiementService extends BaseService implements PaiementServiceInterface
 {
     protected AbonnementRepositoryInterface $abonnementRepository;
+    protected NotificationServiceInterface $notificationService;
 
     public function __construct(
         PaiementRepositoryInterface $repository,
-        AbonnementRepositoryInterface $abonnementRepository
+        AbonnementRepositoryInterface $abonnementRepository,
+        NotificationServiceInterface $notificationService
     ) {
         parent::__construct($repository);
         $this->abonnementRepository = $abonnementRepository;
+        $this->notificationService = $notificationService;
     }
 
     public function traiterPaiement(string $abonnementId, array $paiementData): JsonResponse
@@ -90,6 +94,14 @@ class PaiementService extends BaseService implements PaiementServiceInterface
             // Activer l'abonnement
             $this->abonnementRepository->update($paiement->abonnement_id, [
                 'statut' => StatutAbonnement::ACTIF,
+            ]);
+
+            // Envoyer la notification à l'admin
+            $this->notificationService->sendAdminPaymentNotification([
+                'montant' => $paiement->montant,
+                'abonnement_id' => $paiement->abonnement_id,
+                'numero_transaction' => $paiement->numero_transaction,
+                'ecole_id' => $paiement->ecole_id,
             ]);
 
             DB::commit();

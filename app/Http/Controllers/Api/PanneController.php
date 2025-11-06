@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sirene;
@@ -33,17 +33,13 @@ class PanneController extends Controller
     public function valider(Request $request, $panneId)
     {
         $validated = $request->validate([
-            'admin_id' => 'required|string|exists:users,id',
             'nombre_techniciens_requis' => 'nullable|integer|min:1',
             'date_debut_candidature' => 'nullable|date',
             'date_fin_candidature' => 'nullable|date|after:date_debut_candidature',
             'commentaire' => 'nullable|string',
         ]);
 
-        $adminId = $validated['admin_id'];
-        unset($validated['admin_id']);
-
-        return $this->panneService->validerPanne($panneId, $adminId, $validated);
+        return $this->panneService->validerPanne($panneId, $validated);
     }
 
     public function cloturer($panneId)

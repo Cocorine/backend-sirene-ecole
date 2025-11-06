@@ -12,6 +12,8 @@ interface InterventionServiceInterface extends BaseServiceInterface
     public function retirerCandidature(string $missionTechnicienId, string $motifRetrait): JsonResponse;
     public function retirerMissionTechnicien(string $interventionId, string $motifRetrait, string $adminId): JsonResponse;
     public function demarrerIntervention(string $interventionId): JsonResponse;
+    public function terminerIntervention(string $interventionId): JsonResponse;
+
     public function redigerRapport(string $interventionId, array $rapportData): JsonResponse;
     public function noterIntervention(string $interventionId, int $note, ?string $commentaire): JsonResponse;
     public function noterRapport(string $rapportId, int $note, string $review): JsonResponse;

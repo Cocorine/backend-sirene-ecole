@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\Contracts\InterventionServiceInterface;
@@ -80,6 +80,11 @@ class InterventionController extends Controller
     public function demarrer(string $interventionId): JsonResponse
     {
         return $this->interventionService->demarrerIntervention($interventionId);
+    }
+
+    public function terminer(string $interventionId): JsonResponse
+    {
+        return $this->interventionService->terminerIntervention($interventionId);
     }
 
     public function redigerRapport(Request $request, string $interventionId): JsonResponse
