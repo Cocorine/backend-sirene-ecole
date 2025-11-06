@@ -83,6 +83,36 @@ use OpenApi\Annotations as OA;
  *         )
  *     )
  * )
+ *
+ * @OA\Schema(
+ *     schema="SireneRequest",
+ *     title="Sirene Request",
+ *     required={"numero_serie"},
+ *     @OA\Property(property="numero_serie", type="string", description="Serial number of the sirene")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="SitePrincipalRequest",
+ *     title="Site Principal Request",
+ *     required={"adresse", "ville_id", "sirene"},
+ *     @OA\Property(property="adresse", type="string", maxLength=500),
+ *     @OA\Property(property="ville_id", type="string", format="ulid"),
+ *     @OA\Property(property="latitude", type="number", format="float", nullable=true),
+ *     @OA\Property(property="longitude", type="number", format="float", nullable=true),
+ *     @OA\Property(property="sirene", ref="#/components/schemas/SireneRequest")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="SitesAnnexeRequest",
+ *     title="Sites Annexe Request",
+ *     required={"nom", "sirene"},
+ *     @OA\Property(property="nom", type="string", maxLength=255),
+ *     @OA\Property(property="adresse", type="string", maxLength=500, nullable=true),
+ *     @OA\Property(property="ville_id", type="string", format="ulid", nullable=true),
+ *     @OA\Property(property="latitude", type="number", format="float", nullable=true),
+ *     @OA\Property(property="longitude", type="number", format="float", nullable=true),
+ *     @OA\Property(property="sirene", ref="#/components/schemas/SireneRequest")
+ * )
  */
 class InscriptionEcoleRequest extends FormRequest
 {

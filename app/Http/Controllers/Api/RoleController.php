@@ -12,13 +12,8 @@ use App\Services\Contracts\RoleServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+
 /**
- * @OA\Info(
- *     title="Sirene Automatique API Documentation",
- *     version="1.0.0",
- *     description="API Documentation for the Sirene Automatique project"
- * )
- *
  * Class RoleController
  * @package App\Http\Controllers\API
  * @OA\Tag(

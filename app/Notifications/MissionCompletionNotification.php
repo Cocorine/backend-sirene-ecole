@@ -43,7 +43,7 @@ class MissionCompletionNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line("La mission {$this->missionDetails['numero_ordre']} est terminée. Veuillez laisser votre avis.")
+                    ->line("La mission " . $this->missionDetails['numero_ordre'] . " est terminée. Veuillez laisser votre avis.")
                     ->action('Donner votre avis', url('/')) // TODO: Link to feedback form
                     ->line('Merci d\'utiliser notre application!');
     }

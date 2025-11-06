@@ -17,6 +17,38 @@ use OpenApi\Annotations as OA;
  *     name="Calendrier Scolaire",
  *     description="API Endpoints for School Calendar Management"
  * )
+ * @OA\Schema(
+ *     schema="CalendrierScolaire",
+ *     title="Calendrier Scolaire",
+ *     description="Calendrier Scolaire model",
+ *     @OA\Property(property="id", type="string", format="ulid"),
+ *     @OA\Property(property="pays_id", type="string", format="ulid"),
+ *     @OA\Property(property="annee_scolaire", type="string", example="2023-2024"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="date_rentree", type="string", format="date"),
+ *     @OA\Property(property="date_fin_annee", type="string", format="date"),
+ *     @OA\Property(property="periodes_vacances", type="array", @OA\Items(type="string")),
+ *     @OA\Property(property="jours_feries_defaut", type="array", @OA\Items(type="string")),
+ *     @OA\Property(property="actif", type="boolean"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ * )
+ * @OA\Schema(
+ *     schema="JourFerie",
+ *     title="Jour Ferie",
+ *     description="Jour Ferie model",
+ *     @OA\Property(property="id", type="string", format="ulid"),
+ *     @OA\Property(property="calendrier_id", type="string", format="ulid"),
+ *     @OA\Property(property="ecole_id", type="string", format="ulid"),
+ *     @OA\Property(property="pays_id", type="string", format="ulid"),
+ *     @OA\Property(property="intitule_journee", type="string"),
+ *     @OA\Property(property="date", type="string", format="date"),
+ *     @OA\Property(property="recurrent", type="boolean"),
+ *     @OA\Property(property="actif", type="boolean"),
+ *     @OA\Property(property="est_national", type="boolean"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ * )
  */
 class CalendrierScolaireController extends Controller
 {
