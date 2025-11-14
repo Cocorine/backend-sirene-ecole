@@ -21,6 +21,38 @@ class RoleService extends BaseService implements RoleServiceInterface
         parent::__construct($roleRepository);
         $this->roleRepository = $roleRepository;
     }
+
+    /**
+     * Override getAll to support filtering by profilable and exclude defaults
+     * profilableType is automatically retrieved from auth()->user()->user_account_type_type
+     *
+     * @param int $perPage
+     * @param array $relations
+     * @param string|null $profilableId
+     * @param bool $excludeDefaults
+     * @return JsonResponse
+     */
+    public function getAll(
+        int $perPage = 15,
+        array $relations = [],
+        ?string $profilableId = null,
+        bool $excludeDefaults = true
+    ): JsonResponse {
+        try {
+            $data = $this->roleRepository->paginate(
+                $perPage,
+                ['*'],
+                $relations,
+                $profilableId,
+                $excludeDefaults
+            );
+            return $this->successResponse(null, $data);
+        } catch (Exception $e) {
+            Log::error("Error in " . get_class($this) . "::getAll - " . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
     public function findBySlug(string $slug): JsonResponse
     {
         try {

@@ -19,6 +19,46 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
         $this->permissionRepository = $permissionRepository; // Added
     }
 
+    /**
+     * Get all roles excluding default roles (roles without profilable)
+     * Automatically filters by authenticated user's account type
+     *
+     * @param array $columns
+     * @param array $relations
+     * @param string|null $profilableId Filter by profilable_id (optional)
+     * @param bool $excludeDefaults Exclude roles where roleable_id and roleable_type are NULL
+     * @return Collection
+     */
+    public function all(
+        array $columns = ['*'],
+        array $relations = [],
+        ?string $profilableId = null,
+        bool $excludeDefaults = true
+    ): Collection {
+        $query = $this->model->with($relations);
+
+        // Récupérer automatiquement le type de profil depuis l'utilisateur connecté
+        $user = auth()->user();
+        $profilableType = $user ? $user->user_account_type_type : null;
+
+        // Exclure les rôles par défaut (rôles système sans profilable)
+        if ($excludeDefaults) {
+            $query->whereNotNull('roleable_id')
+                  ->whereNotNull('roleable_type');
+        }
+
+        // Filtrer par profilable_type récupéré de l'utilisateur
+        if ($profilableType !== null) {
+            $query->where('roleable_type', $profilableType);
+        }
+
+        // Filtrer par profilable_id si fourni
+        if ($profilableId !== null) {
+            $query->where('roleable_id', $profilableId);
+        }
+
+        return $query->get($columns);
+    }
 
     public function findBySlug(string $slug, array $relations = []): ?Model
     {
@@ -100,5 +140,48 @@ class RoleRepository extends BaseRepository implements RoleRepositoryInterface
             Log::error("Error syncing permissions for role {$roleId}: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    /**
+     * Paginate roles with filters
+     * Automatically filters by authenticated user's account type
+     *
+     * @param int $perPage
+     * @param array $columns
+     * @param array $relations
+     * @param string|null $profilableId Filter by profilable_id (optional)
+     * @param bool $excludeDefaults Exclude default roles
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function paginate(
+        int $perPage = 15,
+        array $columns = ['*'],
+        array $relations = [],
+        ?string $profilableId = null,
+        bool $excludeDefaults = true
+    ): \Illuminate\Pagination\LengthAwarePaginator {
+        $query = $this->model->with($relations);
+
+        // Récupérer automatiquement le type de profil depuis l'utilisateur connecté
+        $user = auth()->user();
+        $profilableType = $user ? $user->user_account_type_type : null;
+
+        // Exclure les rôles par défaut (rôles système sans profilable)
+        if ($excludeDefaults) {
+            $query->whereNotNull('roleable_id')
+                  ->whereNotNull('roleable_type');
+        }
+
+        // Filtrer par profilable_type récupéré de l'utilisateur
+        if ($profilableType !== null) {
+            $query->where('roleable_type', $profilableType);
+        }
+
+        // Filtrer par profilable_id si fourni
+        if ($profilableId !== null) {
+            $query->where('roleable_id', $profilableId);
+        }
+
+        return $query->paginate($perPage, $columns);
     }
 }
