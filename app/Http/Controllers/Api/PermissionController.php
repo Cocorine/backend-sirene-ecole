@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\Contracts\PermissionServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
 /**
@@ -33,14 +36,22 @@ use OpenApi\Annotations as OA;
  * )
  * Controller for managing permissions.
  */
-class PermissionController extends Controller
+class PermissionController extends Controller implements HasMiddleware
 {
     protected PermissionServiceInterface $permissionService;
 
     public function __construct(PermissionServiceInterface $permissionService)
     {
         $this->permissionService = $permissionService;
-        $this->middleware('auth:api');
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth:api'),
+            new Middleware('can:voir_les_permissions', only: ['index', 'showByRole']),
+            new Middleware('can:voir_permission', only: ['show', 'showBySlug']),
+        ];
     }
 
     /**
