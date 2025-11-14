@@ -16,6 +16,7 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             // Permissions Générales
+           // ['nom' => 'Gérer les users', 'slug' => 'gerer_user'],
             ['nom' => 'Gérer les utilisateurs', 'slug' => 'gerer_utilisateurs'],
             ['nom' => 'Gérer les rôles', 'slug' => 'gerer_roles'],
             ['nom' => 'Gérer les permissions', 'slug' => 'gerer_permissions'],
@@ -241,7 +242,7 @@ class PermissionSeeder extends Seeder
 
             // Informations Utilisateur (UserInfo)
             ['nom' => 'Voir les informations utilisateur', 'slug' => 'voir_les_informations_utilisateur'],
-            ['nom' => 'Voir les informations utilisateur', 'slug' => 'voir_informations_utilisateur'],
+            ['nom' => 'Voir les details d\'un utilisateur', 'slug' => 'voir_informations_utilisateur'],
             ['nom' => 'Créer des informations utilisateur', 'slug' => 'creer_informations_utilisateur'],
             ['nom' => 'Modifier des informations utilisateur', 'slug' => 'modifier_informations_utilisateur'],
             ['nom' => 'Supprimer des informations utilisateur', 'slug' => 'supprimer_informations_utilisateur'],
@@ -256,7 +257,9 @@ class PermissionSeeder extends Seeder
 
         foreach ($permissions as $permissionData) {
             $permission = Permission::firstOrNew(['slug' => $permissionData['slug']], $permissionData);
-            if (!$permission->exists) {
+
+            if ($permission->id == null) {
+
                 $permission->id = Permission::generateUlid();
                 $permission->fill($permissionData);
                 $permission->save();
