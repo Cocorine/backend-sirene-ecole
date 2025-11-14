@@ -29,31 +29,31 @@ Route::get("/pays", function(Request $request){
 });
 
 Route::prefix('permissions')->middleware('auth:api')->group(function () {
-    Route::get('/', [PermissionController::class, 'index']);
-    Route::get('{id}', [PermissionController::class, 'show']);
-    Route::get('slug/{slug}', [PermissionController::class, 'showBySlug']);
-    Route::get('role/{roleId}', [PermissionController::class, 'showByRole']);
+    Route::get('/', [PermissionController::class, 'index'])->middleware('can:voir_les_permissions');
+    Route::get('{id}', [PermissionController::class, 'show'])->middleware('can:voir_permission');
+    Route::get('slug/{slug}', [PermissionController::class, 'showBySlug'])->middleware('can:voir_permission');
+    Route::get('role/{roleId}', [PermissionController::class, 'showByRole'])->middleware('can:voir_les_permissions_role');
 });
 
 Route::prefix('roles')->middleware('auth:api')->group(function () {
-    Route::get('/', [RoleController::class, 'index']);
-    Route::get('{id}', [RoleController::class, 'show']);
-    Route::post('/', [RoleController::class, 'store']);
-    Route::put('{id}', [RoleController::class, 'update']);
-    Route::delete('{id}', [RoleController::class, 'destroy']);
+    Route::get('/', [RoleController::class, 'index'])->middleware('can:voir_les_roles');
+    Route::get('{id}', [RoleController::class, 'show'])->middleware('can:voir_role');
+    Route::post('/', [RoleController::class, 'store'])->middleware('can:creer_role');
+    Route::put('{id}', [RoleController::class, 'update'])->middleware('can:modifier_role');
+    Route::delete('{id}', [RoleController::class, 'destroy'])->middleware('can:supprimer_role');
 
     // Routes pour la gestion des permissions d'un rôle
-    Route::post('{roleId}/permissions/assign', [RoleController::class, 'assignPermissions']);
-    Route::post('{roleId}/permissions/sync', [RoleController::class, 'syncPermissions']);
-    Route::post('{roleId}/permissions/remove', [RoleController::class, 'removePermissions']);
+    Route::post('{roleId}/permissions/assign', [RoleController::class, 'assignPermissions'])->middleware('can:assigner_permissions_role');
+    Route::post('{roleId}/permissions/sync', [RoleController::class, 'syncPermissions'])->middleware('can:assigner_permissions_role');
+    Route::post('{roleId}/permissions/remove', [RoleController::class, 'removePermissions'])->middleware('can:assigner_permissions_role');
 });
 
 Route::prefix('users')->middleware('auth:api')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('{id}', [UserController::class, 'show']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::put('{id}', [UserController::class, 'update']);
-    Route::delete('{id}', [UserController::class, 'destroy']);
+    Route::get('/', [UserController::class, 'index'])->middleware('can:voir_les_utilisateurs');
+    Route::get('{id}', [UserController::class, 'show'])->middleware('can:voir_utilisateur');
+    Route::post('/', [UserController::class, 'store'])->middleware('can:creer_utilisateur');
+    Route::put('{id}', [UserController::class, 'update'])->middleware('can:modifier_utilisateur');
+    Route::delete('{id}', [UserController::class, 'destroy'])->middleware('can:supprimer_utilisateur');
 });
 
 // Authentication routes (public)
