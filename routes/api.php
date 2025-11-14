@@ -28,22 +28,27 @@ Route::get("/pays", function(Request $request){
     return Pays::all();
 });
 
-Route::prefix('permissions')->group(function () {
+Route::prefix('permissions')->middleware('auth:api')->group(function () {
     Route::get('/', [PermissionController::class, 'index']);
     Route::get('{id}', [PermissionController::class, 'show']);
     Route::get('slug/{slug}', [PermissionController::class, 'showBySlug']);
     Route::get('role/{roleId}', [PermissionController::class, 'showByRole']);
 });
 
-Route::prefix('roles')->group(function () {
+Route::prefix('roles')->middleware('auth:api')->group(function () {
     Route::get('/', [RoleController::class, 'index']);
     Route::get('{id}', [RoleController::class, 'show']);
     Route::post('/', [RoleController::class, 'store']);
     Route::put('{id}', [RoleController::class, 'update']);
     Route::delete('{id}', [RoleController::class, 'destroy']);
+
+    // Routes pour la gestion des permissions d'un rôle
+    Route::post('{roleId}/permissions/assign', [RoleController::class, 'assignPermissions']);
+    Route::post('{roleId}/permissions/sync', [RoleController::class, 'syncPermissions']);
+    Route::post('{roleId}/permissions/remove', [RoleController::class, 'removePermissions']);
 });
 
-Route::prefix('users')->group(function () {
+Route::prefix('users')->middleware('auth:api')->group(function () {
     Route::get('/', [UserController::class, 'index']);
     Route::get('{id}', [UserController::class, 'show']);
     Route::post('/', [UserController::class, 'store']);

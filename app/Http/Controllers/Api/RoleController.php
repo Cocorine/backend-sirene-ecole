@@ -11,6 +11,8 @@ use App\Http\Requests\API\Role\UpdateRoleRequest;
 use App\Services\Contracts\RoleServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -38,19 +40,32 @@ use Illuminate\Support\Facades\Gate;
  * )
  * Controller for managing Roles.
  */
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
     protected RoleServiceInterface $roleService;
 
     public function __construct(RoleServiceInterface $roleService)
     {
         $this->roleService = $roleService;
-        $this->middleware('can:voir_les_roles')->only('index');
+        /*$this->middleware('can:voir_les_roles')->only('index');
         $this->middleware('can:creer_role')->only('store');
         $this->middleware('can:voir_role')->only('show');
         $this->middleware('can:modifier_role')->only('update');
         $this->middleware('can:supprimer_role')->only('destroy');
         $this->middleware('can:assigner_permissions_role')->only(['assignPermissions', 'syncPermissions', 'removePermissions']);
+        */
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            /*new Middleware('can:voir_les_roles', only: ['index']),
+            new Middleware('can:creer_role', only: ['store']),
+            new Middleware('can:voir_role', only: ['show']),
+            new Middleware('can:modifier_role', only: ['update']),
+            new Middleware('can:supprimer_role', only: ['destroy']),
+            new Middleware('can:assigner_permissions_role', only: ['assignPermissions', 'syncPermissions', 'removePermissions']),*/
+        ];
     }
 
     /**
