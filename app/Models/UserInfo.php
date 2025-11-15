@@ -39,6 +39,21 @@ class UserInfo extends Model
         return ['telephone', 'email'];
     }
 
+    protected $appends = [
+        'nom_ville',
+    ];
+
+    // Accesseurs
+    /**
+     * Obtenir le nom de la ville de l'utilisateur
+     *
+     * @return string|null
+     */
+    public function getNomVilleAttribute(): ?string
+    {
+        return $this->ville?->nom;
+    }
+
     // User relationship
     public function user(): BelongsTo
     {
