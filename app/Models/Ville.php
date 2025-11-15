@@ -36,6 +36,37 @@ class Ville extends Model
         'deleted_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'nom_pays',
+        'nom_complet',
+    ];
+
+    // Accesseurs
+    /**
+     * Obtenir le nom du pays de la ville
+     *
+     * @return string|null
+     */
+    public function getNomPaysAttribute(): ?string
+    {
+        return $this->pays?->nom;
+    }
+
+    /**
+     * Obtenir le nom complet de la ville avec le pays
+     * Format: "Ville - Pays" (ex: "Dakar - Sénégal")
+     *
+     * @return string
+     */
+    public function getNomCompletAttribute(): string
+    {
+        if ($this->nom_pays) {
+            return $this->nom . ' - ' . $this->nom_pays;
+        }
+
+        return $this->nom;
+    }
+
     // Relations
     public function pays(): BelongsTo
     {
