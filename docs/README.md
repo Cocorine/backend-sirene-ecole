@@ -109,7 +109,23 @@ Ce document couvre toutes les fonctionnalités avancées des Form Requests :
 
 ---
 
-### 7. [FAQ - Questions Fréquentes](FAQ.md)
+### 7. [Controllers - Injection de Dépendances](CONTROLLERS_INJECTION.md)
+**Guide complet sur l'injection dans les Controllers**
+
+Ce document compare les deux approches d'injection de dépendances :
+- 🏗️ **Constructor Injection (avec binding)** : injection dans le constructeur avec propriétés
+- 💉 **Method Injection (sans binding)** : injection directe dans les méthodes
+- 📊 **Comparaison détaillée** : avantages, inconvénients, performance
+- 🎯 **Quand utiliser quelle approche** : critères de décision avec exemples
+- 📚 **Exemples complets** : CRUD, actions spécifiques, approche hybride
+- ✅ **Bonnes pratiques** : readonly, ordre des paramètres, cohérence
+- ❌ **Erreurs à éviter** : dépendances inutilisées, approches mixtes incohérentes
+
+**À lire** pour choisir la meilleure approche d'injection selon vos besoins.
+
+---
+
+### 8. [FAQ - Questions Fréquentes](FAQ.md)
 **Réponses aux questions courantes**
 
 Ce document répond aux questions importantes :
