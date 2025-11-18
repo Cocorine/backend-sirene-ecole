@@ -89,13 +89,34 @@ Ce document explique en détail :
 
 ---
 
-### 6. [FAQ - Questions Fréquentes](FAQ.md)
+### 6. [Form Requests Avancées](FORM_REQUESTS_ADVANCED.md)
+**Guide avancé de validation**
+
+Ce document couvre toutes les fonctionnalités avancées des Form Requests :
+- 🔧 **prepareForValidation()** : nettoyer et formater les données avant validation
+- ✅ **withValidator()** : validation personnalisée et règles métier complexes
+- 🎯 **Validation avec Enums** : utiliser Rule::enum() avec PHP 8.1+
+- 🛠️ **Rules personnalisées** : créer des règles réutilisables (ValidPhoneNumber, MinAge, etc.)
+- 📝 **Rules avec Callbacks** : validation inline avec fonctions
+- 🔀 **Validation conditionnelle** : required_if, sometimes, exclude_if, Rule::when()
+- 💬 **Messages personnalisés** : messages d'erreur clairs et en français
+- 🏷️ **Attributs personnalisés** : franciser les noms de champs
+- ⚠️ **Gestion des erreurs** : personnaliser les réponses 422
+- 📚 Exemples complets du projet
+- ✅ Bonnes pratiques et erreurs à éviter
+
+**À maîtriser** pour créer des validations robustes et maintenables.
+
+---
+
+### 7. [FAQ - Questions Fréquentes](FAQ.md)
 **Réponses aux questions courantes**
 
 Ce document répond aux questions importantes :
 - ❓ **Pourquoi le formatage JSON est dans le Controller et pas dans le Service ?** (avec exemples détaillés)
 - ❓ Quand utiliser un Repository vs Eloquent direct ?
 - ❓ Dois-je toujours créer une interface ?
+- ❓ Comment gérer l'autorisation avec authorize() ?
 - ❓ Où mettre la validation métier ?
 
 **À consulter** quand vous avez des doutes sur l'architecture ou les bonnes pratiques.
