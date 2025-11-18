@@ -74,7 +74,22 @@ Ce document couvre :
 
 ---
 
-### 5. [FAQ - Questions Fréquentes](FAQ.md)
+### 5. [Autorisation - Gates, Policies & Form Requests](AUTHORIZATION.md)
+**Guide complet de l'autorisation**
+
+Ce document explique en détail :
+- 🔐 **Méthode authorize() dans les Form Requests** (6 stratégies avec exemples)
+- 🚪 Gates (portes d'accès) : définition et utilisation
+- 📋 Policies (politiques) : organisation des autorisations par modèle
+- 🛡️ Middleware d'autorisation (can, role)
+- 👥 RBAC - Role-Based Access Control (système de rôles et permissions)
+- ✅ Bonnes pratiques et erreurs à éviter
+
+**À lire absolument** pour sécuriser votre API et gérer les droits d'accès.
+
+---
+
+### 6. [FAQ - Questions Fréquentes](FAQ.md)
 **Réponses aux questions courantes**
 
 Ce document répond aux questions importantes :

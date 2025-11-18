@@ -5,7 +5,8 @@
 1. [Pourquoi le formatage JSON est dans le Controller et pas dans le Service ?](#pourquoi-le-formatage-json-est-dans-le-controller-et-pas-dans-le-service)
 2. [Quand utiliser un Repository vs Eloquent direct ?](#quand-utiliser-un-repository-vs-eloquent-direct)
 3. [Dois-je toujours créer une interface ?](#dois-je-toujours-créer-une-interface)
-4. [Où mettre la validation métier ?](#où-mettre-la-validation-métier)
+4. [Comment gérer l'autorisation avec authorize() ?](#comment-gérer-lautorisation-avec-authorize)
+5. [Où mettre la validation métier ?](#où-mettre-la-validation-métier)
 
 ---
 
@@ -516,6 +517,58 @@ class EcoleResource extends JsonResource { }
 class EcoleController extends Controller { }
 class Ecole extends Model { }
 ```
+
+---
+
+## Comment gérer l'autorisation avec authorize() ?
+
+### 🎯 Question
+
+> "Comment gérer la méthode `authorize()` dans les Form Requests ? Quand retourner `true` ou `false` ?"
+
+### ✅ Réponse courte
+
+La méthode `authorize()` détermine si l'utilisateur a le **droit** d'effectuer la requête.
+
+**Exemples rapides :**
+
+```php
+// Route publique (inscription)
+public function authorize(): bool
+{
+    return true; // ✅ Tout le monde
+}
+
+// Route authentifiée
+public function authorize(): bool
+{
+    return $this->user() !== null; // ✅ Utilisateurs connectés
+}
+
+// Vérifier une permission
+public function authorize(): bool
+{
+    return $this->user()?->hasPermission('create-ecole') ?? false;
+}
+
+// Vérifier l'ownership (propriétaire)
+public function authorize(): bool
+{
+    $ecole = Ecole::find($this->route('id'));
+    return $this->user()?->id === $ecole->user_id;
+}
+```
+
+### 📖 Documentation complète
+
+Pour tout savoir sur l'autorisation :
+- **6 stratégies différentes avec exemples**
+- Gates et Policies
+- Middleware d'autorisation
+- RBAC (Rôles et Permissions)
+- Bonnes pratiques
+
+👉 **[Lire le guide complet de l'autorisation →](AUTHORIZATION.md)**
 
 ---
 
