@@ -125,7 +125,28 @@ Ce document compare les deux approches d'injection de dépendances :
 
 ---
 
-### 8. [FAQ - Questions Fréquentes](FAQ.md)
+### 8. [Middleware](MIDDLEWARE.md)
+**Guide complet des Middleware Laravel**
+
+Ce document explique comment créer et utiliser des Middleware :
+- 🔄 **Introduction aux Middleware** : concept et flow de requête
+- 📋 **Types de Middleware** : global, route, alias, groupe
+- 🛠️ **Créer un Middleware personnalisé** : structure et exemples
+- ⚙️ **Enregistrer un Middleware** : dans Kernel.php (global, alias, groupe)
+- 🔒 **Middleware de sécurité** : ForceJsonResponse, CORS, URL signées
+- 🚪 **Middleware d'autorisation** : vérifier rôle, type d'utilisateur, abonnement
+- 🔄 **Middleware de transformation** : TrimStrings, ConvertEmptyStringsToNull
+- 📊 **Middleware de logging** : LogRequest, MeasureExecutionTime, TrackApiUsage
+- 🔢 **Ordre d'exécution** : priorité et cascade
+- 📚 **Exemples du projet** : routes avec middleware empilés, chaînés
+- ✅ **Bonnes pratiques** : réponses JSON cohérentes, codes d'erreur, logging
+- ❌ **Erreurs à éviter** : logique métier lourde, duplication, messages vagues
+
+**À lire** pour filtrer et transformer les requêtes HTTP de manière élégante.
+
+---
+
+### 9. [FAQ - Questions Fréquentes](FAQ.md)
 **Réponses aux questions courantes**
 
 Ce document répond aux questions importantes :
