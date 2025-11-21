@@ -146,7 +146,26 @@ Ce document explique comment créer et utiliser des Middleware :
 
 ---
 
-### 9. [FAQ - Questions Fréquentes](FAQ.md)
+### 9. [Exceptions - Gestion des Erreurs](EXCEPTIONS.md)
+**Guide complet de la gestion des exceptions**
+
+Ce document explique comment gérer les exceptions et erreurs :
+- ⚠️ **Introduction aux exceptions** : types, hiérarchie, flow de traitement
+- 🎯 **Handler global** : centraliser la gestion des erreurs dans Handler.php
+- 🛠️ **Exceptions personnalisées** : BusinessException, SubscriptionException, PaymentException
+- 🔍 **Gestion par type** : validation, authentification, autorisation, not found, server error
+- 📝 **Logging** : niveaux de sévérité (debug, info, warning, error, critical)
+- 🔄 **Contexte** : différencier API vs Web
+- 📊 **Format de réponse** : structure JSON cohérente avec codes d'erreur
+- 📚 **Exemples complets** : try-catch dans services et controllers
+- ✅ **Bonnes pratiques** : messages clairs, codes HTTP corrects, logging approprié
+- ❌ **Erreurs à éviter** : exceptions trop génériques, informations sensibles, swallow d'exceptions
+
+**À maîtriser** pour gérer proprement les erreurs et fournir des réponses claires aux clients.
+
+---
+
+### 10. [FAQ - Questions Fréquentes](FAQ.md)
 **Réponses aux questions courantes**
 
 Ce document répond aux questions importantes :
